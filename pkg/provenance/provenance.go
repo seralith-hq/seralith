@@ -40,14 +40,15 @@ const (
 	ActorAgent ActorKind = "agent"
 )
 
-// Actor identifies who or what produced a change. Model is declared by the operator,
-// never inferred, and is recorded for evidence rather than trusted for policy.
+// Actor identifies who or what produced a change. Operator is the accountable human an
+// agent acted for. Model is declared, never inferred, and is evidence rather than identity.
 type Actor struct {
 	Kind        ActorKind `json:"kind"`
 	ID          string    `json:"id"`
 	Tool        string    `json:"tool,omitempty"`
 	ToolVersion string    `json:"toolVersion,omitempty"`
 	Model       string    `json:"model,omitempty"`
+	Operator    string    `json:"operator,omitempty"`
 	Host        string    `json:"host,omitempty"`
 }
 

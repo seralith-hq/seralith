@@ -17,6 +17,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/ryan-tobin/new-startup/internal/fsutil"
 	"github.com/ryan-tobin/new-startup/pkg/dsse"
 )
 
@@ -96,10 +97,10 @@ func (l *Ledger) Append(typ, actor, subject string, data any) (*Entry, error) {
 		return nil, fmt.Errorf("ledger: open for append: %w", err)
 	}
 	defer f.Close()
-	if err := lockFile(f); err != nil {
+	if err := fsutil.Lock(f); err != nil {
 		return nil, fmt.Errorf("ledger: lock: %w", err)
 	}
-	defer func() { _ = unlockFile(f) }()
+	defer func() { _ = fsutil.Unlock(f) }()
 
 	head, err := readLast(f)
 	if err != nil {

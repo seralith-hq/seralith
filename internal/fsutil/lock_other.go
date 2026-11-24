@@ -1,8 +1,8 @@
 //go:build !unix
 
-package ledger
+package fsutil
 
 import "os"
 
-func lockFile(*os.File) error   { return nil }
-func unlockFile(*os.File) error { return nil }
+func Lock(*os.File) error   { return nil }
+func Unlock(*os.File) error { return nil }
