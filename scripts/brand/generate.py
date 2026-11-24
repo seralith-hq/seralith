@@ -138,6 +138,14 @@ def main():
         plain(size).save(out / "png" / f"favicon-{size}.png")
     plain(256).save(out / "png" / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (256, 256)])
 
+    banner = Image.new("RGBA", (1600, 400), (0, 0, 0, 0))
+    plate = Image.new("L", banner.size, 0)
+    ImageDraw.Draw(plate).rounded_rectangle([0, 0, 1599, 399], radius=36, fill=255)
+    banner.paste(Image.new("RGBA", banner.size, GRAPHITE), (0, 0), plate)
+    banner_lockup = raster([(mark, SIGNAL), (lockup_word, BONE)], lb, 1040)
+    banner.alpha_composite(banner_lockup, ((1600 - banner_lockup.width) // 2, (400 - banner_lockup.height) // 2))
+    banner.save(out / "png" / "sigil-banner.png")
+
     sheet = Image.new("RGBA", (1600, 1000), BONE)
     light_lockup = raster([(mark, SIGNAL), (lockup_word, GRAPHITE)], lb, 900)
     sheet.alpha_composite(light_lockup, (120, (380 - light_lockup.height) // 2))
