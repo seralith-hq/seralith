@@ -195,6 +195,26 @@ func TestPolicyDenyBlocksCommit(t *testing.T) {
 	}
 }
 
+func TestGateUsesBaseConfiguration(t *testing.T) {
+	h := newHarness(t)
+	h.ok("", "init")
+	base := h.repo.Commit("chore: enable sigil")
+	h.ok("", "ws", "new", "relax")
+	ws := h.wsPath("relax")
+	testutil.WriteFile(t, filepath.Join(ws, ".sigil/policy.yaml"), "version: 1\nrules: []\n")
+	h.ok("", "run", "--ws", "relax", "--agent", "codex", "--", "sh", "-c", "mkdir -p .github/workflows && echo 'on: push' > .github/workflows/x.yml")
+	h.ok("", "commit", "--ws", "relax", "-m", "ci: relax policy and edit pipeline", "--force")
+
+	h.repo.Git("checkout", "-q", "--detach", "sigil/relax")
+	if _, _, code := h.run("", "gate", "--range", base+"..HEAD"); code != 0 {
+		t.Fatal("sanity: the relaxed branch policy should pass when trusted")
+	}
+	out, _, code := h.run("", "gate", "--range", base+"..HEAD", "--config-from", base)
+	if code != 1 || !strings.Contains(out, "agents-no-pipeline-edits") {
+		t.Fatalf("gate with base config: code=%d\n%s", code, out)
+	}
+}
+
 func TestTamperedAttestationFailsVerification(t *testing.T) {
 	h := newHarness(t)
 	h.ok("", "init")

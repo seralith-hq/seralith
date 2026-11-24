@@ -1,0 +1,50 @@
+name: Sigil Gate
+description: Verify signed provenance, attribution, and policy for every commit in a pull request.
+author: Sigil Systems, Inc.
+branding:
+  icon: shield
+  color: orange
+
+inputs:
+  version:
+    description: Sigil version to install
+    default: latest
+  base:
+    description: Base branch to compare against and load policy and trust from
+    default: ${{ github.event.pull_request.base.ref || github.event.repository.default_branch }}
+  format:
+    description: Output format (github, text, markdown, json)
+    default: github
+  include-merges:
+    description: Require attestations on merge commits
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Install sigil
+      shell: bash
+      env:
+        SIGIL_VERSION: ${{ inputs.version }}
+        SIGIL_BIN_DIR: ${{ runner.temp }}/sigil-bin
+      run: |
+        mkdir -p "$SIGIL_BIN_DIR"
+        "${{ github.action_path }}/scripts/install.sh"
+        echo "$SIGIL_BIN_DIR" >> "$GITHUB_PATH"
+    - name: Fetch base and attestations
+      shell: bash
+      env:
+        BASE: ${{ inputs.base }}
+      run: |
+        git fetch --no-tags origin "+refs/heads/${BASE}:refs/remotes/origin/${BASE}"
+        git fetch --no-tags origin "+refs/notes/sigil:refs/notes/sigil" || echo "::warning::no attestations found on origin"
+    - name: Gate
+      shell: bash
+      env:
+        BASE: ${{ inputs.base }}
+        FORMAT: ${{ inputs.format }}
+        INCLUDE_MERGES: ${{ inputs.include-merges }}
+      run: |
+        args=(gate --range "origin/${BASE}..HEAD" --config-from "origin/${BASE}" --format "$FORMAT")
+        if [ "$INCLUDE_MERGES" = "true" ]; then args+=(--include-merges); fi
+        sigil "${args[@]}"
