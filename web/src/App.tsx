@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { useEvents, useResource } from "./lib/hooks";
 import { href, useRoute, type Route } from "./lib/router";
 import type { ProjectInfo, SessionInfo } from "./lib/types";
-import { Logo } from "./components/ui";
+import { Logo, Wordmark } from "./components/ui";
 import { WorkspacesPage } from "./pages/Workspaces";
 import { WorkspacePage } from "./pages/Workspace";
 import { SessionsPage } from "./pages/Sessions";
@@ -48,7 +48,7 @@ export function App() {
         <div className="brand">
           <Logo />
           <div>
-            <div className="brand-name">SIGIL</div>
+            <Wordmark height={13} />
             <div className="brand-project">{project.data?.name ?? "…"}</div>
           </div>
         </div>

@@ -1,25 +1,20 @@
 import type { ReactNode } from "react";
 import type { Actor, ActorKind, Decision, DecisionStatus } from "../lib/types";
 import { actorLabel, percentages } from "../lib/format";
+import { mark, wordmark } from "./brand";
 
 export function Logo({ size = 28 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" role="img" aria-label="Sigil">
-      <path d="M32 3 57.1 17.5v29L32 61 6.9 46.5v-29Z" fill="#0E1116" stroke="#262C3A" />
-      <path
-        d="M32 9.5 51.5 20.75v22.5L32 54.5 12.5 43.25v-22.5Z"
-        fill="none"
-        stroke="#FF5A1F"
-        strokeWidth="2.5"
-      />
-      <path
-        d="M41 21H25.5v10.5h13V43H23"
-        fill="none"
-        stroke="#E9E6DF"
-        strokeWidth="5"
-        strokeLinecap="square"
-      />
-      <circle cx="41" cy="21" r="3" fill="#3DDC97" />
+    <svg width={size} height={size} viewBox={mark.viewBox} role="img" aria-label="Sigil">
+      <path d={mark.path} fill="var(--signal)" fillRule="evenodd" />
+    </svg>
+  );
+}
+
+export function Wordmark({ height = 14 }: { height?: number }) {
+  return (
+    <svg height={height} viewBox={wordmark.viewBox} role="img" aria-label="Sigil" style={{ display: "block" }}>
+      <path d={wordmark.path} fill="currentColor" fillRule="evenodd" />
     </svg>
   );
 }
