@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" width="280" height="64" role="img" aria-label="Sigil">
+  <g>
+    <path d="M32 3 57.1 17.5v29L32 61 6.9 46.5v-29Z" fill="#0E1116"/>
+    <path d="M32 9.5 51.5 20.75v22.5L32 54.5 12.5 43.25v-22.5Z" fill="none" stroke="#FF5A1F" stroke-width="2.5"/>
+    <path d="M41 21H25.5v10.5h13V43H23" fill="none" stroke="#E9E6DF" stroke-width="5" stroke-linecap="square"/>
+    <circle cx="41" cy="21" r="3" fill="#3DDC97"/>
+  </g>
+  <text x="76" y="44" font-family="'JetBrains Mono','IBM Plex Mono',ui-monospace,monospace" font-size="34" font-weight="700" letter-spacing="6" fill="#0E1116">SIGIL</text>
+</svg>
