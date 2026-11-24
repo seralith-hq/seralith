@@ -1,0 +1,22 @@
+services:
+  sigil-control:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/control.Dockerfile
+    image: sigil/control:local
+    ports:
+      - "8080:8080"
+    environment:
+      SIGIL_CONTROL_BOOTSTRAP_TOKEN: ${SIGIL_CONTROL_BOOTSTRAP_TOKEN:?set a bootstrap token}
+    volumes:
+      - sigil-data:/var/lib/sigil
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/sigil-control", "-version"]
+      interval: 30s
+    restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  sigil-data:
