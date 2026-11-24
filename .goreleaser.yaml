@@ -1,0 +1,68 @@
+version: 2
+project_name: sigil
+
+before:
+  hooks:
+    - pnpm -C web install --frozen-lockfile
+    - make web
+
+builds:
+  - id: sigil
+    main: ./cmd/sigil
+    binary: sigil
+    env: [CGO_ENABLED=0]
+    goos: [linux, darwin]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags:
+      - -s -w
+      - -X github.com/ryan-tobin/new-startup/internal/version.Version={{ .Version }}
+      - -X github.com/ryan-tobin/new-startup/internal/version.Commit={{ .ShortCommit }}
+      - -X github.com/ryan-tobin/new-startup/internal/version.Date={{ .Date }}
+  - id: sigil-control
+    main: ./ee/cmd/sigil-control
+    binary: sigil-control
+    env: [CGO_ENABLED=0]
+    goos: [linux]
+    goarch: [amd64, arm64]
+    flags: [-trimpath]
+    ldflags:
+      - -s -w
+      - -X github.com/ryan-tobin/new-startup/internal/version.Version={{ .Version }}
+      - -X github.com/ryan-tobin/new-startup/internal/version.Commit={{ .ShortCommit }}
+      - -X github.com/ryan-tobin/new-startup/internal/version.Date={{ .Date }}
+
+archives:
+  - id: sigil
+    ids: [sigil]
+    name_template: "sigil_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files: [LICENSE, NOTICE, README.md]
+  - id: sigil-control
+    ids: [sigil-control]
+    name_template: "sigil-control_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files: [ee/LICENSE, ee/README.md]
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+sboms:
+  - artifacts: archive
+
+changelog:
+  use: github
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\(.+\))??!?:.+$'
+      order: 0
+    - title: Fixes
+      regexp: '^.*?fix(\(.+\))??!?:.+$'
+      order: 1
+    - title: Other
+      order: 999
+  filters:
+    exclude: ['^docs:', '^test:', '^ci:', '^chore:']
+
+release:
+  draft: true
+  prerelease: auto
