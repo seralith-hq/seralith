@@ -18,7 +18,7 @@ Requirements:
 | Tool | Version |
 | --- | --- |
 | Go | 1.26+ |
-| Node.js | 22+ |
+| Node.js | 26+ |
 | pnpm | 9+ |
 | git | 2.40+ |
 

@@ -13,7 +13,7 @@ sigil version
 ```
 
 Requirements: git 2.40+, Linux or macOS. Building from source requires Go 1.26+
-and Node.js 22+ with pnpm.
+and Node.js 26+ with pnpm.
 
 ## 1. Initialize a repository
 
