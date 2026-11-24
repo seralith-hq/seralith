@@ -53,28 +53,50 @@ in isolated workspaces and records cryptographic evidence of every change.
 ## Quick start
 
 ```sh
-# Build from source
-make bootstrap && make release-build
+# Install (Linux and macOS)
+curl -fsSL https://raw.githubusercontent.com/ryan-tobin/new-startup/main/scripts/install.sh | sh
+
+# Or build from source
+make bootstrap release-build
 
 # Initialize Sigil in a repository
 cd your-repo
 sigil init
+git add .sigil && git commit -m "chore: enable sigil"
 
-# Create an isolated workspace and run an agent in it
+# Create isolated workspaces and run agents in parallel
 sigil ws new auth-refactor
-sigil run --ws auth-refactor --agent codex -- codex
+sigil ws new docs-refresh
+sigil run --ws auth-refactor --agent codex
+sigil run --ws docs-refresh --agent gemini --model pro
 
-# Or just use your own editor or shell
+# Or just use your own editor or shell; your edits are attributed to you
 sigil run --ws auth-refactor -- $SHELL
 
-# Commit with a signed attestation
+# Review, then commit with a signed attestation
+sigil status --ws auth-refactor
 sigil commit --ws auth-refactor -m "refactor(auth): extract token service"
+sigil sync push
 
-# Gate a branch in CI
-sigil gate --range origin/main..HEAD
+# A security reviewer approves; CI gates the branch
+sigil approve sigil/auth-refactor --role security
+sigil gate --base origin/main --config-from origin/main
+
+# Who wrote this file?
+sigil blame internal/auth/token.go
 
 # Open the workbench
-sigil serve
+sigil serve --open
+```
+
+See [Getting started](docs/getting-started.md) for a full walkthrough.
+
+### Gate pull requests on GitHub
+
+```yaml
+- uses: actions/checkout@v7
+  with: { fetch-depth: 0 }
+- uses: ryan-tobin/new-startup@v0
 ```
 
 ## Architecture
@@ -111,6 +133,8 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 | `web/` | Workbench UI (React, TypeScript, Vite) |
 | `ee/` | Sigil Control, the commercial control plane |
 | `site/` | Marketing site |
+| `deploy/` | Container images, Compose, and Kubernetes manifests |
+| `scripts/` | Installer and maintenance scripts |
 | `docs/` | Product, specification, and company documentation |
 | `brand/` | Logo and brand guidelines |
 
@@ -126,11 +150,15 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 
 ## Documentation
 
+- [Getting started](docs/getting-started.md)
 - [Architecture](docs/architecture.md)
+- [CLI reference](docs/cli.md)
 - [Attestation specification](docs/spec/attestation.md)
 - [Policy reference](docs/spec/policy.md)
 - [Threat model](docs/security/threat-model.md)
 - [Compliance mapping](docs/compliance/mapping.md)
+- [GitHub Actions](docs/integrations/github-actions.md) · [GitLab CI](docs/integrations/gitlab-ci.md)
+- [Self-hosting Sigil Control](docs/operations/self-hosting.md)
 
 ## Contributing
 
