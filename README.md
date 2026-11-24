@@ -12,7 +12,7 @@
 <p align="center">
   <a href="https://github.com/ryan-tobin/new-startup/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/ryan-tobin/new-startup/actions/workflows/ci.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-0E1116"></a>
-  <img alt="Go 1.24+" src="https://img.shields.io/badge/go-1.24%2B-FF5A1F">
+  <img alt="Go 1.26+" src="https://img.shields.io/badge/go-1.26%2B-FF5A1F">
 </p>
 
 ---

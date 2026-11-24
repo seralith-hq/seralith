@@ -12,7 +12,7 @@ sudo install bin/sigil /usr/local/bin/
 sigil version
 ```
 
-Requirements: git 2.40+, Linux or macOS. Building from source requires Go 1.24+
+Requirements: git 2.40+, Linux or macOS. Building from source requires Go 1.26+
 and Node.js 22+ with pnpm.
 
 ## 1. Initialize a repository
