@@ -1,6 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Sigil">
-  <path d="M32 3 57.1 17.5v29L32 61 6.9 46.5v-29Z" fill="#0E1116"/>
-  <path d="M32 9.5 51.5 20.75v22.5L32 54.5 12.5 43.25v-22.5Z" fill="none" stroke="#FF5A1F" stroke-width="2.5"/>
-  <path d="M41 21H25.5v10.5h13V43H23" fill="none" stroke="#E9E6DF" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter"/>
-  <circle cx="41" cy="21" r="3" fill="#3DDC97"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.00 0.00 86.60 100.00" role="img" aria-label="Sigil">
+<path fill="#FF5A1F" fill-rule="evenodd" d="M0.00 75.00 43.30 100.00 86.60 75.00 86.60 58.33 86.60 47.22 86.60 25.00 43.30 0.00 0.00 25.00 0.00 41.67 0.00 52.78ZM43.30 22.22 16.84 37.50 16.84 40.28 52.92 61.11 43.30 66.67 9.62 47.22 9.62 30.56 43.30 11.11 76.98 30.56 76.98 41.67ZM43.30 88.89 9.62 69.44 9.62 58.33 43.30 77.78 69.76 62.50 69.76 59.72 33.68 38.89 43.30 33.33 76.98 52.78 76.98 69.44Z"/>
 </svg>

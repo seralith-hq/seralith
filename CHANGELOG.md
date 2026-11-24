@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- New Sigil identity: a generated hexagon-and-S symbol built on an equal-width
+  isometric grid, a Michroma-based wordmark, and a complete asset set (SVG
+  lockups, one-color variants, app icons, and favicons), applied across the
+  workbench, the site, and the README.
 - Read-only commands no longer require a configured git identity, so the gate
   runs in CI without setup.
 

@@ -25,7 +25,8 @@ code, pre { font-family: var(--mono); }
 
 .nav { position: sticky; top: 0; z-index: 10; background: rgba(10, 12, 16, 0.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
 .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px; }
-.logo { display: flex; align-items: center; gap: 10px; font: 700 15px var(--mono); letter-spacing: 0.32em; }
+.logo { display: flex; align-items: center; }
+.logo img { display: block; height: 28px; width: auto; }
 .nav nav { display: flex; align-items: center; gap: 22px; font-size: 14px; color: var(--steel); }
 .nav nav a:hover { color: var(--bone); }
 

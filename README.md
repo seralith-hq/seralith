@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="brand/sigil-logo.svg" alt="Sigil" width="280">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="brand/sigil-logo-dark.svg">
+    <img src="brand/sigil-logo.svg" alt="Sigil" width="360">
+  </picture>
 </p>
 
 <h3 align="center">Build in parallel. Ship with proof.</h3>
