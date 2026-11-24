@@ -12,13 +12,17 @@ import (
 )
 
 func newVerifyCmd(g *globals) *cobra.Command {
-	return &cobra.Command{
+	var configFrom string
+	cmd := &cobra.Command{
 		Use:   "verify [commit]",
 		Short: "Verify a commit's attestation, signatures, integrity, and policy",
 		Args:  cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			e, err := loadEnv(cmd.Context(), g)
 			if err != nil {
+				return err
+			}
+			if err := e.useConfigFrom(cmd.Context(), configFrom); err != nil {
 				return err
 			}
 			rev := "HEAD"
@@ -46,10 +50,12 @@ func newVerifyCmd(g *globals) *cobra.Command {
 			return nil
 		},
 	}
+	cmd.Flags().StringVar(&configFrom, "config-from", "", "load policy and trust store from this revision instead of the working tree")
+	return cmd
 }
 
 func newGateCmd(g *globals) *cobra.Command {
-	var rangeSpec, base, format, remote string
+	var rangeSpec, base, format, remote, configFrom string
 	var fetch, includeMerges bool
 	cmd := &cobra.Command{
 		Use:   "gate",
@@ -64,6 +70,9 @@ func newGateCmd(g *globals) *cobra.Command {
 				return err
 			}
 			repo := e.Project.Repo
+			if err := e.useConfigFrom(cmd.Context(), configFrom); err != nil {
+				return err
+			}
 			if fetch {
 				if err := notes.Fetch(cmd.Context(), repo, remote); err != nil {
 					fmt.Fprintf(g.stderr, "warning: could not fetch attestations from %s: %v\n", remote, err)
@@ -118,6 +127,7 @@ func newGateCmd(g *globals) *cobra.Command {
 	cmd.Flags().BoolVar(&fetch, "fetch", false, "fetch attestations from the remote first")
 	cmd.Flags().StringVar(&remote, "remote", "origin", "remote to fetch attestations from")
 	cmd.Flags().BoolVar(&includeMerges, "include-merges", false, "require attestations on merge commits too")
+	cmd.Flags().StringVar(&configFrom, "config-from", "", "load policy and trust store from this revision (use the base branch in CI)")
 	return cmd
 }
 
