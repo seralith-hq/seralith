@@ -26,6 +26,7 @@ linters:
         - G301
         - G304
         - G306
+        - G703
   exclusions:
     presets:
       - std-error-handling

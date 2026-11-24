@@ -322,7 +322,7 @@ func readLast(f *os.File) (*Entry, error) {
 			n = offset
 		}
 		offset -= n
-		buf := make([]byte, n)
+		buf := make([]byte, n, n+int64(len(tail)))
 		if _, err := f.ReadAt(buf, offset); err != nil && !errors.Is(err, io.EOF) {
 			return nil, err
 		}
