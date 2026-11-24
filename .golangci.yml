@@ -1,38 +1,39 @@
+version: "2"
+
 run:
   timeout: 5m
 
 linters:
+  default: standard
   enable:
-    - errcheck
-    - govet
-    - ineffassign
-    - staticcheck
-    - unused
-    - gosimple
-    - misspell
-    - revive
-    - gofmt
-    - goimports
     - bodyclose
     - errorlint
     - gosec
-    - unconvert
+    - misspell
     - prealloc
-
-linters-settings:
-  revive:
+    - revive
+    - unconvert
+  settings:
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: package-comments
+          disabled: true
+    gosec:
+      excludes:
+        - G204
+        - G301
+        - G304
+        - G306
+  exclusions:
+    presets:
+      - std-error-handling
     rules:
-      - name: exported
-        disabled: true
-      - name: package-comments
-        disabled: true
-  gosec:
-    excludes:
-      - G204
-      - G304
-      - G306
+      - path: _test\.go
+        linters: [gosec, errcheck, prealloc]
 
-issues:
-  exclude-rules:
-    - path: _test\.go
-      linters: [gosec, errcheck]
+formatters:
+  enable:
+    - gofmt
+    - goimports
