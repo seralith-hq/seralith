@@ -14,7 +14,7 @@ help: ## Show available targets
 .PHONY: bootstrap
 bootstrap: ## Install web dependencies
 	pnpm -C web install
-	pnpm -C site install
+	@if [ -f site/package.json ]; then pnpm -C site install; fi
 
 .PHONY: web
 web: ## Build the workbench UI into the embedded asset directory
@@ -26,7 +26,7 @@ web: ## Build the workbench UI into the embedded asset directory
 .PHONY: build
 build: ## Build sigil and sigil-control into ./bin
 	CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/sigil ./cmd/sigil
-	CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/sigil-control ./ee/cmd/sigil-control
+	@if [ -d ee/cmd/sigil-control ]; then CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/sigil-control ./ee/cmd/sigil-control; fi
 
 .PHONY: release-build
 release-build: web build ## Build the UI and both binaries
