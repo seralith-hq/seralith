@@ -26,13 +26,16 @@ is recorded as a segment attributed to the session's actor. Without a command,
 the agent profile's default command is used. Without --agent, Sigil infers the
 profile from the command, and an unrecognized command is attributed to you.`,
 		Example: `  sigil run --ws auth --agent codex
-  sigil run --ws auth --agent claude --model opus -- claude
+  sigil run --ws auth --agent gemini --model pro -- gemini
   sigil run --ws auth -- $SHELL
   sigil run --ws auth --agent aider -- aider --model local/qwen`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 			e, err := loadEnv(ctx, g)
 			if err != nil {
+				return err
+			}
+			if err := e.requireIdentity(); err != nil {
 				return err
 			}
 			ws, err := e.resolveWorkspace(wsName, g.dir)

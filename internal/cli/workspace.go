@@ -25,6 +25,9 @@ func newWorkspaceCmd(g *globals) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			if err := e.requireIdentity(); err != nil {
+				return err
+			}
 			ws, err := e.Workspaces.Create(cmd.Context(), workspace.CreateOptions{Name: args[0], Base: base, Owner: e.Principal, Log: g.stderr})
 			if err != nil {
 				return err

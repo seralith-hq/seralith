@@ -135,6 +135,9 @@ decisions in effect, and is stored in refs/notes/sigil. Push it with
 			if err != nil {
 				return err
 			}
+			if err := e.requireIdentity(); err != nil {
+				return err
+			}
 			res, err := e.attest().Commit(cmd.Context(), attest.CommitOptions{Workspace: ws.Name, Message: message, Force: force})
 			if errors.Is(err, attest.ErrDenied) {
 				pv, perr := e.attest().Preview(cmd.Context(), ws.Name)
@@ -175,6 +178,9 @@ func newApproveCmd(g *globals) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			e, err := loadEnv(cmd.Context(), g)
 			if err != nil {
+				return err
+			}
+			if err := e.requireIdentity(); err != nil {
 				return err
 			}
 			env, commit, err := e.attest().Approve(cmd.Context(), e.Project.Repo, attest.ApproveOptions{Rev: args[0], Role: role, Rules: rules, Reject: reject, Comment: comment})
