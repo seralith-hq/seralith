@@ -18,7 +18,7 @@ RUN CGO_ENABLED=0 go build -trimpath \
     -ldflags "-s -w -X github.com/ryan-tobin/new-startup/internal/version.Version=${VERSION}" \
     -o /out/sigil ./cmd/sigil
 
-FROM alpine:3.20
+FROM alpine:3.24
 RUN apk add --no-cache git ca-certificates && adduser -D -u 10001 sigil
 COPY --from=build /out/sigil /usr/local/bin/sigil
 USER sigil
