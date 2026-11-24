@@ -90,7 +90,7 @@ func newRoot(g *globals) *cobra.Command {
 	add("setup", newInitCmd(g), newWhoamiCmd(g), newKeyCmd(g), newAgentsCmd(g))
 	add("work", newWorkspaceCmd(g), newRunCmd(g), newStatusCmd(g), newCommitCmd(g))
 	add("trust", newApproveCmd(g), newVerifyCmd(g), newGateCmd(g), newBlameCmd(g), newEvidenceCmd(g), newPolicyCmd(g))
-	add("ops", newLogCmd(g), newLedgerCmd(g), newSyncCmd(g), newVersionCmd(g))
+	add("ops", newLogCmd(g), newLedgerCmd(g), newSyncCmd(g), newServeCmd(g), newVersionCmd(g))
 	return root
 }
 
