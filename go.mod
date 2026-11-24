@@ -7,7 +7,7 @@ toolchain go1.27.4
 require (
 	github.com/bmatcuk/doublestar/v4 v4.10.7
 	github.com/creack/pty v1.1.24
-	github.com/gorilla/websocket v1.5.3
+	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
 	github.com/spf13/cobra v1.10.2
 	golang.org/x/term v0.48.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -22,6 +22,7 @@ require (
 	github.com/ncruces/go-strftime v1.1.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/spf13/pflag v1.1.0 // indirect
+	golang.org/x/net v0.26.0 // indirect
 	golang.org/x/sys v0.50.0 // indirect
 	modernc.org/gc/v3 v3.2.1 // indirect
 	modernc.org/libc v1.82.13 // indirect
