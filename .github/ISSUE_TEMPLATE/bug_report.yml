@@ -1,0 +1,56 @@
+name: Bug report
+description: Report a defect in Sigil
+labels: ["type: bug", "status: triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security vulnerabilities must be reported privately. See SECURITY.md.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. sigil init
+        2. sigil ws new feature-x
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Sigil version
+      description: Output of `sigil version`
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - CLI
+        - Daemon / API
+        - Workbench UI
+        - Policy engine
+        - Ledger / attestations
+        - Control plane
+        - Documentation
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system
+      placeholder: Ubuntu 24.04, macOS 15, Windows 11 (WSL2)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      render: shell
