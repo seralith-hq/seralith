@@ -138,6 +138,10 @@ def main():
         plain(size).save(out / "png" / f"favicon-{size}.png")
     plain(256).save(out / "png" / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (256, 256)])
 
+    cx, cy, side = (mb[0] + mb[2]) / 2, (mb[1] + mb[3]) / 2, max(mb[2] - mb[0], mb[3] - mb[1])
+    square = (cx - side / 2, cy - side / 2, cx + side / 2, cy + side / 2)
+    raster([(mark, SIGNAL)], square, 1024, pad=45.0, background=GRAPHITE).save(out / "png" / "sigil-avatar-1024.png")
+
     banner = Image.new("RGBA", (1600, 400), (0, 0, 0, 0))
     plate = Image.new("L", banner.size, 0)
     ImageDraw.Draw(plate).rounded_rectangle([0, 0, 1599, 399], radius=36, fill=255)
