@@ -3,7 +3,7 @@
 ```yaml
 seralith-gate:
   stage: test
-  image: ghcr.io/ryan-tobin/seralith:latest
+  image: ghcr.io/seralith-hq/seralith:latest
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
   variables:

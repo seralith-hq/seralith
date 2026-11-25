@@ -6,8 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/notes"
-	"github.com/ryan-tobin/new-startup/internal/verify"
+	"github.com/seralith-hq/seralith/internal/notes"
+	"github.com/seralith-hq/seralith/internal/verify"
 	"github.com/spf13/cobra"
 )
 

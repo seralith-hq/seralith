@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/ryan-tobin/new-startup/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/ledger"
 	"github.com/spf13/cobra"
 )
 

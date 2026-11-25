@@ -8,8 +8,8 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/ryan-tobin/new-startup/internal/daemon"
-	"github.com/ryan-tobin/new-startup/internal/webui"
+	"github.com/seralith-hq/seralith/internal/daemon"
+	"github.com/seralith-hq/seralith/internal/webui"
 	"github.com/spf13/cobra"
 )
 

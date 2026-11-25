@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ryan-tobin/new-startup/internal/agent"
-	"github.com/ryan-tobin/new-startup/internal/session"
+	"github.com/seralith-hq/seralith/internal/agent"
+	"github.com/seralith-hq/seralith/internal/session"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )

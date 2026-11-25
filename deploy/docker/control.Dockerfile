@@ -6,7 +6,7 @@ RUN go mod download
 COPY . .
 ARG VERSION=dev
 RUN CGO_ENABLED=0 go build -trimpath \
-    -ldflags "-s -w -X github.com/ryan-tobin/new-startup/internal/version.Version=${VERSION}" \
+    -ldflags "-s -w -X github.com/seralith-hq/seralith/internal/version.Version=${VERSION}" \
     -o /out/seralith-control ./ee/cmd/seralith-control
 
 FROM gcr.io/distroless/static-debian12:nonroot

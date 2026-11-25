@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/pkg/dsse"
 )
 
 type resolver map[string]dsse.Verifier

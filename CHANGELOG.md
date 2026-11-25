@@ -58,5 +58,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   attestation archive with server-side verification, analytics, and a
   hash-chained audit trail; `seralith cloud` client.
 
-[Unreleased]: https://github.com/ryan-tobin/new-startup/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/ryan-tobin/new-startup/releases/tag/v0.1.0
+[Unreleased]: https://github.com/seralith-hq/seralith/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/seralith-hq/seralith/releases/tag/v0.1.0

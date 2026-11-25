@@ -13,8 +13,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 type Profile struct {

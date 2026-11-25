@@ -6,16 +6,16 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ryan-tobin/new-startup/internal/attest"
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/notes"
-	"github.com/ryan-tobin/new-startup/internal/policy"
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/internal/testutil"
-	"github.com/ryan-tobin/new-startup/internal/verify"
-	"github.com/ryan-tobin/new-startup/internal/workspace"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/attest"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/notes"
+	"github.com/seralith-hq/seralith/internal/policy"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/internal/testutil"
+	"github.com/seralith-hq/seralith/internal/verify"
+	"github.com/seralith-hq/seralith/internal/workspace"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 var ctx = context.Background()

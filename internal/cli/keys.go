@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/project"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/project"
 	"github.com/spf13/cobra"
 )
 

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/ryan-tobin/new-startup/internal/cli"
+	"github.com/seralith-hq/seralith/internal/cli"
 )
 
 func main() {

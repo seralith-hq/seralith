@@ -2,7 +2,7 @@
 # Installs the seralith CLI from GitHub releases and verifies its checksum.
 set -eu
 
-REPO="${SERALITH_REPO:-ryan-tobin/new-startup}"
+REPO="${SERALITH_REPO:-seralith-hq/seralith}"
 VERSION="${SERALITH_VERSION:-latest}"
 BIN_DIR="${SERALITH_BIN_DIR:-/usr/local/bin}"
 

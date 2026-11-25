@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 func TestDeclaredModel(t *testing.T) {

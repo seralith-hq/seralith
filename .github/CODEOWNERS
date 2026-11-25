@@ -1,6 +1,9 @@
-*                       @ryan-tobin
-/internal/attest/       @ryan-tobin
-/internal/ledger/       @ryan-tobin
-/internal/policy/       @ryan-tobin
-/ee/                    @ryan-tobin
-/.github/               @ryan-tobin
+*                       @seralith-hq/maintainers
+/internal/attest/       @seralith-hq/security
+/internal/verify/       @seralith-hq/security
+/internal/policy/       @seralith-hq/security
+/internal/ledger/       @seralith-hq/security
+/internal/keys/         @seralith-hq/security
+/pkg/                   @seralith-hq/security
+/ee/                    @seralith-hq/maintainers
+/.github/               @seralith-hq/maintainers

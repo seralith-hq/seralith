@@ -12,13 +12,13 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ryan-tobin/new-startup/ee/control"
-	"github.com/ryan-tobin/new-startup/internal/cli"
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/policy"
-	"github.com/ryan-tobin/new-startup/internal/testutil"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/ee/control"
+	"github.com/seralith-hq/seralith/internal/cli"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/policy"
+	"github.com/seralith-hq/seralith/internal/testutil"
+	"github.com/seralith-hq/seralith/pkg/dsse"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 const bootstrap = "bootstrap-secret"

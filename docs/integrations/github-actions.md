@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: ryan-tobin/new-startup@v0
+      - uses: seralith-hq/seralith@v0
         with:
           version: latest
 ```

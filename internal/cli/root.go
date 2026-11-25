@@ -10,7 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ryan-tobin/new-startup/internal/version"
+	"github.com/seralith-hq/seralith/internal/version"
 	"github.com/spf13/cobra"
 )
 

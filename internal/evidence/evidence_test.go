@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/gitx"
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/testutil"
-	"github.com/ryan-tobin/new-startup/internal/verify"
+	"github.com/seralith-hq/seralith/internal/gitx"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/testutil"
+	"github.com/seralith-hq/seralith/internal/verify"
 )
 
 func build(t *testing.T) (string, *keys.TrustStore) {

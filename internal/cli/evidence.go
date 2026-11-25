@@ -5,10 +5,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/evidence"
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/internal/verify"
+	"github.com/seralith-hq/seralith/internal/evidence"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/internal/verify"
 	"github.com/spf13/cobra"
 )
 

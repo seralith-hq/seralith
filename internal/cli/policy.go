@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ryan-tobin/new-startup/internal/policy"
-	"github.com/ryan-tobin/new-startup/internal/project"
+	"github.com/seralith-hq/seralith/internal/policy"
+	"github.com/seralith-hq/seralith/internal/project"
 	"github.com/spf13/cobra"
 )
 

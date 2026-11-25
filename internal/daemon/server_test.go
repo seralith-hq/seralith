@@ -11,14 +11,14 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/ryan-tobin/new-startup/internal/agent"
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/policy"
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/internal/session"
-	"github.com/ryan-tobin/new-startup/internal/testutil"
-	"github.com/ryan-tobin/new-startup/internal/workspace"
+	"github.com/seralith-hq/seralith/internal/agent"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/policy"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/internal/session"
+	"github.com/seralith-hq/seralith/internal/testutil"
+	"github.com/seralith-hq/seralith/internal/workspace"
 )
 
 const token = "test-token"

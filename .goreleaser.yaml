@@ -16,9 +16,9 @@ builds:
     flags: [-trimpath]
     ldflags:
       - -s -w
-      - -X github.com/ryan-tobin/new-startup/internal/version.Version={{ .Version }}
-      - -X github.com/ryan-tobin/new-startup/internal/version.Commit={{ .ShortCommit }}
-      - -X github.com/ryan-tobin/new-startup/internal/version.Date={{ .Date }}
+      - -X github.com/seralith-hq/seralith/internal/version.Version={{ .Version }}
+      - -X github.com/seralith-hq/seralith/internal/version.Commit={{ .ShortCommit }}
+      - -X github.com/seralith-hq/seralith/internal/version.Date={{ .Date }}
   - id: seralith-control
     main: ./ee/cmd/seralith-control
     binary: seralith-control
@@ -28,9 +28,9 @@ builds:
     flags: [-trimpath]
     ldflags:
       - -s -w
-      - -X github.com/ryan-tobin/new-startup/internal/version.Version={{ .Version }}
-      - -X github.com/ryan-tobin/new-startup/internal/version.Commit={{ .ShortCommit }}
-      - -X github.com/ryan-tobin/new-startup/internal/version.Date={{ .Date }}
+      - -X github.com/seralith-hq/seralith/internal/version.Version={{ .Version }}
+      - -X github.com/seralith-hq/seralith/internal/version.Commit={{ .ShortCommit }}
+      - -X github.com/seralith-hq/seralith/internal/version.Date={{ .Date }}
 
 archives:
   - id: seralith

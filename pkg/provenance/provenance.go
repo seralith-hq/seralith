@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
+	"github.com/seralith-hq/seralith/pkg/dsse"
 )
 
 const (
