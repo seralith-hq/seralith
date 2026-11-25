@@ -56,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   when independent approvals satisfy each pending rule. A verified upload now
   replaces an earlier unverified one of the same statement, so uploading it first
   with missing or wrong signatures no longer hides the genuine envelope.
+- `seralith run` could exit before recording `session.ended` in the ledger,
+  because a session signalled completion before writing that entry.
 - Email addresses on seralith.com render as written instead of being replaced by
   Cloudflare's obfuscation placeholder.
 
