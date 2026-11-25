@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- seralith.com deploys to Cloudflare Pages from `main`, with preview deploys
+  for pull requests, strict security headers, a published security policy at
+  `/security`, an RFC 9116 `security.txt`, a 404 page, and a sitemap.
+
 - `seralith gate` and `seralith verify` accept `--config-from <rev>` to judge a branch
   by the policy and trust store of its base.
 - Release automation with GoReleaser, SBOMs, and build provenance; installer
