@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Security:** policies take `humanLabels: unverified` (the default) or
+  `trusted`. When unverified, agent rules that protect paths also apply to
+  human-labeled changes to those paths, with `deny` relaxed to one
+  independent approval, so relabeling agent work as human no longer avoids
+  review. Existing policies without the field get the new behavior.
+
 - seralith.com deploys to Cloudflare Pages from `main`, with preview deploys
   for pull requests, strict security headers, a published security policy at
   `/security`, an RFC 9116 `security.txt`, a 404 page, and a sitemap.
@@ -41,6 +47,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Security:** a project's `.seralith/config.yaml` can no longer define an
+  agent profile with a built-in ID such as `shell` or `claude`; such profiles
+  are ignored with a warning. Built-in profiles win when guessing the tool for
+  a command, and the tool version probe no longer runs relative paths.
 - **Security:** `seralith ledger verify` reports a ledger as `unanchored`, not
   `intact`, when it has no checkpoints or a checkpoint is signed by a key outside
   the trust store, and lists those keys; `--strict` fails in that case.
