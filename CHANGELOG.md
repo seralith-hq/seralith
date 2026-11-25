@@ -39,6 +39,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Read-only commands no longer require a configured git identity, so the gate
   runs in CI without setup.
 
+### Fixed
+
+- Email addresses on seralith.com render as written instead of being replaced by
+  Cloudflare's obfuscation placeholder.
+
 ## [0.1.0] - 2026-11-24
 
 ### Added
