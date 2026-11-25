@@ -49,7 +49,7 @@ verified.
 | T10 | Ledger tampering | Hash chain detects edits, deletions, and reordering; signed checkpoints prevent full rewrites without the key |
 | T11 | Browser-based attack on the local daemon | Loopback-only listener, per-run token, Host and Origin validation, strict CSP |
 | T12 | Credential theft via Seralith | Seralith never proxies model traffic or stores coding-tool credentials; control-plane tokens are stored hashed and sent only over TLS |
-| T13 | Forged upload to Seralith Control | Server-side verification against the registry; untrusted envelopes are flagged |
+| T13 | Forged upload to Seralith Control | Server-side verification against the registry with the gate's identity rules (committer signs changes; approvers sign approvals with a human key holding the role); untrusted envelopes are flagged and replaced when the genuine envelope arrives |
 
 ## Known limitations
 

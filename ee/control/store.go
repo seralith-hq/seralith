@@ -439,7 +439,9 @@ type AttestationRecord struct {
 	ReceivedAt    string   `json:"receivedAt"`
 }
 
-// PutAttestation stores a record, reporting false when it already existed.
+// PutAttestation stores a record, reporting false when it already existed. A verified
+// record replaces an unverified one with the same digest, so an earlier upload of a
+// statement with missing or wrong signatures cannot hide the genuine envelope.
 func (s *Store) PutAttestation(ctx context.Context, projectID string, a AttestationRecord) (bool, error) {
 	tools, _ := json.Marshal(nonNil(a.Tools))
 	models, _ := json.Marshal(nonNil(a.Models))
@@ -447,7 +449,11 @@ func (s *Store) PutAttestation(ctx context.Context, projectID string, a Attestat
 	res, err := s.db.ExecContext(ctx, `
 		INSERT INTO attestations (digest, project_id, commit_sha, predicate_type, envelope, signer, verified, status, human_lines, agent_lines, tools, models, pending_rules, received_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-		ON CONFLICT (project_id, digest) DO NOTHING`,
+		ON CONFLICT (project_id, digest) DO UPDATE SET
+			envelope = excluded.envelope, signer = excluded.signer, verified = excluded.verified,
+			status = excluded.status, human_lines = excluded.human_lines, agent_lines = excluded.agent_lines,
+			tools = excluded.tools, models = excluded.models, pending_rules = excluded.pending_rules
+		WHERE attestations.verified = 0 AND excluded.verified = 1`,
 		a.Digest, projectID, a.Commit, a.PredicateType, a.Envelope, a.Signer, a.Verified, a.Status, a.HumanLines, a.AgentLines, string(tools), string(models), string(pending), s.ts())
 	if err != nil {
 		return false, err
