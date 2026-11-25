@@ -65,7 +65,7 @@ func buildEnv(ctx context.Context, p *project.Project) (*env, error) {
 		Ledger:     l,
 		Workspaces: wm,
 		Sessions:   session.NewManager(wm, l, p.SessionsDir()),
-		Agents:     agent.NewRegistry(custom),
+		Agents:     agents(custom),
 		Policy:     pol,
 		Trust:      trust,
 		Key:        key,
@@ -137,4 +137,12 @@ func (e *env) resolveWorkspace(name, dir string) (*workspace.Workspace, error) {
 		return nil, fmt.Errorf("no workspace given and %s is not inside one; pass --ws", dir)
 	}
 	return ws, nil
+}
+
+func agents(custom []project.AgentProfile) *agent.Registry {
+	reg := agent.NewRegistry(custom)
+	for _, id := range reg.Shadowed() {
+		fmt.Fprintf(os.Stderr, "seralith: ignoring agent %q in .seralith/config.yaml: it would replace the built-in profile\n", id)
+	}
+	return reg
 }

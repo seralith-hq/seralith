@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Security:** a project's `.seralith/config.yaml` can no longer define an
+  agent profile with a built-in ID such as `shell` or `claude`; such profiles
+  are ignored with a warning. Built-in profiles win when guessing the tool for
+  a command, and the tool version probe no longer runs relative paths.
 - **Security:** `seralith gate` no longer skips a merge commit whose tree
   differs from the clean merge of its parents. Such a merge previously passed
   with any content and no attestation.

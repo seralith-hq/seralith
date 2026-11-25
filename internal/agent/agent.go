@@ -53,14 +53,22 @@ func defaultShell() string {
 // Registry merges built-in and project-defined profiles.
 type Registry struct {
 	profiles map[string]Profile
+	shadowed []string
 }
 
+// NewRegistry adds project-defined profiles to the built-ins. A project profile with
+// a built-in ID is ignored, so a repository's configuration cannot change what
+// launching a known tool such as "shell" runs.
 func NewRegistry(custom []project.AgentProfile) *Registry {
 	r := &Registry{profiles: map[string]Profile{}}
 	for _, p := range Builtins {
 		r.profiles[p.ID] = p
 	}
 	for _, c := range custom {
+		if p, ok := r.profiles[c.ID]; ok && !p.Custom {
+			r.shadowed = append(r.shadowed, c.ID)
+			continue
+		}
 		kind := provenance.ActorAgent
 		if c.Kind == string(provenance.ActorHuman) {
 			kind = provenance.ActorHuman
@@ -73,6 +81,9 @@ func NewRegistry(custom []project.AgentProfile) *Registry {
 	}
 	return r
 }
+
+// Shadowed lists project profiles ignored because they reuse a built-in ID.
+func (r *Registry) Shadowed() []string { return r.shadowed }
 
 func (r *Registry) Get(id string) (Profile, bool) {
 	p, ok := r.profiles[id]
@@ -88,13 +99,16 @@ func (r *Registry) All() []Profile {
 	return out
 }
 
-// Guess finds the profile whose executable matches command[0].
+// Guess finds the profile whose executable matches command[0], preferring
+// built-in profiles over project-defined ones.
 func (r *Registry) Guess(command []string) (Profile, bool) {
 	if len(command) == 0 {
 		return Profile{}, false
 	}
 	exe := filepath.Base(command[0])
-	for _, p := range r.All() {
+	all := r.All()
+	sort.SliceStable(all, func(i, j int) bool { return !all[i].Custom && all[j].Custom })
+	for _, p := range all {
 		if p.ID == "shell" {
 			continue
 		}
@@ -133,12 +147,21 @@ func (p Profile) DeclaredModel(args, env []string) string {
 
 var versionPattern = regexp.MustCompile(`v?\d+\.\d+(\.\d+)?([-+.][0-9A-Za-z.-]+)?`)
 
-// ToolVersion asks the executable for its version, returning "" when unavailable.
-func (p Profile) ToolVersion(ctx context.Context) string {
-	if p.Kind == provenance.ActorHuman || len(p.Command) == 0 {
+// ToolVersion asks the executable that command launches, or the profile's own when
+// command is empty, for its version, returning "" when unavailable. Relative paths
+// are not probed, so a repository cannot get a file of its own run this way.
+func (p Profile) ToolVersion(ctx context.Context, command []string) string {
+	if len(command) == 0 {
+		command = p.Command
+	}
+	if p.Kind == provenance.ActorHuman || len(command) == 0 {
 		return ""
 	}
-	path, err := exec.LookPath(p.Command[0])
+	exe := command[0]
+	if strings.ContainsRune(exe, filepath.Separator) && !filepath.IsAbs(exe) {
+		return ""
+	}
+	path, err := exec.LookPath(exe)
 	if err != nil {
 		return ""
 	}
@@ -183,7 +206,7 @@ func (p Profile) Actor(ctx context.Context, operator string, args, env []string)
 		Kind:        provenance.ActorAgent,
 		ID:          p.ID,
 		Tool:        p.ID,
-		ToolVersion: p.ToolVersion(ctx),
+		ToolVersion: p.ToolVersion(ctx, args),
 		Model:       p.DeclaredModel(args, env),
 		Operator:    operator,
 		Host:        host,
