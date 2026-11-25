@@ -46,7 +46,7 @@ verified.
 | T7 | Approval by someone without authority | The signing key must be a human key holding the required role |
 | T8 | Relaxed policy in a feature branch | Run the gate with the policy and trust store from the **base** branch, not the branch under test (see the CI guides) |
 | T9 | Replayed approval from another commit | Approvals are bound to a commit subject; only approvals of the commit itself, or of the range tip, count |
-| T10 | Ledger tampering | Hash chain detects edits, deletions, and reordering; signed checkpoints prevent full rewrites without the key |
+| T10 | Ledger tampering | Hash chain detects edits, deletions, and reordering; checkpoints signed by trusted keys prevent full rewrites without the key, and a ledger without them is reported as unanchored |
 | T11 | Browser-based attack on the local daemon | Loopback-only listener, per-run token, Host and Origin validation, strict CSP |
 | T12 | Credential theft via Seralith | Seralith never proxies model traffic or stores coding-tool credentials; control-plane tokens are stored hashed and sent only over TLS |
 | T13 | Forged upload to Seralith Control | Server-side verification against the registry with the gate's identity rules (committer signs changes; approvers sign approvals with a human key holding the role); untrusted envelopes are flagged and replaced when the genuine envelope arrives |

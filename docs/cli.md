@@ -45,7 +45,7 @@ flags.
 | Command | Description |
 | --- | --- |
 | `seralith log [--type] [--subject] [-n]` | Show the audit ledger |
-| `seralith ledger verify` | Verify the hash chain and checkpoints |
+| `seralith ledger verify` | Verify the hash chain and checkpoints; reports `unanchored` when a checkpoint is missing or signed by a key outside the trust store, and `--strict` fails in that case |
 | `seralith ledger checkpoint` | Sign the current ledger head |
 | `seralith sync push \| fetch [--remote]` | Publish or fetch `refs/notes/seralith` |
 | `seralith serve [--addr] [--open]` | Start the workbench on localhost |

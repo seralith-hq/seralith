@@ -32,6 +32,7 @@ type Input struct {
 	Gate       *verify.GateReport
 	PolicyFile []byte
 	TrustFile  []byte
+	Trust      dsse.KeyResolver
 	Ledger     *ledger.Ledger
 	Signer     dsse.Signer
 	Project    string
@@ -112,7 +113,7 @@ func Build(ctx context.Context, in Input, w io.Writer) (*Manifest, error) {
 			return nil, err
 		}
 		files["ledger.jsonl"] = data
-		rep, err := in.Ledger.Verify(nil)
+		rep, err := in.Ledger.Verify(in.Trust)
 		if err != nil {
 			return nil, err
 		}
