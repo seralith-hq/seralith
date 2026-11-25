@@ -13,6 +13,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"sync"
 	"time"
@@ -232,17 +233,25 @@ type Issue struct {
 }
 
 type Report struct {
-	Entries     int     `json:"entries"`
-	Head        string  `json:"head"`
-	Checkpoints int     `json:"checkpoints"`
-	Verified    int     `json:"verifiedCheckpoints"`
-	Issues      []Issue `json:"issues,omitempty"`
+	Entries       int      `json:"entries"`
+	Head          string   `json:"head"`
+	Checkpoints   int      `json:"checkpoints"`
+	Verified      int      `json:"verifiedCheckpoints"`
+	UntrustedKeys []string `json:"untrustedCheckpointKeys,omitempty"`
+	Issues        []Issue  `json:"issues,omitempty"`
 }
 
+// OK reports whether the hash chain is intact and no checkpoint is invalid.
 func (r *Report) OK() bool { return len(r.Issues) == 0 }
 
+// Anchored reports whether the chain is intact and every checkpoint, of which there
+// is at least one, is signed by a trusted key. Only an anchored ledger is protected
+// against a rewrite by someone who can edit the file but does not hold a trusted key.
+func (r *Report) Anchored() bool { return r.OK() && r.Checkpoints > 0 && r.Verified == r.Checkpoints }
+
 // Verify walks the whole chain, checking sequence, links, hashes, and checkpoint
-// signatures. Checkpoints from keys unknown to resolver are counted but not verified.
+// signatures. Checkpoints from keys unknown to resolver are counted but not verified,
+// and their key IDs are listed in UntrustedKeys.
 func (l *Ledger) Verify(resolver dsse.KeyResolver) (*Report, error) {
 	rep := &Report{}
 	prevHash := GenesisHash
@@ -294,6 +303,9 @@ func verifyCheckpoint(e *Entry, hashes map[uint64]string, resolver dsse.KeyResol
 	}
 	v, ok := resolver.Resolve(cp.KeyID)
 	if !ok {
+		if !slices.Contains(rep.UntrustedKeys, cp.KeyID) {
+			rep.UntrustedKeys = append(rep.UntrustedKeys, cp.KeyID)
+		}
 		return
 	}
 	sig, err := base64.StdEncoding.DecodeString(cp.Sig)

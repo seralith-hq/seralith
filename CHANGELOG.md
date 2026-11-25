@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Security:** `seralith ledger verify` reports a ledger as `unanchored`, not
+  `intact`, when it has no checkpoints or a checkpoint is signed by a key outside
+  the trust store, and lists those keys; `--strict` fails in that case.
+  Evidence packages now verify ledger checkpoints against the trust store.
 - **Security:** `seralith gate` no longer skips a merge commit whose tree
   differs from the clean merge of its parents. Such a merge previously passed
   with any content and no attestation.

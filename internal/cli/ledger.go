@@ -41,7 +41,8 @@ func newLogCmd(g *globals) *cobra.Command {
 
 func newLedgerCmd(g *globals) *cobra.Command {
 	cmd := &cobra.Command{Use: "ledger", Short: "Verify and checkpoint the audit ledger"}
-	cmd.AddCommand(&cobra.Command{
+	var strict bool
+	verifyCmd := &cobra.Command{
 		Use:   "verify",
 		Short: "Verify the hash chain and checkpoint signatures",
 		Args:  cobra.NoArgs,
@@ -59,20 +60,31 @@ func newLedgerCmd(g *globals) *cobra.Command {
 			} else {
 				s := styleFor(g.stdout)
 				state := s.green("intact")
-				if !rep.OK() {
+				switch {
+				case !rep.OK():
 					state = s.red("tampered")
+				case !rep.Anchored():
+					state = s.yellow("unanchored")
 				}
 				fmt.Fprintf(g.stdout, "%s  %d entries, %d/%d checkpoints verified, head %s\n", state, rep.Entries, rep.Verified, rep.Checkpoints, short(rep.Head))
 				for _, is := range rep.Issues {
 					fmt.Fprintf(g.stdout, "  %s entry %d: %s\n", s.red("✗"), is.Seq, is.Problem)
 				}
+				if rep.OK() && !rep.Anchored() {
+					fmt.Fprintf(g.stdout, "  %s the hash chain is intact, but without checkpoints signed by trusted keys it does not prove the ledger was not rewritten\n", s.yellow("!"))
+					for _, id := range rep.UntrustedKeys {
+						fmt.Fprintf(g.stdout, "  %s checkpoint key %s is not in the trust store\n", s.yellow("!"), id)
+					}
+				}
 			}
-			if !rep.OK() {
+			if !rep.OK() || (strict && !rep.Anchored()) {
 				return &ExitError{Code: 1}
 			}
 			return nil
 		},
-	})
+	}
+	verifyCmd.Flags().BoolVar(&strict, "strict", false, "also fail unless every checkpoint is signed by a trusted key")
+	cmd.AddCommand(verifyCmd)
 	cmd.AddCommand(&cobra.Command{
 		Use:   "checkpoint",
 		Short: "Sign the current ledger head",

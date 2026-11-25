@@ -48,7 +48,7 @@ DoWI 8430.01, NIST SP 800-218, and the EU CRA, and a signed manifest.`,
 				return err
 			}
 			man, err := evidence.Build(cmd.Context(), evidence.Input{
-				Repo: e.Project.Repo, Range: rangeSpec, Gate: gate, PolicyFile: policyBytes, TrustFile: trustBytes,
+				Repo: e.Project.Repo, Range: rangeSpec, Gate: gate, PolicyFile: policyBytes, TrustFile: trustBytes, Trust: e.Trust,
 				Ledger: e.Ledger, Signer: e.Key, Project: e.Project.Config.Name, Now: time.Now().UTC(),
 			}, f)
 			if cerr := f.Close(); err == nil {

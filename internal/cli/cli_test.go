@@ -171,6 +171,7 @@ func TestEndToEndWorkflow(t *testing.T) {
 	if out := h.ok("", "ledger", "verify"); !strings.Contains(out, "intact") || !strings.Contains(out, "1/1 checkpoints verified") {
 		t.Fatalf("ledger verify: %s", out)
 	}
+	h.ok("", "ledger", "verify", "--strict")
 	if out := h.ok("", "log", "--type", "approval.recorded"); strings.Count(out, "approval.recorded") != 2 {
 		t.Fatalf("log: %s", out)
 	}

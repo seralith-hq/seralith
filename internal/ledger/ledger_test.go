@@ -99,7 +99,7 @@ func TestCheckpoint(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !rep.OK() || rep.Checkpoints != 1 || rep.Verified != 1 {
+	if !rep.OK() || !rep.Anchored() || rep.Checkpoints != 1 || rep.Verified != 1 {
 		t.Fatalf("report = %+v", rep)
 	}
 	other, _ := keys.Generate()
@@ -108,8 +108,11 @@ func TestCheckpoint(t *testing.T) {
 		t.Fatal(err)
 	}
 	rep2, _ := l.Verify(ts2)
-	if rep2.Verified != 0 || !rep2.OK() {
+	if rep2.Verified != 0 || !rep2.OK() || rep2.Anchored() || len(rep2.UntrustedKeys) != 1 || rep2.UntrustedKeys[0] != k.KeyID() {
 		t.Fatalf("unknown checkpoint key report = %+v", rep2)
+	}
+	if rep3, _ := l.Verify(nil); rep3.Anchored() {
+		t.Fatalf("ledger anchored without a trust store: %+v", rep3)
 	}
 }
 
