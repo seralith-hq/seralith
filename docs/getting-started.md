@@ -6,7 +6,7 @@ in about ten minutes.
 ## Install
 
 ```sh
-git clone https://github.com/ryan-tobin/new-startup.git seralith && cd seralith
+git clone https://github.com/seralith-hq/seralith.git seralith && cd seralith
 make bootstrap release-build
 sudo install bin/seralith /usr/local/bin/
 seralith version

@@ -53,7 +53,7 @@ in isolated workspaces and records cryptographic evidence of every change.
 
 ```sh
 # Install (Linux and macOS)
-curl -fsSL https://raw.githubusercontent.com/ryan-tobin/new-startup/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/seralith-hq/seralith/main/scripts/install.sh | sh
 
 # Or build from source
 make bootstrap release-build
@@ -95,7 +95,7 @@ See [Getting started](docs/getting-started.md) for a full walkthrough.
 ```yaml
 - uses: actions/checkout@v7
   with: { fetch-depth: 0 }
-- uses: ryan-tobin/new-startup@v0
+- uses: seralith-hq/seralith@v0
 ```
 
 ## Architecture

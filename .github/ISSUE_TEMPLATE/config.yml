@@ -1,10 +1,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/ryan-tobin/new-startup/security/advisories/new
+    url: https://github.com/seralith-hq/seralith/security/advisories/new
     about: Report vulnerabilities privately.
   - name: Questions and discussion
-    url: https://github.com/ryan-tobin/new-startup/discussions
+    url: https://github.com/seralith-hq/seralith/discussions
     about: Ask usage questions and share ideas.
   - name: Enterprise and Sovereign inquiries
     url: mailto:sales@seralith.com

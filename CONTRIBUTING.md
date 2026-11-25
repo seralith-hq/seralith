@@ -23,7 +23,7 @@ Requirements:
 | git | 2.40+ |
 
 ```sh
-git clone https://github.com/ryan-tobin/new-startup.git seralith
+git clone https://github.com/seralith-hq/seralith.git seralith
 cd seralith
 make bootstrap   # installs web dependencies
 make build       # builds the web workbench and the seralith binaries into ./bin

@@ -44,7 +44,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: seralith-control
-          image: ghcr.io/ryan-tobin/seralith-control:latest
+          image: ghcr.io/seralith-hq/seralith-control:latest
           ports:
             - name: http
               containerPort: 8080
