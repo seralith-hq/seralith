@@ -38,14 +38,14 @@ verified.
 | # | Threat | Mitigation |
 | --- | --- | --- |
 | T1 | Agent under-reports its changes | Attribution is observed by snapshotting the tree; agents are never asked |
-| T2 | Agent changes are passed off as human edits by committing outside Seralith | The gate requires a change attestation for every non-merge commit |
+| T2 | Agent changes are passed off as human edits by committing outside Seralith | The gate requires a change attestation for every commit except a merge whose tree is exactly the clean merge of its parents |
 | T3 | Attestation copied from a benign commit to a malicious one | Subject, tree, and parents must match the commit |
-| T4 | Extra changes slipped into a commit after observation | Segments must chain to the commit tree exactly |
+| T4 | Extra changes slipped into a commit after observation, or hidden from policy | Segments must chain to the commit tree exactly, and every path git reports between the first parent and the commit must be declared by a segment |
 | T5 | Forged attestation or approval | Ed25519 signatures verified against a trust store committed on the protected branch or served by Seralith Control |
 | T6 | Self-approval of a protected change | Approvers must differ from the committer unless a rule explicitly allows it |
 | T7 | Approval by someone without authority | The signing key must be a human key holding the required role |
 | T8 | Relaxed policy in a feature branch | Run the gate with the policy and trust store from the **base** branch, not the branch under test (see the CI guides) |
-| T9 | Replayed approval from another commit | Approvals are bound to a commit subject; only those on the commit or the range tip count |
+| T9 | Replayed approval from another commit | Approvals are bound to a commit subject; only approvals of the commit itself, or of the range tip, count |
 | T10 | Ledger tampering | Hash chain detects edits, deletions, and reordering; signed checkpoints prevent full rewrites without the key |
 | T11 | Browser-based attack on the local daemon | Loopback-only listener, per-run token, Host and Origin validation, strict CSP |
 | T12 | Credential theft via Seralith | Seralith never proxies model traffic or stores coding-tool credentials; control-plane tokens are stored hashed and sent only over TLS |
@@ -64,9 +64,15 @@ verified.
   separate workspace to work in parallel.
 - **Declared models.** The model field records what the operator declared.
   Seralith does not see model traffic, by design, and cannot verify it.
-- **Merge commits.** The gate skips merge commits by default, since their
-  content comes from attested parents. Conflict resolutions in merges are not
-  attributed; use `--include-merges` to require attestations on merges.
+- **Merge commits.** The gate skips a merge commit by default only when its
+  tree is exactly what merging its parents produces. A merge with conflict
+  resolutions or other content of its own fails unless it is attested; rebase
+  instead, or use `--include-merges` to require attestations on every merge.
+- **Declared actors.** Which actor made each segment is recorded by the
+  committer's own Seralith. The gate checks that every changed path is
+  declared, but a holder of a trusted key can still label agent work as human.
+  Rules that apply to every actor bind such a key holder; rules scoped to
+  `actors: [agent]` do not.
 - **Key compromise.** A stolen developer key can sign false attestations for
   that developer until it is revoked. Revocation takes effect at the next gate
   run that uses the updated trust store.
