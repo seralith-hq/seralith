@@ -360,11 +360,11 @@ func (m *Manager) supervise(s *Session, isPTY bool, pumped <-chan struct{}) {
 	}
 	info := s.info
 	s.mu.Unlock()
-	close(s.done)
 
 	m.log("session.ended", info.Actor.String(), info.Workspace, map[string]any{
 		"session": info.ID, "exitCode": code, "segment": info.Segment, "files": info.FilesChanged, "error": info.Error,
 	})
+	close(s.done)
 	m.notify(info)
 }
 

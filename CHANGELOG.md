@@ -41,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- `seralith run` could exit before recording `session.ended` in the ledger,
+  because a session signalled completion before writing that entry.
 - Email addresses on seralith.com render as written instead of being replaced by
   Cloudflare's obfuscation placeholder.
 
