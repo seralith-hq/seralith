@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strings"
 
 	"github.com/seralith-hq/seralith/internal/gitx"
 	"github.com/seralith-hq/seralith/internal/keys"
@@ -27,10 +28,13 @@ const (
 type Options struct {
 	Trust  *keys.TrustStore
 	Policy *policy.Policy
-	// SkipMerges treats merge commits as covered by the attestations of their parents.
+	// SkipMerges treats a merge commit as covered by its parents when its tree is
+	// exactly what merging them produces.
 	SkipMerges bool
 	// ExtraApprovals are approvals that apply to every commit, such as those on a range tip.
 	ExtraApprovals []notes.Attestation
+	// ApprovalTip is the commit that ExtraApprovals must approve.
+	ApprovalTip string
 }
 
 type Approval struct {
@@ -81,8 +85,13 @@ func Commit(ctx context.Context, repo *gitx.Repo, rev string, opts Options) (*Co
 		return nil, err
 	}
 	if opts.SkipMerges && len(parents) > 1 {
-		rep.Status = StatusSkipped
-		return rep, nil
+		if derived, err := mergeIsDerived(ctx, repo, commit, parents); err != nil {
+			return nil, err
+		} else if derived {
+			rep.Status = StatusSkipped
+			return rep, nil
+		}
+		rep.fail("merge commit is not a clean merge of its parents, so it needs a change attestation")
 	}
 	atts, err := notes.Statements(ctx, repo, commit)
 	if err != nil {
@@ -96,15 +105,21 @@ func Commit(ctx context.Context, repo *gitx.Repo, rev string, opts Options) (*Co
 		rep.Status = StatusFail
 		return rep, nil
 	}
+	rep.Problems = nil
 	rep.Attested = true
 	pred, _ := change.Statement.Change()
 	rep.Predicate = pred
 	rep.Digest = provenance.Digest(change.Envelope)
 	rep.Summary = &pred.Summary
 	checkIntegrity(ctx, repo, commit, parents, pred, rep)
+	observed, err := observedChanges(ctx, repo, commit, parents, pred.Segments, rep)
+	if err != nil {
+		return nil, err
+	}
 
-	res := opts.Policy.Evaluate(policy.ChangesFromSegments(pred.Segments))
-	approvals := collectApprovals(append(slices.Clone(atts[provenance.PredicateApproval]), opts.ExtraApprovals...), opts.Trust, rep)
+	res := opts.Policy.Evaluate(observed)
+	approvals := append(collectApprovals(atts[provenance.PredicateApproval], commit, opts.Trust), collectApprovals(opts.ExtraApprovals, opts.ApprovalTip, opts.Trust)...)
+	rep.Approvals = approvals
 	for _, d := range res.Decisions {
 		ds := DecisionStatus{Decision: d}
 		switch d.Effect {
@@ -164,7 +179,6 @@ func pickChange(list []notes.Attestation, commit string, trust *keys.TrustStore,
 			rep.fail("attestation is not signed by its committer %s", pred.Committer.ID)
 			continue
 		}
-		rep.Problems = nil
 		return a
 	}
 	return nil
@@ -203,7 +217,84 @@ func checkIntegrity(ctx context.Context, repo *gitx.Repo, commit string, parents
 	}
 }
 
-func collectApprovals(list []notes.Attestation, trust *keys.TrustStore, rep *CommitReport) []Approval {
+// mergeIsDerived reports whether a merge commit's tree is one of its parents' trees
+// or the conflict-free result of merging its two parents, so that it introduces no
+// content of its own.
+func mergeIsDerived(ctx context.Context, repo *gitx.Repo, commit string, parents []string) (bool, error) {
+	tree, err := repo.CommitTree(ctx, commit)
+	if err != nil {
+		return false, err
+	}
+	for _, p := range parents {
+		pt, err := repo.CommitTree(ctx, p)
+		if err != nil {
+			return false, err
+		}
+		if pt == tree {
+			return true, nil
+		}
+	}
+	if len(parents) != 2 {
+		return false, nil
+	}
+	out, err := repo.Run(ctx, "merge-tree", "--write-tree", "--no-messages", parents[0], parents[1])
+	if err != nil {
+		return false, nil
+	}
+	merged, _, _ := strings.Cut(out, "\n")
+	return strings.TrimSpace(merged) == tree, nil
+}
+
+// observedChanges returns the policy changes for a commit: the changes its segments
+// declare, checked against the diff git computes between the first parent and the
+// commit. Paths no segment declares are problems, and lines added beyond what the
+// segments declare are attributed to every actor that declared the path.
+func observedChanges(ctx context.Context, repo *gitx.Repo, commit string, parents []string, segments []provenance.Segment, rep *CommitReport) ([]policy.Change, error) {
+	base := gitx.EmptyTree
+	if len(parents) > 0 {
+		var err error
+		if base, err = repo.CommitTree(ctx, parents[0]); err != nil {
+			return nil, err
+		}
+	}
+	tree, err := repo.CommitTree(ctx, commit)
+	if err != nil {
+		return nil, err
+	}
+	actual, err := repo.DiffTrees(ctx, base, tree)
+	if err != nil {
+		return nil, err
+	}
+	changes := policy.ChangesFromSegments(segments)
+	actors := map[string][]provenance.Actor{}
+	declared := map[string]int{}
+	for _, c := range changes {
+		if !slices.Contains(actors[c.Path], c.Actor) {
+			actors[c.Path] = append(actors[c.Path], c.Actor)
+		}
+		declared[c.Path] += c.LinesAdded
+	}
+	for _, f := range actual {
+		owners := actors[f.Path]
+		if len(owners) == 0 {
+			rep.fail("change to %s is not declared by any segment", f.Path)
+			continue
+		}
+		if f.OldPath != "" && len(actors[f.OldPath]) == 0 {
+			rep.fail("rename from %s is not declared by any segment", f.OldPath)
+		}
+		if extra := f.LinesAdded - declared[f.Path]; extra > 0 {
+			for _, a := range owners {
+				changes = append(changes, policy.Change{Actor: a, Path: f.Path, LinesAdded: extra})
+			}
+		}
+	}
+	return changes, nil
+}
+
+// collectApprovals checks each approval statement and accepts it only if it
+// approves target.
+func collectApprovals(list []notes.Attestation, target string, trust *keys.TrustStore) []Approval {
 	out := make([]Approval, 0, len(list))
 	for _, a := range list {
 		pred, err := a.Statement.Approval()
@@ -215,6 +306,8 @@ func collectApprovals(list []notes.Attestation, trust *keys.TrustStore, rep *Com
 		switch {
 		case a.Statement.Commit() != pred.Commit:
 			ap.Problem = "subject does not match predicate"
+		case target == "" || pred.Commit != target:
+			ap.Problem = "approval is for a different commit"
 		case err != nil:
 			ap.Problem = "signature not trusted"
 		default:
@@ -237,7 +330,6 @@ func collectApprovals(list []notes.Attestation, trust *keys.TrustStore, rep *Com
 		}
 		out = append(out, ap)
 	}
-	rep.Approvals = out
 	return out
 }
 
@@ -293,7 +385,7 @@ func Gate(ctx context.Context, repo *gitx.Repo, rangeSpec string, opts Options) 
 		if err != nil {
 			return nil, err
 		}
-		opts.ExtraApprovals = atts[provenance.PredicateApproval]
+		opts.ExtraApprovals, opts.ApprovalTip = atts[provenance.PredicateApproval], tip
 	}
 	for _, c := range commits {
 		cr, err := Commit(ctx, repo, c, opts)

@@ -16,7 +16,7 @@ inputs:
     description: Output format (github, text, markdown, json)
     default: github
   include-merges:
-    description: Require attestations on merge commits
+    description: Require attestations on every merge commit, including clean merges
     default: "false"
 
 runs:

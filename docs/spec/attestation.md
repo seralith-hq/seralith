@@ -106,11 +106,23 @@ Given a commit `C`, a trust store `T`, and a policy `P`:
 3. Let `t₀ = tree(parent₁(C))`, or the empty tree for a root commit. Require
    `segments[0].baseTree == t₀`, `segments[i].baseTree ==
    segments[i-1].resultTree`, and `segments[last].resultTree == tree(C)`.
-4. Evaluate `P` over the segments. Any `deny` fails.
-5. For each `require-approval` decision with threshold *n* and roles *R*,
-   count distinct approvers over `approval/v1` statements on `C` or on the
-   range tip whose envelope verifies under `T` with a **human** key whose
+4. Compute the diff from `t₀` to `tree(C)`. Every changed path, including the
+   old path of a rename, must appear in some segment's `files`. Lines a path
+   adds beyond what the segments declare are attributed to every actor that
+   declared the path.
+5. Evaluate `P` over the segments' files plus that attribution. Any `deny`
+   fails.
+6. For each `require-approval` decision with threshold *n* and roles *R*,
+   count distinct approvers over `approval/v1` statements that approve `C` and
+   sit on `C`, or that approve the range tip and sit on the range tip. An
+   approval's `commit` must equal its subject and the commit it approves. Its
+   envelope must verify under `T` with a **human** key whose
    principal equals the approver and holds the stated role, where the role is in
    *R* (if *R* is non-empty), the rule list is empty or includes the rule, and
    the approver differs from the committer unless the rule allows
    self-approval. A qualifying `reject` fails. Fewer than *n* approvers fails.
+
+When merges are skipped (the default), a merge commit is skipped only if its
+tree equals one parent's tree or the conflict-free result of
+`git merge-tree --write-tree` over its two parents. Any other merge, including
+one with conflict resolutions, must carry its own change attestation.
