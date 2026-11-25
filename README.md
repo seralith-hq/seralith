@@ -134,8 +134,8 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 | `site/` | Marketing site |
 | `deploy/` | Container images, Compose, and Kubernetes manifests |
 | `scripts/` | Installer and maintenance scripts |
-| `docs/` | Product, specification, and company documentation |
-| `brand/` | Logo and brand guidelines |
+| `docs/` | Product, specification, and security documentation |
+| `brand/` | Logo assets |
 
 ## Editions
 
