@@ -10,6 +10,11 @@
 </p>
 
 <p align="center">
+  <a href="https://seralith.com">seralith.com</a> ·
+  <a href="https://x.com/seralithhq">@seralithhq</a>
+</p>
+
+<p align="center">
   <a href="LICENSE"><img alt="License: Apache-2.0" src="https://img.shields.io/badge/license-Apache--2.0-0E1116"></a>
   <img alt="Go 1.26+" src="https://img.shields.io/badge/go-1.26%2B-FF5A1F">
 </p>

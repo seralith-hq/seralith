@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- seralith.com and the README link to the GitHub repository and @seralithhq on X.
+
 ## [0.1.0] - 2026-11-25
 
 First public release.
