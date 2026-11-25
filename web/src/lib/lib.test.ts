@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseUnifiedDiff } from "./diff";
-import { actorLabel, duration, percentages, relativeTime, shortSha } from "./format";
+import { actorLabel, duration, percentages, relativeTime, shortId, shortSha } from "./format";
 import { href, parseRoute } from "./router";
 import { captureToken } from "./api";
 
@@ -53,6 +53,9 @@ describe("format", () => {
     expect(relativeTime("2025-12-30T12:00:00Z", now)).toBe("2d ago");
     expect(duration("2026-01-01T00:00:00Z", "2026-01-01T00:01:05Z")).toBe("1m 5s");
     expect(shortSha("abcdef0123456789")).toBe("abcdef01");
+    expect(shortId("ses_1a2119387f0012ab34cd56")).toBe("ses_ab34cd56");
+    expect(shortId("ses_1a2119387f0099ff00ee11")).not.toBe(shortId("ses_1a2119387f0012ab34cd56"));
+    expect(shortId("plain")).toBe("plain");
   });
 });
 

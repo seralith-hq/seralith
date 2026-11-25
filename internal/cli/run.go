@@ -82,7 +82,7 @@ profile from the command, and an unrecognized command is attributed to you.`,
 				return fmt.Errorf("session %s: %s", info.ID, info.Error)
 			}
 			fmt.Fprintf(g.stderr, "%s session %s exited %d · %s changed (+%d −%d)\n",
-				s.accent("◆ seralith"), short(info.ID), *info.ExitCode, plural(info.FilesChanged, "file"), info.LinesAdded, info.LinesDeleted)
+				s.accent("◆ seralith"), shortID(info.ID), *info.ExitCode, plural(info.FilesChanged, "file"), info.LinesAdded, info.LinesDeleted)
 			if *info.ExitCode != 0 {
 				return &ExitError{Code: *info.ExitCode}
 			}
