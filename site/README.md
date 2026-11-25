@@ -55,3 +55,6 @@ Settings → Actions → General.
 
 The Content-Security-Policy forbids scripts and inline styles. Keep styles in
 `styles.css`.
+Every page wraps its body in `<!--email_off-->` markers so Cloudflare's email
+obfuscation leaves addresses alone; its decoder is a script the policy blocks.
+Keep the markers on new pages.
