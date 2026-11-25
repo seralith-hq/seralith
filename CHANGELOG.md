@@ -47,6 +47,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Session and segment IDs are shown by their random suffix, so sessions started
+  close together no longer look identical in the CLI and workbench.
+- `seralith approve` warns when the trust store would not count the approval,
+  for example because the key does not hold the requested role.
 - **Security:** a project's `.seralith/config.yaml` can no longer define an
   agent profile with a built-in ID such as `shell` or `claude`; such profiles
   are ignored with a warning. Built-in profiles win when guessing the tool for

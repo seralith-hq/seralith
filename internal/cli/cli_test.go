@@ -109,8 +109,8 @@ func TestEndToEndWorkflow(t *testing.T) {
 		t.Fatalf("gate before approval: code=%d\n%s", code, out)
 	}
 
-	if _, _, code := h.run("", "approve", "seralith/auth", "--role", "security"); code != 0 {
-		t.Fatal("approve command failed")
+	if _, stderr, code := h.run("", "approve", "seralith/auth", "--role", "security"); code != 0 || !strings.Contains(stderr, "does not hold the role security") {
+		t.Fatalf("approve without the role should warn: code=%d stderr=%s", code, stderr)
 	}
 	out, _, code = h.run("", "gate", "--range", rangeSpec)
 	if code != 1 {
@@ -125,7 +125,9 @@ func TestEndToEndWorkflow(t *testing.T) {
 	h.as("alice")
 	h.ok("", "key", "trust", bobPub, "--principal", "bob@example.com", "--roles", "security")
 	h.as("bob")
-	h.ok("", "approve", "seralith/auth", "--role", "security", "-m", "token handling reviewed")
+	if _, stderr, _ := h.run("", "approve", "seralith/auth", "--role", "security", "-m", "token handling reviewed"); stderr != "" {
+		t.Fatalf("trusted approval warned: %s", stderr)
+	}
 	h.as("alice")
 
 	out, _, code = h.run("", "gate", "--range", rangeSpec)

@@ -62,6 +62,17 @@ func table(w io.Writer, header []string, rows [][]string) {
 	_ = tw.Flush()
 }
 
+// shortID shortens a generated ID such as ses_<time><random> to its prefix and the
+// end of its random part, which, unlike the leading timestamp, tells IDs created
+// close together apart.
+func shortID(id string) string {
+	prefix, rest, ok := strings.Cut(id, "_")
+	if !ok || len(rest) <= 8 {
+		return id
+	}
+	return prefix + "_" + rest[len(rest)-8:]
+}
+
 func short(s string) string {
 	if len(s) > 12 {
 		return s[:12]

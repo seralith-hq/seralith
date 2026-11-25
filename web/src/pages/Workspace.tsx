@@ -2,7 +2,7 @@ import { useState } from "react";
 import { del, post } from "../lib/api";
 import { useResource } from "../lib/hooks";
 import { href } from "../lib/router";
-import { duration, plural, relativeTime, shortSha } from "../lib/format";
+import { duration, plural, relativeTime, shortId, shortSha } from "../lib/format";
 import type { AgentDetection, FileChange, Preview, SessionInfo } from "../lib/types";
 import { ActorChip, AttributionBar, Badge, Decisions, Empty, ErrorBox } from "../components/ui";
 import { SessionTerminal } from "../components/Terminal";
@@ -179,7 +179,7 @@ function TerminalTab({
             <tbody>
               {recent.map((s) => (
                 <tr key={s.id} className="clickable" onClick={() => setViewing(s)}>
-                  <td className="mono">{s.id.slice(0, 14)}</td>
+                  <td className="mono">{shortId(s.id)}</td>
                   <td>
                     <ActorChip actor={s.actor} />
                   </td>

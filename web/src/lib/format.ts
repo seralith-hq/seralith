@@ -4,6 +4,12 @@ export function shortSha(sha: string | undefined, n = 8): string {
   return (sha ?? "").slice(0, n);
 }
 
+export function shortId(id: string): string {
+  const cut = id.indexOf("_");
+  const rest = cut < 0 ? "" : id.slice(cut + 1);
+  return rest.length <= 8 ? id : `${id.slice(0, cut)}_${rest.slice(-8)}`;
+}
+
 export function relativeTime(iso: string | undefined, now: Date = new Date()): string {
   if (!iso) return "";
   const then = new Date(iso).getTime();

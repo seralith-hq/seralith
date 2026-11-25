@@ -56,7 +56,7 @@ func printPreview(w io.Writer, pv *attest.Preview) {
 			add += f.LinesAdded
 			del += f.LinesDeleted
 		}
-		rows = append(rows, []string{short(seg.ID), string(seg.Kind), actorLabel(seg.Actor), plural(len(seg.Files), "file"), fmt.Sprintf("+%d −%d", add, del)})
+		rows = append(rows, []string{shortID(seg.ID), string(seg.Kind), actorLabel(seg.Actor), plural(len(seg.Files), "file"), fmt.Sprintf("+%d −%d", add, del)})
 	}
 	table(w, []string{"SEGMENT", "KIND", "ACTOR", "FILES", "LINES"}, rows)
 	fmt.Fprintf(w, "\n%s %s\n", s.bold("attribution"), formatLines(pv.Summary.LinesByKind))
@@ -187,12 +187,17 @@ func newApproveCmd(g *globals) *cobra.Command {
 			if err != nil {
 				return err
 			}
+			problem := e.approvalProblem(role)
 			verb := "approved"
 			if reject {
 				verb = "rejected"
 			}
 			if g.json {
-				return writeJSON(g.stdout, map[string]any{"commit": commit, "decision": verb, "attestation": provenance.Digest(env)})
+				out := map[string]any{"commit": commit, "decision": verb, "attestation": provenance.Digest(env)}
+				if problem != "" {
+					out["warning"] = problem
+				}
+				return writeJSON(g.stdout, out)
 			}
 			s := styleFor(g.stdout)
 			fmt.Fprintf(g.stdout, "%s %s %s as %s", s.green("✓"), verb, short(commit), e.Principal)
@@ -200,6 +205,9 @@ func newApproveCmd(g *globals) *cobra.Command {
 				fmt.Fprintf(g.stdout, " (role %s)", role)
 			}
 			fmt.Fprintln(g.stdout)
+			if problem != "" {
+				fmt.Fprintf(g.stderr, "%s this approval will not count under the current trust store: %s\n", styleFor(g.stderr).yellow("!"), problem)
+			}
 			return nil
 		},
 	}

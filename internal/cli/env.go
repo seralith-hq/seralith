@@ -139,6 +139,25 @@ func (e *env) resolveWorkspace(name, dir string) (*workspace.Workspace, error) {
 	return ws, nil
 }
 
+// approvalProblem explains why the trust store would not accept an approval signed
+// by the user's key in role, or returns "" when it would.
+func (e *env) approvalProblem(role string) string {
+	tk, ok := e.Trust.Lookup(e.Key.KeyID())
+	switch {
+	case !ok:
+		return fmt.Sprintf("your key %s is not trusted; a maintainer can add it with `seralith key trust`", e.Key.KeyID())
+	case tk.Revoked:
+		return fmt.Sprintf("your key %s is revoked", e.Key.KeyID())
+	case tk.Principal != e.Principal:
+		return fmt.Sprintf("your key is trusted for %s, not %s", tk.Principal, e.Principal)
+	case tk.Kind != keys.KindHuman:
+		return "approvals must be signed by a human key"
+	case role != "" && !tk.HasRole(role):
+		return fmt.Sprintf("your key does not hold the role %s", role)
+	}
+	return ""
+}
+
 func agents(custom []project.AgentProfile) *agent.Registry {
 	reg := agent.NewRegistry(custom)
 	for _, id := range reg.Shadowed() {
