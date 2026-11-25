@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 // DiffTrees returns per-file changes between two tree-ish objects, including

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/blame"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/blame"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 	"github.com/spf13/cobra"
 )
 

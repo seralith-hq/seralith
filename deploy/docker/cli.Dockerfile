@@ -15,7 +15,7 @@ COPY . .
 COPY --from=web /src/web/dist/ ./internal/webui/dist/
 ARG VERSION=dev
 RUN CGO_ENABLED=0 go build -trimpath \
-    -ldflags "-s -w -X github.com/ryan-tobin/new-startup/internal/version.Version=${VERSION}" \
+    -ldflags "-s -w -X github.com/seralith-hq/seralith/internal/version.Version=${VERSION}" \
     -o /out/seralith ./cmd/seralith
 
 FROM alpine:3.24

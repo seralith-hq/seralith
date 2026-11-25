@@ -12,14 +12,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/attest"
-	"github.com/ryan-tobin/new-startup/internal/blame"
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/session"
-	"github.com/ryan-tobin/new-startup/internal/verify"
-	"github.com/ryan-tobin/new-startup/internal/version"
-	"github.com/ryan-tobin/new-startup/internal/workspace"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/attest"
+	"github.com/seralith-hq/seralith/internal/blame"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/session"
+	"github.com/seralith-hq/seralith/internal/verify"
+	"github.com/seralith-hq/seralith/internal/version"
+	"github.com/seralith-hq/seralith/internal/workspace"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 func (s *Server) handleProject(w http.ResponseWriter, _ *http.Request) {

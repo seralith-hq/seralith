@@ -1,4 +1,4 @@
-module github.com/ryan-tobin/new-startup
+module github.com/seralith-hq/seralith
 
 go 1.26.0
 

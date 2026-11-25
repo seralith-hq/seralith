@@ -16,8 +16,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/ee/control"
-	"github.com/ryan-tobin/new-startup/internal/version"
+	"github.com/seralith-hq/seralith/ee/control"
+	"github.com/seralith-hq/seralith/internal/version"
 )
 
 func main() {

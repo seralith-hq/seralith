@@ -19,9 +19,9 @@ import (
 	"time"
 
 	"github.com/creack/pty"
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/workspace"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/workspace"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 type State string

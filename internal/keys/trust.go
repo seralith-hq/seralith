@@ -7,7 +7,7 @@ import (
 	"slices"
 	"sort"
 
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
+	"github.com/seralith-hq/seralith/pkg/dsse"
 	"gopkg.in/yaml.v3"
 )
 

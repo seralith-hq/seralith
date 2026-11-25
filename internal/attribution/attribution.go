@@ -5,7 +5,7 @@ package attribution
 import (
 	"sort"
 
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 const baseline = ""

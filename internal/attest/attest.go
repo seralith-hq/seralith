@@ -7,15 +7,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/attribution"
-	"github.com/ryan-tobin/new-startup/internal/gitx"
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/notes"
-	"github.com/ryan-tobin/new-startup/internal/policy"
-	"github.com/ryan-tobin/new-startup/internal/version"
-	"github.com/ryan-tobin/new-startup/internal/workspace"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/attribution"
+	"github.com/seralith-hq/seralith/internal/gitx"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/notes"
+	"github.com/seralith-hq/seralith/internal/policy"
+	"github.com/seralith-hq/seralith/internal/version"
+	"github.com/seralith-hq/seralith/internal/workspace"
+	"github.com/seralith-hq/seralith/pkg/dsse"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 var ErrDenied = errors.New("attest: policy denies this change")

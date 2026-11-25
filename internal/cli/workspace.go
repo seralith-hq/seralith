@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/workspace"
+	"github.com/seralith-hq/seralith/internal/workspace"
 	"github.com/spf13/cobra"
 )
 

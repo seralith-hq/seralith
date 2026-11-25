@@ -15,8 +15,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/fsutil"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
+	"github.com/seralith-hq/seralith/internal/fsutil"
+	"github.com/seralith-hq/seralith/pkg/dsse"
 )
 
 type Credentials struct {

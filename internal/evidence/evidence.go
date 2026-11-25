@@ -15,13 +15,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/gitx"
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/notes"
-	"github.com/ryan-tobin/new-startup/internal/verify"
-	"github.com/ryan-tobin/new-startup/internal/version"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/gitx"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/notes"
+	"github.com/seralith-hq/seralith/internal/verify"
+	"github.com/seralith-hq/seralith/internal/version"
+	"github.com/seralith-hq/seralith/pkg/dsse"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 const ManifestPayloadType = "application/vnd.seralith.evidence-manifest+json"

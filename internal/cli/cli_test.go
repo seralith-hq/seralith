@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/testutil"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/testutil"
 )
 
 type harness struct {

@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/bmatcuk/doublestar/v4"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 	"gopkg.in/yaml.v3"
 )
 

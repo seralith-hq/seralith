@@ -8,7 +8,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/ryan-tobin/new-startup/internal/keys"
+	"github.com/seralith-hq/seralith/internal/keys"
 )
 
 func newLedger(t *testing.T) *Ledger {

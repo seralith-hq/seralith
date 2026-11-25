@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/gitx"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/gitx"
+	"github.com/seralith-hq/seralith/pkg/dsse"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 const Ref = "refs/notes/seralith"

@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/policy"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/policy"
+	"github.com/seralith-hq/seralith/pkg/dsse"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 // TrustStore builds a verifiable trust store from the organization's key registry.

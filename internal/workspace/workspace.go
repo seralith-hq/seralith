@@ -17,11 +17,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ryan-tobin/new-startup/internal/fsutil"
-	"github.com/ryan-tobin/new-startup/internal/gitx"
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/fsutil"
+	"github.com/seralith-hq/seralith/internal/gitx"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 const BranchPrefix = "seralith/"

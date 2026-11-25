@@ -9,12 +9,12 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/cloud"
-	"github.com/ryan-tobin/new-startup/internal/keys"
-	"github.com/ryan-tobin/new-startup/internal/notes"
-	"github.com/ryan-tobin/new-startup/internal/policy"
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/pkg/dsse"
+	"github.com/seralith-hq/seralith/internal/cloud"
+	"github.com/seralith-hq/seralith/internal/keys"
+	"github.com/seralith-hq/seralith/internal/notes"
+	"github.com/seralith-hq/seralith/internal/policy"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/pkg/dsse"
 	"github.com/spf13/cobra"
 )
 

@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ryan-tobin/new-startup/internal/ledger"
-	"github.com/ryan-tobin/new-startup/internal/project"
-	"github.com/ryan-tobin/new-startup/internal/testutil"
-	"github.com/ryan-tobin/new-startup/internal/workspace"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/ledger"
+	"github.com/seralith-hq/seralith/internal/project"
+	"github.com/seralith-hq/seralith/internal/testutil"
+	"github.com/seralith-hq/seralith/internal/workspace"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 )
 
 var ctx = context.Background()

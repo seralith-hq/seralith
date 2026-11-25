@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/attest"
-	"github.com/ryan-tobin/new-startup/pkg/provenance"
+	"github.com/seralith-hq/seralith/internal/attest"
+	"github.com/seralith-hq/seralith/pkg/provenance"
 	"github.com/spf13/cobra"
 )
 

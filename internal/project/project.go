@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/ryan-tobin/new-startup/internal/gitx"
+	"github.com/seralith-hq/seralith/internal/gitx"
 	"gopkg.in/yaml.v3"
 )
 
