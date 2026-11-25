@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://seralith.com/sitemap.xml

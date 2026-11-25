@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Security · Seralith</title>
+    <meta name="description" content="How to report a vulnerability in Seralith, and what we commit to in return." />
+    <meta name="theme-color" content="#0E1116" />
+    <link rel="canonical" href="https://seralith.com/security" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="logo" href="/" aria-label="Seralith home"><img src="/logo.svg" alt="Seralith" height="28" /></a>
+        <nav aria-label="Primary"><a class="btn btn-small" href="mailto:security@seralith.com">Report a vulnerability</a></nav>
+      </div>
+    </header>
+    <main class="wrap section prose">
+      <h1>Security</h1>
+      <p class="lede">Seralith is security infrastructure. We treat every report with urgency, and we will not pursue legal action against good-faith research that follows this policy.</p>
+
+      <h2>Reporting a vulnerability</h2>
+      <p>Email <a href="mailto:security@seralith.com">security@seralith.com</a>. Do not open a public issue. Please include:</p>
+      <ul>
+        <li>The affected component (CLI, daemon, workbench, or Seralith Control) and version</li>
+        <li>Reproduction steps or a proof of concept</li>
+        <li>Your assessment of impact, especially any way to forge, strip, or replay attestations, or to bypass a policy gate</li>
+      </ul>
+
+      <h2>Our commitments</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Stage</th><th>Target</th></tr></thead>
+          <tbody>
+            <tr><td>Acknowledgement</td><td>1 business day</td></tr>
+            <tr><td>Triage and severity</td><td>3 business days</td></tr>
+            <tr><td>Fix for critical issues</td><td>14 days</td></tr>
+            <tr><td>Coordinated disclosure</td><td>90 days, or on fix release, whichever is first</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>We credit reporters in release notes unless they prefer to remain anonymous.</p>
+
+      <h2>Scope</h2>
+      <p><strong>In scope:</strong> signature verification, ledger integrity, policy evaluation, gate bypasses, privilege escalation in the daemon, authentication in Seralith Control, and the integrity of our release artifacts and this website.</p>
+      <p><strong>Out of scope:</strong> denial of service through resource exhaustion on a machine the attacker already controls, issues in third-party coding tools that Seralith launches but does not ship, and reports from automated scanners without a demonstrated impact.</p>
+
+      <p class="muted small">Machine-readable contact: <a href="/.well-known/security.txt">/.well-known/security.txt</a></p>
+    </main>
+    <footer class="wrap footer">
+      <span>© 2026 Seralith, Inc.</span>
+      <a class="muted" href="/">seralith.com</a>
+    </footer>
+  </body>
+</html>
