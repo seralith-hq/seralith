@@ -69,10 +69,13 @@ verified.
   resolutions or other content of its own fails unless it is attested; rebase
   instead, or use `--include-merges` to require attestations on every merge.
 - **Declared actors.** Which actor made each segment is recorded by the
-  committer's own Seralith. The gate checks that every changed path is
-  declared, but a holder of a trusted key can still label agent work as human.
-  Rules that apply to every actor bind such a key holder; rules scoped to
-  `actors: [agent]` do not.
+  committer's own Seralith, so a holder of a trusted key can label agent work
+  as human. With the default `humanLabels: unverified`, agent rules that
+  protect paths also apply to human-labeled changes to those paths, so a
+  protected change needs an independent approval whatever its label. Agent
+  rules without paths, such as line-count thresholds, still rely on the
+  label, as does every rule under `humanLabels: trusted`. Hardware-backed
+  proof of human presence is on the roadmap.
 - **Key compromise.** A stolen developer key can sign false attestations for
   that developer until it is revoked. Revocation takes effect at the next gate
   run that uses the updated trust store.

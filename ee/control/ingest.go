@@ -253,12 +253,13 @@ func approvalOf(a AttestationRecord) *provenance.ApprovalPredicate {
 
 // rulesSatisfied reports whether approvals meet every pending rule, counting
 // distinct approvers other than the committer, with a matching role and rule list.
-// A rule no longer in the policy needs one independent approval.
+// A rule no longer in the policy, or a deny rule relaxed for a human-labeled change,
+// needs one independent approval.
 func rulesSatisfied(pol *policy.Policy, pending []string, committer string, approvals []*provenance.ApprovalPredicate) bool {
 	for _, id := range pending {
 		need, roles, allowSelf := 1, []string(nil), false
 		if r, ok := pol.Rule(id); ok {
-			need, roles, allowSelf = r.Approvals, r.Roles, r.AllowSelf
+			need, roles, allowSelf = max(r.Approvals, 1), r.Roles, r.AllowSelf
 		}
 		approvers := map[string]bool{}
 		for _, ap := range approvals {

@@ -45,9 +45,39 @@ func TestAgentPipelineEditDenied(t *testing.T) {
 	if Strongest(res.Decisions) != provenance.EffectDeny {
 		t.Fatal("strongest should be deny")
 	}
-	res = p.Evaluate([]Change{{Actor: human, Path: ".github/workflows/ci.yml", LinesAdded: 3}})
+}
+
+func TestUnverifiedHumanLabels(t *testing.T) {
+	p := mustDefault(t)
+	res := p.Evaluate([]Change{{Actor: human, Path: ".github/workflows/ci.yml", LinesAdded: 3}})
+	if len(res.Decisions) != 1 {
+		t.Fatalf("decisions = %+v", res.Decisions)
+	}
+	if d := res.Decisions[0]; d.Rule != "agents-no-pipeline-edits" || d.Effect != provenance.EffectRequireApproval || d.Approvals != 1 {
+		t.Fatalf("human pipeline edit should need one approval, got %+v", d)
+	}
+	res = p.Evaluate([]Change{{Actor: human, Path: "internal/crypto/aes.go", LinesAdded: 3}})
+	if d := res.Decisions; len(d) != 1 || d[0].Effect != provenance.EffectRequireApproval || d[0].Roles[0] != "security" {
+		t.Fatalf("human crypto edit should need security approval, got %+v", d)
+	}
+	res = p.Evaluate([]Change{{Actor: human, Path: "a.go", LinesAdded: 5000}})
 	if len(res.Decisions) != 0 {
-		t.Fatalf("human pipeline edit triggered %+v", res.Decisions)
+		t.Fatalf("rules without paths must not extend to humans: %+v", res.Decisions)
+	}
+	res = p.Evaluate([]Change{{Actor: agent, Path: ".github/workflows/ci.yml"}, {Actor: human, Path: ".github/workflows/release.yml"}})
+	if d := res.Decisions; len(d) != 1 || d[0].Effect != provenance.EffectDeny || len(d[0].Paths) != 1 || d[0].Paths[0] != ".github/workflows/ci.yml" {
+		t.Fatalf("agent edit should still be denied: %+v", d)
+	}
+}
+
+func TestTrustedHumanLabels(t *testing.T) {
+	p, err := Parse([]byte(strings.Replace(Default, "humanLabels: unverified", "humanLabels: trusted", 1)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res := p.Evaluate([]Change{{Actor: human, Path: ".github/workflows/ci.yml"}, {Actor: human, Path: "internal/crypto/aes.go"}})
+	if len(res.Decisions) != 0 {
+		t.Fatalf("trusted human edits triggered %+v", res.Decisions)
 	}
 }
 
@@ -114,6 +144,7 @@ func TestValidation(t *testing.T) {
 		"actor":     "version: 1\nrules:\n  - id: a\n    when: {actors: [robot]}\n    effect: warn\n",
 		"glob":      "version: 1\nrules:\n  - id: a\n    when: {paths: ['[']}\n    effect: warn\n",
 		"unknown":   "version: 1\nrules:\n  - id: a\n    when: {colour: red}\n    effect: warn\n",
+		"labels":    "version: 1\nhumanLabels: maybe\nrules: []\n",
 	}
 	for name, doc := range cases {
 		if _, err := Parse([]byte(doc)); err == nil {
