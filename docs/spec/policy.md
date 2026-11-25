@@ -6,6 +6,7 @@ applies retroactively to unmerged work.
 
 ```yaml
 version: 1
+humanLabels: unverified
 rules:
   - id: security-critical-review
     description: Agent changes to security-critical code need independent human approval.
@@ -16,6 +17,22 @@ rules:
     approvals: 1
     roles: [security]
 ```
+
+## Human labels
+
+Whether a segment was written by a human or an agent is recorded by the
+committer's own Seralith. A trusted key holder can therefore label agent work
+as human, and a "human" label is a claim made by the party it benefits.
+`humanLabels` decides how much policy relies on that claim.
+
+| Value | Behavior |
+| --- | --- |
+| `unverified` (default) | A rule that targets agents and names `paths` also applies to human-labeled changes to those paths. A `deny` becomes a requirement for one independent approval, so people can still edit, for example, pipeline definitions. Rules without `paths`, such as line-count thresholds, apply to agents only. |
+| `trusted` | Human labels are taken at face value. Agent rules never apply to human-labeled changes. |
+
+A rule "targets agents" when its `actors` include `agent`, or when it has no
+`actors` and filters on `tools`, `toolsNotIn`, or `models`. Use `trusted` only
+when every key holder is trusted not to relabel agent work.
 
 ## Rule fields
 

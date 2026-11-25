@@ -180,3 +180,25 @@ func TestMergeWithForeignContentIsNotSkipped(t *testing.T) {
 		t.Fatalf("problems = %s", problems(rep.Commits[0]))
 	}
 }
+
+func TestHumanLabeledProtectedChangeNeedsIndependentApproval(t *testing.T) {
+	f := newFixture(t)
+	repo := f.svc.Workspaces.Project.Repo
+	c := f.commit(t, "a", "internal/crypto/aes.go", "package crypto\n")
+	rep, _ := verify.Commit(ctx, repo, c, f.opts())
+	if rep.Status != verify.StatusFail || !strings.Contains(problems(rep), "security-critical-review") {
+		t.Fatalf("human-labeled crypto change passed without review: %s", problems(rep))
+	}
+	if _, _, err := f.svc.Approve(ctx, repo, attest.ApproveOptions{Rev: c, Role: "security"}); err != nil {
+		t.Fatal(err)
+	}
+	if rep, _ = verify.Commit(ctx, repo, c, f.opts()); rep.Status != verify.StatusFail {
+		t.Fatal("self-approval satisfied review of a human-labeled change")
+	}
+	if _, _, err := f.reviewer(t).Approve(ctx, repo, attest.ApproveOptions{Rev: c, Role: "security"}); err != nil {
+		t.Fatal(err)
+	}
+	if rep, _ = verify.Commit(ctx, repo, c, f.opts()); rep.Status != verify.StatusPass {
+		t.Fatalf("independent approval not accepted: %s", problems(rep))
+	}
+}

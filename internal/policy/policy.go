@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"regexp"
 	"slices"
@@ -50,9 +51,20 @@ type Rule struct {
 	AllowSelf   bool                    `yaml:"allowSelfApproval,omitempty" json:"allowSelfApproval,omitempty"`
 }
 
+// Human label modes. The actor kind of a segment is recorded by the committer's own
+// Seralith, so a "human" label is a claim by the party it benefits.
+const (
+	// HumanLabelsUnverified, the default, applies agent rules that protect paths to
+	// human-labeled changes too, with deny relaxed to one independent approval.
+	HumanLabelsUnverified = "unverified"
+	// HumanLabelsTrusted takes human labels at face value.
+	HumanLabelsTrusted = "trusted"
+)
+
 type Policy struct {
-	Version int    `yaml:"version" json:"version"`
-	Rules   []Rule `yaml:"rules" json:"rules"`
+	Version     int    `yaml:"version" json:"version"`
+	HumanLabels string `yaml:"humanLabels,omitempty" json:"humanLabels,omitempty"`
+	Rules       []Rule `yaml:"rules" json:"rules"`
 
 	digest string
 }
@@ -60,6 +72,7 @@ type Policy struct {
 // Default is the policy written by `seralith init`. It encodes the controls most
 // regulated teams start from.
 const Default = `version: 1
+humanLabels: unverified
 rules:
   - id: agents-no-pipeline-edits
     description: Coding agents may not modify CI/CD pipeline definitions.
@@ -136,6 +149,11 @@ func (p *Policy) Digest() string { return p.digest }
 func (p *Policy) Validate() error {
 	if p.Version != 1 {
 		return fmt.Errorf("policy: unsupported version %d", p.Version)
+	}
+	switch p.HumanLabels {
+	case "", HumanLabelsUnverified, HumanLabelsTrusted:
+	default:
+		return fmt.Errorf("policy: humanLabels must be %q or %q", HumanLabelsUnverified, HumanLabelsTrusted)
 	}
 	seen := map[string]bool{}
 	var errs []error
@@ -225,40 +243,72 @@ func (m *Match) matchPath(path string) bool {
 	return false
 }
 
+// unverifiedMessage explains a deny rule relaxed for a human-labeled change.
+const unverifiedMessage = "Human-labeled change to a path this rule protects from agents; human labels are not verified, so it needs an independent approval."
+
 // Evaluate applies every rule to changes and returns the triggered decisions.
 func (p *Policy) Evaluate(changes []Change) *provenance.PolicyResult {
 	res := &provenance.PolicyResult{Digest: provenance.DigestSet{"sha256": p.digest}, Decisions: []provenance.Decision{}}
 	for _, r := range p.Rules {
-		paths := map[string]bool{}
+		direct, extended := map[string]bool{}, map[string]bool{}
 		lines := 0
 		for _, c := range changes {
-			if r.When.matchActor(c.Actor) && r.When.matchPath(c.Path) {
-				paths[c.Path] = true
-				lines += c.LinesAdded
+			if !r.When.matchPath(c.Path) {
+				continue
 			}
+			switch {
+			case r.When.matchActor(c.Actor):
+				direct[c.Path] = true
+			case p.extendsToHuman(&r, c.Actor):
+				extended[c.Path] = true
+			default:
+				continue
+			}
+			lines += c.LinesAdded
 		}
-		if len(paths) == 0 || !r.When.Files.exceeded(len(paths)) || !r.When.LinesAdded.exceeded(lines) {
+		for path := range direct {
+			delete(extended, path)
+		}
+		matched := len(direct) + len(extended)
+		if matched == 0 || !r.When.Files.exceeded(matched) || !r.When.LinesAdded.exceeded(lines) {
 			continue
 		}
-		list := make([]string, 0, len(paths))
-		for path := range paths {
-			list = append(list, path)
+		d := provenance.Decision{Rule: r.ID, Effect: r.Effect, Message: r.Message, Approvals: r.Approvals, Roles: r.Roles}
+		if d.Message == "" {
+			d.Message = r.Description
 		}
-		sort.Strings(list)
-		msg := r.Message
-		if msg == "" {
-			msg = r.Description
+		switch {
+		case r.Effect == provenance.EffectDeny && len(direct) > 0:
+			d.Paths = sorted(direct)
+		case r.Effect == provenance.EffectDeny:
+			d.Effect, d.Approvals, d.Message, d.Paths = provenance.EffectRequireApproval, 1, unverifiedMessage, sorted(extended)
+		default:
+			maps.Copy(direct, extended)
+			d.Paths = sorted(direct)
 		}
-		res.Decisions = append(res.Decisions, provenance.Decision{
-			Rule:      r.ID,
-			Effect:    r.Effect,
-			Message:   msg,
-			Paths:     list,
-			Approvals: r.Approvals,
-			Roles:     r.Roles,
-		})
+		res.Decisions = append(res.Decisions, d)
 	}
 	return res
+}
+
+// extendsToHuman reports whether a rule that targets agents on specific paths also
+// applies to a human-labeled change because human labels are not trusted.
+func (p *Policy) extendsToHuman(r *Rule, a provenance.Actor) bool {
+	if p.HumanLabels == HumanLabelsTrusted || a.Kind != provenance.ActorHuman || len(r.When.Paths) == 0 {
+		return false
+	}
+	m := r.When
+	return slices.Contains(m.Actors, provenance.ActorAgent) ||
+		(len(m.Actors) == 0 && (len(m.Tools) > 0 || len(m.ToolsNotIn) > 0 || len(m.Models) > 0))
+}
+
+func sorted(set map[string]bool) []string {
+	out := make([]string, 0, len(set))
+	for k := range set {
+		out = append(out, k)
+	}
+	sort.Strings(out)
+	return out
 }
 
 // Rule returns the rule with id.

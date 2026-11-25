@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Security:** policies take `humanLabels: unverified` (the default) or
+  `trusted`. When unverified, agent rules that protect paths also apply to
+  human-labeled changes to those paths, with `deny` relaxed to one
+  independent approval, so relabeling agent work as human no longer avoids
+  review. Existing policies without the field get the new behavior.
+
 - seralith.com deploys to Cloudflare Pages from `main`, with preview deploys
   for pull requests, strict security headers, a published security policy at
   `/security`, an RFC 9116 `security.txt`, a 404 page, and a sitemap.
