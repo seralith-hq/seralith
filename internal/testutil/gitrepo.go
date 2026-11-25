@@ -1,4 +1,4 @@
-// Package testutil provides fixtures shared by Sigil's tests.
+// Package testutil provides fixtures shared by Seralith's tests.
 package testutil
 
 import (

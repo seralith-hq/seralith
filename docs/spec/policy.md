@@ -1,6 +1,6 @@
 # Policy language
 
-Policies live in `.sigil/policy.yaml`. The gate evaluates the policy file it is
+Policies live in `.seralith/policy.yaml`. The gate evaluates the policy file it is
 given, not the decisions recorded in an attestation, so tightening a policy
 applies retroactively to unmerged work.
 

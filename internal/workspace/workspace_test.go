@@ -19,9 +19,9 @@ var ctx = context.Background()
 
 func setup(t *testing.T, cfg string) (*testutil.GitRepo, *workspace.Manager) {
 	t.Helper()
-	t.Setenv("SIGIL_DATA_DIR", t.TempDir())
+	t.Setenv("SERALITH_DATA_DIR", t.TempDir())
 	g := testutil.NewGitRepo(t)
-	g.Write(".sigil/config.yaml", cfg)
+	g.Write(".seralith/config.yaml", cfg)
 	g.Write("main.go", testutil.Lines("package main", "", "func main() {}"))
 	g.Commit("init")
 	p, err := project.Load(ctx, g.Dir)
@@ -41,7 +41,7 @@ func TestCreateListRemove(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if ws.Branch != "sigil/feature-a" || ws.Pending() {
+	if ws.Branch != "seralith/feature-a" || ws.Pending() {
 		t.Fatalf("workspace = %+v", ws)
 	}
 	if _, err := os.Stat(filepath.Join(ws.Path, "main.go")); err != nil {
@@ -64,7 +64,7 @@ func TestCreateListRemove(t *testing.T) {
 	if err := m.Remove(ctx, "feature-a", workspace.RemoveOptions{DeleteBranch: true}); err != nil {
 		t.Fatal(err)
 	}
-	if out := g.Git("branch", "--list", "sigil/feature-a"); out != "" {
+	if out := g.Git("branch", "--list", "seralith/feature-a"); out != "" {
 		t.Fatalf("branch not deleted: %q", out)
 	}
 	entries, _ := m.Ledger.Entries(ledger.Filter{})
@@ -123,7 +123,7 @@ func TestExternalCommitDiscardsPending(t *testing.T) {
 	if _, err := repo.Run(ctx, "add", "-A"); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := repo.Run(ctx, "commit", "-q", "-m", "outside sigil"); err != nil {
+	if _, err := repo.Run(ctx, "commit", "-q", "-m", "outside seralith"); err != nil {
 		t.Fatal(err)
 	}
 	ws, _, err := m.Observe(ctx, "w")

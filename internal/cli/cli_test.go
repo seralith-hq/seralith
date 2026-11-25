@@ -22,8 +22,8 @@ type harness struct {
 func newHarness(t *testing.T) *harness {
 	t.Helper()
 	home := t.TempDir()
-	t.Setenv("SIGIL_DATA_DIR", filepath.Join(home, "data"))
-	t.Setenv("SIGIL_CONFIG_DIR", filepath.Join(home, "config"))
+	t.Setenv("SERALITH_DATA_DIR", filepath.Join(home, "data"))
+	t.Setenv("SERALITH_CONFIG_DIR", filepath.Join(home, "config"))
 	t.Setenv("NO_COLOR", "1")
 	h := &harness{t: t, repo: testutil.NewGitRepo(t), keys: filepath.Join(home, "keys")}
 	h.as("alice")
@@ -34,8 +34,8 @@ func newHarness(t *testing.T) *harness {
 }
 
 func (h *harness) as(user string) {
-	h.t.Setenv("SIGIL_KEY", filepath.Join(h.keys, user+".pem"))
-	h.t.Setenv("SIGIL_PRINCIPAL", user+"@example.com")
+	h.t.Setenv("SERALITH_KEY", filepath.Join(h.keys, user+".pem"))
+	h.t.Setenv("SERALITH_PRINCIPAL", user+"@example.com")
 }
 
 func (h *harness) run(dir string, args ...string) (string, string, int) {
@@ -52,7 +52,7 @@ func (h *harness) ok(dir string, args ...string) string {
 	h.t.Helper()
 	out, errOut, code := h.run(dir, args...)
 	if code != 0 {
-		h.t.Fatalf("sigil %s exited %d\nstdout: %s\nstderr: %s", strings.Join(args, " "), code, out, errOut)
+		h.t.Fatalf("seralith %s exited %d\nstdout: %s\nstderr: %s", strings.Join(args, " "), code, out, errOut)
 	}
 	return out
 }
@@ -64,13 +64,13 @@ func (h *harness) wsPath(name string) string {
 func TestEndToEndWorkflow(t *testing.T) {
 	h := newHarness(t)
 	out := h.ok("", "init", "--name", "demo")
-	if !strings.Contains(out, "Sigil initialized for demo") {
+	if !strings.Contains(out, "Seralith initialized for demo") {
 		t.Fatalf("init output: %s", out)
 	}
 	if _, _, code := h.run("", "init"); code == 0 {
 		t.Fatal("second init should fail without --force")
 	}
-	base := h.repo.Commit("chore: enable sigil")
+	base := h.repo.Commit("chore: enable seralith")
 
 	h.ok("", "ws", "new", "auth")
 	ws := h.wsPath("auth")
@@ -103,13 +103,13 @@ func TestEndToEndWorkflow(t *testing.T) {
 		t.Fatalf("commit output missing decision: %s", out)
 	}
 
-	rangeSpec := base + "..sigil/auth"
+	rangeSpec := base + "..seralith/auth"
 	out, _, code := h.run("", "gate", "--range", rangeSpec)
 	if code != 1 || !strings.Contains(out, "requires 1 approval(s) from role [security]") {
 		t.Fatalf("gate before approval: code=%d\n%s", code, out)
 	}
 
-	if _, _, code := h.run("", "approve", "sigil/auth", "--role", "security"); code != 0 {
+	if _, _, code := h.run("", "approve", "seralith/auth", "--role", "security"); code != 0 {
 		t.Fatal("approve command failed")
 	}
 	out, _, code = h.run("", "gate", "--range", rangeSpec)
@@ -125,7 +125,7 @@ func TestEndToEndWorkflow(t *testing.T) {
 	h.as("alice")
 	h.ok("", "key", "trust", bobPub, "--principal", "bob@example.com", "--roles", "security")
 	h.as("bob")
-	h.ok("", "approve", "sigil/auth", "--role", "security", "-m", "token handling reviewed")
+	h.ok("", "approve", "seralith/auth", "--role", "security", "-m", "token handling reviewed")
 	h.as("alice")
 
 	out, _, code = h.run("", "gate", "--range", rangeSpec)
@@ -133,7 +133,7 @@ func TestEndToEndWorkflow(t *testing.T) {
 		t.Fatalf("gate after approval: code=%d\n%s", code, out)
 	}
 	md := h.ok("", "gate", "--range", rangeSpec, "--format", "markdown")
-	if !strings.Contains(md, "Sigil gate: PASS") {
+	if !strings.Contains(md, "Seralith gate: PASS") {
 		t.Fatalf("markdown: %s", md)
 	}
 
@@ -146,7 +146,7 @@ func TestEndToEndWorkflow(t *testing.T) {
 			Verified bool `json:"verified"`
 		} `json:"lines"`
 	}
-	if err := json.Unmarshal([]byte(h.ok("", "--json", "blame", "--rev", "sigil/auth", "internal/auth/token.go")), &bl); err != nil {
+	if err := json.Unmarshal([]byte(h.ok("", "--json", "blame", "--rev", "seralith/auth", "internal/auth/token.go")), &bl); err != nil {
 		t.Fatal(err)
 	}
 	if len(bl.Lines) != 3 {
@@ -157,7 +157,7 @@ func TestEndToEndWorkflow(t *testing.T) {
 			t.Fatalf("blame line = %+v", l)
 		}
 	}
-	summary := h.ok("", "blame", "--rev", "sigil/auth", "--summary", "src/app.go")
+	summary := h.ok("", "blame", "--rev", "seralith/auth", "--summary", "src/app.go")
 	if !strings.Contains(summary, "human 1") || !strings.Contains(summary, "unattested 3") {
 		t.Fatalf("blame summary = %s", summary)
 	}
@@ -179,7 +179,7 @@ func TestEndToEndWorkflow(t *testing.T) {
 func TestPolicyDenyBlocksCommit(t *testing.T) {
 	h := newHarness(t)
 	h.ok("", "init")
-	h.repo.Commit("chore: enable sigil")
+	h.repo.Commit("chore: enable seralith")
 	h.ok("", "ws", "new", "ci")
 	h.ok("", "run", "--ws", "ci", "--agent", "claude", "--", "sh", "-c", "mkdir -p .github/workflows && echo 'on: push' > .github/workflows/x.yml")
 	out, errOut, code := h.run("", "commit", "--ws", "ci", "-m", "ci: tweak")
@@ -190,7 +190,7 @@ func TestPolicyDenyBlocksCommit(t *testing.T) {
 	if out := h.ok("", "log", "--type", "policy.override"); !strings.Contains(out, "policy.override") {
 		t.Fatal("override not recorded")
 	}
-	if _, _, code := h.run("", "verify", "sigil/ci"); code != 1 {
+	if _, _, code := h.run("", "verify", "seralith/ci"); code != 1 {
 		t.Fatal("verify should fail a denied change even after a forced commit")
 	}
 }
@@ -198,14 +198,14 @@ func TestPolicyDenyBlocksCommit(t *testing.T) {
 func TestGateUsesBaseConfiguration(t *testing.T) {
 	h := newHarness(t)
 	h.ok("", "init")
-	base := h.repo.Commit("chore: enable sigil")
+	base := h.repo.Commit("chore: enable seralith")
 	h.ok("", "ws", "new", "relax")
 	ws := h.wsPath("relax")
-	testutil.WriteFile(t, filepath.Join(ws, ".sigil/policy.yaml"), "version: 1\nrules: []\n")
+	testutil.WriteFile(t, filepath.Join(ws, ".seralith/policy.yaml"), "version: 1\nrules: []\n")
 	h.ok("", "run", "--ws", "relax", "--agent", "codex", "--", "sh", "-c", "mkdir -p .github/workflows && echo 'on: push' > .github/workflows/x.yml")
 	h.ok("", "commit", "--ws", "relax", "-m", "ci: relax policy and edit pipeline", "--force")
 
-	h.repo.Git("checkout", "-q", "--detach", "sigil/relax")
+	h.repo.Git("checkout", "-q", "--detach", "seralith/relax")
 	if _, _, code := h.run("", "gate", "--range", base+"..HEAD"); code != 0 {
 		t.Fatal("sanity: the relaxed branch policy should pass when trusted")
 	}
@@ -218,11 +218,11 @@ func TestGateUsesBaseConfiguration(t *testing.T) {
 func TestTamperedAttestationFailsVerification(t *testing.T) {
 	h := newHarness(t)
 	h.ok("", "init")
-	h.repo.Commit("chore: enable sigil")
+	h.repo.Commit("chore: enable seralith")
 	h.ok("", "ws", "new", "w")
 	h.ok("", "run", "--ws", "w", "--", "sh", "-c", "echo hi > hello.txt")
 	h.ok("", "commit", "--ws", "w", "-m", "feat: hello")
-	h.ok("", "verify", "sigil/w")
+	h.ok("", "verify", "seralith/w")
 
 	other, err := keys.Generate()
 	if err != nil {
@@ -232,16 +232,16 @@ func TestTamperedAttestationFailsVerification(t *testing.T) {
 	if err := other.Save(keyPath); err != nil {
 		t.Fatal(err)
 	}
-	t.Setenv("SIGIL_KEY", keyPath)
-	h.ok("", "ws", "new", "w2", "--base", "sigil/w")
+	t.Setenv("SERALITH_KEY", keyPath)
+	h.ok("", "ws", "new", "w2", "--base", "seralith/w")
 	h.ok("", "run", "--ws", "w2", "--", "sh", "-c", "echo evil > hello.txt")
 	h.ok("", "commit", "--ws", "w2", "-m", "fix: innocent")
-	out, _, code := h.run("", "verify", "sigil/w2")
+	out, _, code := h.run("", "verify", "seralith/w2")
 	if code != 1 || !strings.Contains(out, "not trusted") {
 		t.Fatalf("untrusted signer: code=%d out=%s", code, out)
 	}
 
-	h.repo.Git("checkout", "-q", "-b", "sneaky", "sigil/w")
+	h.repo.Git("checkout", "-q", "-b", "sneaky", "seralith/w")
 	h.repo.Write("hello.txt", "replaced\n")
 	h.repo.Commit("chore: unattested change")
 	out, _, code = h.run("", "verify", "HEAD")

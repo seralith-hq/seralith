@@ -1,4 +1,4 @@
-# sigil.systems
+# seralith.com
 
 The marketing site. Plain HTML and CSS, no build step, no third-party requests.
 

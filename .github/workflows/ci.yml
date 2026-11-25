@@ -26,7 +26,7 @@ jobs:
       - name: Configure git identity for tests
         run: |
           git config --global user.name "ci"
-          git config --global user.email "ci@sigil.systems"
+          git config --global user.email "ci@seralith.com"
       - name: Vet
         run: go vet ./...
       - name: Test

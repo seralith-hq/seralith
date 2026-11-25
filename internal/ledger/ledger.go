@@ -1,4 +1,4 @@
-// Package ledger implements Sigil's append-only, hash-chained audit log.
+// Package ledger implements Seralith's append-only, hash-chained audit log.
 package ledger
 
 import (
@@ -63,7 +63,7 @@ type Checkpoint struct {
 }
 
 func checkpointMessage(seq uint64, head string) []byte {
-	return []byte("sigil-ledger-checkpoint:v1:" + strconv.FormatUint(seq, 10) + ":" + head)
+	return []byte("seralith-ledger-checkpoint:v1:" + strconv.FormatUint(seq, 10) + ":" + head)
 }
 
 type Ledger struct {

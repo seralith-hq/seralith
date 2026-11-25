@@ -2,7 +2,7 @@
 
 Status: **Stable (v1)**
 
-Sigil attestations are [in-toto Statement v1](https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md)
+Seralith attestations are [in-toto Statement v1](https://github.com/in-toto/attestation/blob/main/spec/v1/statement.md)
 documents wrapped in [DSSE](https://github.com/secure-systems-lab/dsse) envelopes
 and signed with Ed25519. Any tool that speaks in-toto can read them.
 
@@ -26,7 +26,7 @@ followed by the first 16 bytes of the SHA-256 of the raw public key, in hex.
 {
   "_type": "https://in-toto.io/Statement/v1",
   "subject": [{ "name": "git+commit:5a9e07fc…", "digest": { "gitCommit": "5a9e07fc…" } }],
-  "predicateType": "https://sigil.systems/attestation/change/v1",
+  "predicateType": "https://seralith.com/attestation/change/v1",
   "predicate": { }
 }
 ```
@@ -49,7 +49,7 @@ Describes the observed history behind one commit.
 | `attribution` | FileAttribution[] | Line ranges in the commit tree owned by each segment |
 | `summary` | Summary | Files changed and surviving lines per actor kind |
 | `policy` | PolicyResult | Decisions at commit time (informational; the gate re-evaluates) |
-| `builder` | `{id, version}` | The Sigil build that produced the attestation |
+| `builder` | `{id, version}` | The Seralith build that produced the attestation |
 | `createdAt` | RFC 3339 | Creation time |
 
 ### Actor
@@ -92,14 +92,14 @@ Describes the observed history behind one commit.
 ## Storage
 
 Envelopes are stored one per line in the git note for their commit under
-`refs/notes/sigil`, deduplicated by attestation ID. Notes from different
+`refs/notes/seralith`, deduplicated by attestation ID. Notes from different
 machines merge with git's `cat_sort_uniq` strategy, so there are no conflicts.
 
 ## Verification algorithm
 
 Given a commit `C`, a trust store `T`, and a policy `P`:
 
-1. Load envelopes from `refs/notes/sigil` for `C`. Choose a `change/v1`
+1. Load envelopes from `refs/notes/seralith` for `C`. Choose a `change/v1`
    statement whose subject is `C` and whose envelope verifies under `T`, where
    at least one accepting key's principal equals `predicate.committer.id`.
 2. Require `predicate.tree == tree(C)` and `predicate.parents == parents(C)`.

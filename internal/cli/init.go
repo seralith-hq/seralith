@@ -18,11 +18,11 @@ func newInitCmd(g *globals) *cobra.Command {
 	var force bool
 	cmd := &cobra.Command{
 		Use:   "init",
-		Short: "Initialize Sigil in the current repository",
-		Long: `Initialize Sigil in the current repository.
+		Short: "Initialize Seralith in the current repository",
+		Long: `Initialize Seralith in the current repository.
 
-Creates .sigil/config.yaml, a default policy, and a trust store containing
-your signing key. Commit the .sigil directory so that collaborators and CI
+Creates .seralith/config.yaml, a default policy, and a trust store containing
+your signing key. Commit the .seralith directory so that collaborators and CI
 verify against the same policy and keys.`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -32,7 +32,7 @@ verify against the same policy and keys.`,
 				return err
 			}
 			if p.Config != nil && !force {
-				return errors.New("sigil is already initialized here (use --force to rewrite configuration)")
+				return errors.New("seralith is already initialized here (use --force to rewrite configuration)")
 			}
 			if name == "" {
 				name = filepath.Base(p.Root)
@@ -75,7 +75,7 @@ verify against the same policy and keys.`,
 				return writeJSON(g.stdout, map[string]any{"project": name, "root": p.Root, "key": key.KeyID(), "principal": principal, "keyCreated": created})
 			}
 			s := styleFor(g.stdout)
-			fmt.Fprintf(g.stdout, "%s Sigil initialized for %s\n\n", s.green("✓"), s.bold(name))
+			fmt.Fprintf(g.stdout, "%s Seralith initialized for %s\n\n", s.green("✓"), s.bold(name))
 			fmt.Fprintf(g.stdout, "  config     %s\n", rel(p.Root, p.ConfigPath(project.ConfigFile)))
 			fmt.Fprintf(g.stdout, "  policy     %s\n", rel(p.Root, p.ConfigPath(project.PolicyFile)))
 			fmt.Fprintf(g.stdout, "  trust      %s\n", rel(p.Root, p.ConfigPath(project.TrustFile)))
@@ -83,7 +83,7 @@ verify against the same policy and keys.`,
 			if created {
 				fmt.Fprintf(g.stdout, "  new key    %s\n", project.UserKeyPath())
 			}
-			fmt.Fprintf(g.stdout, "\nNext:\n  git add .sigil && git commit -m \"chore: enable sigil\"\n  sigil ws new my-task\n  sigil run --ws my-task --agent <tool>\n")
+			fmt.Fprintf(g.stdout, "\nNext:\n  git add .seralith && git commit -m \"chore: enable seralith\"\n  seralith ws new my-task\n  seralith run --ws my-task --agent <tool>\n")
 			return nil
 		},
 	}

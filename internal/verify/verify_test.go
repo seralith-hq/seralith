@@ -31,9 +31,9 @@ type fixture struct {
 
 func newFixture(t *testing.T) *fixture {
 	t.Helper()
-	t.Setenv("SIGIL_DATA_DIR", t.TempDir())
+	t.Setenv("SERALITH_DATA_DIR", t.TempDir())
 	g := testutil.NewGitRepo(t)
-	g.Write(".sigil/config.yaml", "version: 1\nname: demo\n")
+	g.Write(".seralith/config.yaml", "version: 1\nname: demo\n")
 	g.Write("README.md", "demo\n")
 	base := g.Commit("init")
 	p, err := project.Load(ctx, g.Dir)
@@ -150,7 +150,7 @@ func TestGateRangeAndMergeSkipping(t *testing.T) {
 	f := newFixture(t)
 	f.commit(t, "a", "a.txt", "a\n")
 	f.commit(t, "a", "a2.txt", "a2\n")
-	f.g.Git("merge", "-q", "--no-ff", "-m", "merge a", "sigil/a")
+	f.g.Git("merge", "-q", "--no-ff", "-m", "merge a", "seralith/a")
 	rep, err := verify.Gate(ctx, f.svc.Workspaces.Project.Repo, f.base+"..HEAD", f.opts())
 	if err != nil {
 		t.Fatal(err)

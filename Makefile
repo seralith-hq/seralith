@@ -24,9 +24,9 @@ web: ## Build the workbench UI into the embedded asset directory
 	touch internal/webui/dist/.gitkeep
 
 .PHONY: build
-build: ## Build sigil and sigil-control into ./bin
-	CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/sigil ./cmd/sigil
-	@if [ -d ee/cmd/sigil-control ]; then CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/sigil-control ./ee/cmd/sigil-control; fi
+build: ## Build seralith and seralith-control into ./bin
+	CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/seralith ./cmd/seralith
+	@if [ -d ee/cmd/seralith-control ]; then CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/seralith-control ./ee/cmd/seralith-control; fi
 
 .PHONY: release-build
 release-build: web build ## Build the UI and both binaries
@@ -54,7 +54,7 @@ fmt: ## Format sources
 
 .PHONY: dev
 dev: ## Run the daemon and the Vite dev server
-	go run ./cmd/sigil serve --dev & pnpm -C web dev
+	go run ./cmd/seralith serve --dev & pnpm -C web dev
 
 .PHONY: clean
 clean: ## Remove build output

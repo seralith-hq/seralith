@@ -57,7 +57,7 @@ type Policy struct {
 	digest string
 }
 
-// Default is the policy written by `sigil init`. It encodes the controls most
+// Default is the policy written by `seralith init`. It encodes the controls most
 // regulated teams start from.
 const Default = `version: 1
 rules:

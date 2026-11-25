@@ -15,7 +15,7 @@ import (
 	"github.com/ryan-tobin/new-startup/pkg/provenance"
 )
 
-const Ref = "refs/notes/sigil"
+const Ref = "refs/notes/seralith"
 
 // Read returns every envelope attached to commit. Malformed lines are skipped.
 func Read(ctx context.Context, repo *gitx.Repo, commit string) ([]*dsse.Envelope, error) {
@@ -70,7 +70,7 @@ func Add(ctx context.Context, repo *gitx.Repo, commit string, env *dsse.Envelope
 	buf.Write(raw)
 	buf.WriteByte('\n')
 
-	tmp, err := os.MkdirTemp("", "sigil-note-")
+	tmp, err := os.MkdirTemp("", "seralith-note-")
 	if err != nil {
 		return err
 	}
@@ -113,13 +113,13 @@ func Push(ctx context.Context, repo *gitx.Repo, remote string) error {
 
 // Fetch merges the remote notes ref into the local one.
 func Fetch(ctx context.Context, repo *gitx.Repo, remote string) error {
-	if _, err := repo.Run(ctx, "fetch", remote, "+"+Ref+":refs/notes/sigil-remote"); err != nil {
+	if _, err := repo.Run(ctx, "fetch", remote, "+"+Ref+":refs/notes/seralith-remote"); err != nil {
 		return err
 	}
-	defer func() { _ = repo.DeleteRef(ctx, "refs/notes/sigil-remote") }()
+	defer func() { _ = repo.DeleteRef(ctx, "refs/notes/seralith-remote") }()
 	if _, err := repo.Run(ctx, "rev-parse", "--verify", "--quiet", Ref); err != nil {
-		return repo.UpdateRef(ctx, Ref, "refs/notes/sigil-remote")
+		return repo.UpdateRef(ctx, Ref, "refs/notes/seralith-remote")
 	}
-	_, err := repo.Run(ctx, "notes", "--ref="+Ref, "merge", "-s", "cat_sort_uniq", "refs/notes/sigil-remote")
+	_, err := repo.Run(ctx, "notes", "--ref="+Ref, "merge", "-s", "cat_sort_uniq", "refs/notes/seralith-remote")
 	return err
 }

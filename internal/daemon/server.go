@@ -1,4 +1,4 @@
-// Package daemon serves the Sigil workbench API and UI on the loopback interface.
+// Package daemon serves the Seralith workbench API and UI on the loopback interface.
 package daemon
 
 import (
@@ -225,9 +225,9 @@ func (s *Server) uiHandler() http.Handler {
 	})
 }
 
-const fallbackPage = `<!doctype html><html><head><meta charset="utf-8"><title>Sigil</title>
+const fallbackPage = `<!doctype html><html><head><meta charset="utf-8"><title>Seralith</title>
 <style>body{font:15px/1.6 system-ui;background:#0E1116;color:#E9E6DF;display:grid;place-items:center;height:100vh;margin:0}code{color:#FF5A1F}</style>
-</head><body><div><h1>Sigil daemon is running</h1><p>The workbench UI is not embedded in this build. Run <code>make web build</code>, or use the API at <code>/api/v1</code>.</p></div></body></html>`
+</head><body><div><h1>Seralith daemon is running</h1><p>The workbench UI is not embedded in this build. Run <code>make web build</code>, or use the API at <code>/api/v1</code>.</p></div></body></html>`
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
 	w.Header().Set("Content-Type", "application/json")

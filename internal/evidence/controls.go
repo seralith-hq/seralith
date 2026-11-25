@@ -1,6 +1,6 @@
 package evidence
 
-// Control maps a regulatory requirement to the Sigil evidence that supports it.
+// Control maps a regulatory requirement to the Seralith evidence that supports it.
 type Control struct {
 	Framework string   `json:"framework"`
 	ID        string   `json:"id"`

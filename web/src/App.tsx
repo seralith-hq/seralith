@@ -35,7 +35,7 @@ export function App() {
         <Logo size={56} />
         <h3 style={{ marginTop: 16 }}>Open the workbench from your terminal</h3>
         <p>
-          Run <code>sigil serve</code> and use the link it prints. The link carries a one-time token for this
+          Run <code>seralith serve</code> and use the link it prints. The link carries a one-time token for this
           session.
         </p>
       </div>

@@ -21,12 +21,12 @@ import (
 func credentialsPath() string { return filepath.Join(project.ConfigHome(), "cloud.json") }
 
 func newCloudCmd(g *globals) *cobra.Command {
-	cmd := &cobra.Command{Use: "cloud", Short: "Connect to Sigil Control (Team, Enterprise, and Sovereign)"}
+	cmd := &cobra.Command{Use: "cloud", Short: "Connect to Seralith Control (Team, Enterprise, and Sovereign)"}
 
 	var url, token, projectName string
 	login := &cobra.Command{
 		Use:   "login --url <url> --token <token> [--project <name>]",
-		Short: "Save Sigil Control credentials and link this repository to a project",
+		Short: "Save Seralith Control credentials and link this repository to a project",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if url == "" || token == "" {
@@ -58,14 +58,14 @@ func newCloudCmd(g *globals) *cobra.Command {
 			return nil
 		},
 	}
-	login.Flags().StringVar(&url, "url", "", "Sigil Control URL")
+	login.Flags().StringVar(&url, "url", "", "Seralith Control URL")
 	login.Flags().StringVar(&token, "token", "", "API token")
 	login.Flags().StringVar(&projectName, "project", "", "link this repository to a project")
 
 	var rangeSpec string
 	push := &cobra.Command{
 		Use:   "push [--range a..b]",
-		Short: "Upload attestations to Sigil Control",
+		Short: "Upload attestations to Seralith Control",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			e, client, name, err := cloudEnv(cmd.Context(), g)
@@ -105,7 +105,7 @@ func newCloudCmd(g *globals) *cobra.Command {
 
 	pullTrust := &cobra.Command{
 		Use:   "pull-trust",
-		Short: "Replace .sigil/trust.yaml with the organization key registry",
+		Short: "Replace .seralith/trust.yaml with the organization key registry",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			e, client, _, err := cloudEnv(cmd.Context(), g)
@@ -130,7 +130,7 @@ func newCloudCmd(g *globals) *cobra.Command {
 
 	pullPolicy := &cobra.Command{
 		Use:   "pull-policy",
-		Short: "Replace .sigil/policy.yaml with the project's published policy",
+		Short: "Replace .seralith/policy.yaml with the project's published policy",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			e, client, name, err := cloudEnv(cmd.Context(), g)
@@ -187,12 +187,12 @@ func cloudEnv(ctx context.Context, g *globals) (*env, *cloud.Client, string, err
 	if err != nil {
 		return nil, nil, "", err
 	}
-	name := os.Getenv("SIGIL_CLOUD_PROJECT")
+	name := os.Getenv("SERALITH_CLOUD_PROJECT")
 	if name == "" && e.Project.Config.Control != nil {
 		name = e.Project.Config.Control.Project
 	}
 	if name == "" {
-		return nil, nil, "", errors.New("no project linked; run `sigil cloud login --project <name>` or set SIGIL_CLOUD_PROJECT")
+		return nil, nil, "", errors.New("no project linked; run `seralith cloud login --project <name>` or set SERALITH_CLOUD_PROJECT")
 	}
 	return e, client, name, nil
 }

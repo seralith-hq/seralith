@@ -1,4 +1,4 @@
-// Package cloud is a client for the Sigil Control API.
+// Package cloud is a client for the Seralith Control API.
 package cloud
 
 import (
@@ -24,7 +24,7 @@ type Credentials struct {
 	Token string `json:"token"`
 }
 
-// LoadCredentials reads saved credentials, letting SIGIL_CLOUD_URL and SIGIL_CLOUD_TOKEN override them.
+// LoadCredentials reads saved credentials, letting SERALITH_CLOUD_URL and SERALITH_CLOUD_TOKEN override them.
 func LoadCredentials(path string) (*Credentials, error) {
 	c := &Credentials{}
 	if data, err := os.ReadFile(path); err == nil {
@@ -34,14 +34,14 @@ func LoadCredentials(path string) (*Credentials, error) {
 	} else if !errors.Is(err, os.ErrNotExist) {
 		return nil, err
 	}
-	if v := os.Getenv("SIGIL_CLOUD_URL"); v != "" {
+	if v := os.Getenv("SERALITH_CLOUD_URL"); v != "" {
 		c.URL = v
 	}
-	if v := os.Getenv("SIGIL_CLOUD_TOKEN"); v != "" {
+	if v := os.Getenv("SERALITH_CLOUD_TOKEN"); v != "" {
 		c.Token = v
 	}
 	if c.URL == "" || c.Token == "" {
-		return nil, errors.New("cloud: not logged in; run `sigil cloud login` or set SIGIL_CLOUD_URL and SIGIL_CLOUD_TOKEN")
+		return nil, errors.New("cloud: not logged in; run `seralith cloud login` or set SERALITH_CLOUD_URL and SERALITH_CLOUD_TOKEN")
 	}
 	return c, nil
 }
@@ -99,7 +99,7 @@ func (c *Client) do(ctx context.Context, method, path string, body, out any) err
 		return err
 	}
 	req.Header.Set("Authorization", "Bearer "+c.token)
-	req.Header.Set("User-Agent", "sigil-cli")
+	req.Header.Set("User-Agent", "seralith-cli")
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}

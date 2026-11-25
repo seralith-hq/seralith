@@ -1,12 +1,12 @@
 # Compliance mapping
 
-Sigil produces evidence. Assessors decide compliance. This mapping shows which
+Seralith produces evidence. Assessors decide compliance. This mapping shows which
 artifacts support which requirements. Every evidence package includes it as
 `controls.json`.
 
 ## DoW Instruction 8430.01, *Accelerated Mission Software* (effective September 2026)
 
-| Requirement area | Sigil evidence |
+| Requirement area | Seralith evidence |
 | --- | --- |
 | AI-generated code is unverified input; developers remain accountable | Agent segments record the accountable operator; every commit is signed by its human committer |
 | Human review and approval of AI changes to security- or safety-critical functionality | `require-approval` rules bound to paths and roles; signed `approval/v1` attestations; gate enforcement |
@@ -16,7 +16,7 @@ artifacts support which requirements. Every evidence package includes it as
 
 ## NIST SP 800-218, Secure Software Development Framework
 
-| Practice | Sigil evidence |
+| Practice | Seralith evidence |
 | --- | --- |
 | PO.3.2 Secure toolchains | Tool allowlists, isolated workspaces |
 | PS.1.1 Protect code from unauthorized changes | Deny rules on pipelines and secrets; gate on protected branches |
@@ -27,7 +27,7 @@ artifacts support which requirements. Every evidence package includes it as
 
 ## NIST SP 800-171 (CMMC Level 2)
 
-| Requirement | Sigil evidence |
+| Requirement | Seralith evidence |
 | --- | --- |
 | 3.3.1 Create and retain audit records | Hash-chained ledger and control-plane audit trail |
 | 3.3.8 Protect audit information | Hash chaining and signed checkpoints |
@@ -35,16 +35,16 @@ artifacts support which requirements. Every evidence package includes it as
 
 ## EU Cyber Resilience Act
 
-| Obligation | Sigil evidence |
+| Obligation | Seralith evidence |
 | --- | --- |
-| Art. 14 reporting of actively exploited vulnerabilities (from 11 September 2026) | `sigil blame` identifies the change, actor, tool, and model behind any vulnerable line within the 24-hour early-warning window |
+| Art. 14 reporting of actively exploited vulnerabilities (from 11 September 2026) | `seralith blame` identifies the change, actor, tool, and model behind any vulnerable line within the 24-hour early-warning window |
 | Annex I Part II vulnerability handling and documentation | Attribution, dependency-manifest rules, and evidence packages per release |
 
 ## Producing evidence
 
 ```sh
-sigil evidence export --range v2.3.0..v2.4.0 -o evidence-v2.4.0.zip
-sigil evidence verify evidence-v2.4.0.zip --trust .sigil/trust.yaml
+seralith evidence export --range v2.3.0..v2.4.0 -o evidence-v2.4.0.zip
+seralith evidence verify evidence-v2.4.0.zip --trust .seralith/trust.yaml
 ```
 
 | File | Contents |

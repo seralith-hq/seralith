@@ -1,4 +1,4 @@
-// Package cli implements the sigil command-line interface.
+// Package cli implements the seralith command-line interface.
 package cli
 
 import (
@@ -64,15 +64,15 @@ func Main(args []string, stdin io.Reader, stdout, stderr io.Writer) int {
 
 func newRoot(g *globals) *cobra.Command {
 	root := &cobra.Command{
-		Use:           "sigil",
+		Use:           "seralith",
 		Short:         "Build in parallel. Ship with proof.",
-		Long:          "Sigil runs human and agent coding sessions in isolated workspaces and\nrecords signed, line-level provenance for every change.",
+		Long:          "Seralith runs human and agent coding sessions in isolated workspaces and\nrecords signed, line-level provenance for every change.",
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		Version:       version.String(),
 	}
-	root.SetVersionTemplate("sigil {{.Version}}\n")
-	root.PersistentFlags().StringVarP(&g.dir, "dir", "C", ".", "run as if sigil was started in this directory")
+	root.SetVersionTemplate("seralith {{.Version}}\n")
+	root.PersistentFlags().StringVarP(&g.dir, "dir", "C", ".", "run as if seralith was started in this directory")
 	root.PersistentFlags().BoolVar(&g.json, "json", false, "emit machine-readable JSON")
 
 	root.AddGroup(
@@ -103,7 +103,7 @@ func newVersionCmd(g *globals) *cobra.Command {
 			if g.json {
 				return writeJSON(g.stdout, map[string]string{"version": version.Version, "commit": version.Commit, "date": version.Date})
 			}
-			fmt.Fprintln(g.stdout, "sigil", version.String())
+			fmt.Fprintln(g.stdout, "seralith", version.String())
 			return nil
 		},
 	}

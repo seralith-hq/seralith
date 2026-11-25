@@ -1,5 +1,5 @@
 version: 2
-project_name: sigil
+project_name: seralith
 
 before:
   hooks:
@@ -7,9 +7,9 @@ before:
     - make web
 
 builds:
-  - id: sigil
-    main: ./cmd/sigil
-    binary: sigil
+  - id: seralith
+    main: ./cmd/seralith
+    binary: seralith
     env: [CGO_ENABLED=0]
     goos: [linux, darwin]
     goarch: [amd64, arm64]
@@ -19,9 +19,9 @@ builds:
       - -X github.com/ryan-tobin/new-startup/internal/version.Version={{ .Version }}
       - -X github.com/ryan-tobin/new-startup/internal/version.Commit={{ .ShortCommit }}
       - -X github.com/ryan-tobin/new-startup/internal/version.Date={{ .Date }}
-  - id: sigil-control
-    main: ./ee/cmd/sigil-control
-    binary: sigil-control
+  - id: seralith-control
+    main: ./ee/cmd/seralith-control
+    binary: seralith-control
     env: [CGO_ENABLED=0]
     goos: [linux]
     goarch: [amd64, arm64]
@@ -33,13 +33,13 @@ builds:
       - -X github.com/ryan-tobin/new-startup/internal/version.Date={{ .Date }}
 
 archives:
-  - id: sigil
-    ids: [sigil]
-    name_template: "sigil_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  - id: seralith
+    ids: [seralith]
+    name_template: "seralith_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files: [LICENSE, NOTICE, README.md]
-  - id: sigil-control
-    ids: [sigil-control]
-    name_template: "sigil-control_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+  - id: seralith-control
+    ids: [seralith-control]
+    name_template: "seralith-control_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     files: [ee/LICENSE, ee/README.md]
 
 checksum:

@@ -60,7 +60,7 @@ export function SessionTerminal({
         if (msg.type === "exit" && msg.session) {
           setInfo(msg.session);
           exitRef.current?.(msg.session);
-          term.write(`\r\n\x1b[38;5;202m◆ sigil\x1b[0m session exited ${msg.session.exitCode ?? ""}\r\n`);
+          term.write(`\r\n\x1b[38;5;202m◆ seralith\x1b[0m session exited ${msg.session.exitCode ?? ""}\r\n`);
         }
         return;
       }

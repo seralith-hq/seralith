@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
-const daemon = process.env.SIGIL_DAEMON ?? "http://127.0.0.1:7457";
+const daemon = process.env.SERALITH_DAEMON ?? "http://127.0.0.1:7457";
 
 export default defineConfig({
   plugins: [react()],

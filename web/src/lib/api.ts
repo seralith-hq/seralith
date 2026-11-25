@@ -1,4 +1,4 @@
-const TOKEN_KEY = "sigil.token";
+const TOKEN_KEY = "seralith.token";
 
 export function captureToken(hash: string, storage: Storage = sessionStorage): string | null {
   const match = /(?:^#|&)token=([A-Za-z0-9_-]+)/.exec(hash);

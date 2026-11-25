@@ -1,6 +1,6 @@
-// Package control implements Sigil Control, the organization control plane.
+// Package control implements Seralith Control, the organization control plane.
 //
-// Copyright 2026 Sigil Systems, Inc. Licensed under the Sigil Commercial License; see ee/LICENSE.
+// Copyright 2026 Seralith, Inc. Licensed under the Seralith Commercial License; see ee/LICENSE.
 package control
 
 import (
@@ -237,7 +237,7 @@ func (s *Store) IssueToken(ctx context.Context, userID, name string, ttl time.Du
 	if _, err := rand.Read(b[:]); err != nil {
 		return "", nil, err
 	}
-	secret := "sgl_" + hex.EncodeToString(b[:])
+	secret := "srl_" + hex.EncodeToString(b[:])
 	t := &Token{ID: newID("tok"), UserID: userID, Name: name, Prefix: secret[:12], CreatedAt: s.ts()}
 	var expires any
 	if ttl > 0 {

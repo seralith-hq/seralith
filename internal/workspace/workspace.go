@@ -24,7 +24,7 @@ import (
 	"github.com/ryan-tobin/new-startup/pkg/provenance"
 )
 
-const BranchPrefix = "sigil/"
+const BranchPrefix = "seralith/"
 
 var (
 	ErrNotFound    = errors.New("workspace: not found")
@@ -170,7 +170,7 @@ type CreateOptions struct {
 	Log   io.Writer
 }
 
-// Create adds a worktree on a new sigil/<name> branch, copies configured untracked
+// Create adds a worktree on a new seralith/<name> branch, copies configured untracked
 // files, and runs setup commands.
 func (m *Manager) Create(ctx context.Context, opts CreateOptions) (*Workspace, error) {
 	if !validName.MatchString(opts.Name) {
@@ -325,7 +325,7 @@ func (m *Manager) Observe(ctx context.Context, name string) (*Workspace, string,
 	return ws, tree, nil
 }
 
-// reconcileHead handles commits made outside Sigil. Pending segments can no longer be
+// reconcileHead handles commits made outside Seralith. Pending segments can no longer be
 // bound to a commit, so they are discarded and the event is recorded in the ledger.
 func (m *Manager) reconcileHead(ctx context.Context, ws *Workspace) (*Workspace, error) {
 	head, err := ws.Repo().Head(ctx)

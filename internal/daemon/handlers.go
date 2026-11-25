@@ -310,7 +310,7 @@ func (s *Server) handleListCommits(w http.ResponseWriter, r *http.Request) {
 		limit = 40
 	}
 	repo := s.cfg.Project.Repo
-	out, err := repo.Run(r.Context(), "log", "--branches=sigil/*", "--not", "--exclude=sigil/*", "--branches",
+	out, err := repo.Run(r.Context(), "log", "--branches=seralith/*", "--not", "--exclude=seralith/*", "--branches",
 		"-n", strconv.Itoa(limit), "--format=%H%x1f%s%x1f%ae%x1f%cI%x1f%D")
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err)

@@ -1,6 +1,6 @@
-// Command sigil-control runs Sigil Control, the organization control plane.
+// Command seralith-control runs Seralith Control, the organization control plane.
 //
-// Copyright 2026 Sigil Systems, Inc. Licensed under the Sigil Commercial License; see ee/LICENSE.
+// Copyright 2026 Seralith, Inc. Licensed under the Seralith Commercial License; see ee/LICENSE.
 package main
 
 import (
@@ -22,22 +22,22 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintln(os.Stderr, "sigil-control:", err)
+		fmt.Fprintln(os.Stderr, "seralith-control:", err)
 		os.Exit(1)
 	}
 }
 
 func run() error {
-	addr := flag.String("addr", envOr("SIGIL_CONTROL_ADDR", ":8080"), "listen address")
-	dbPath := flag.String("db", envOr("SIGIL_CONTROL_DB", "sigil-control.db"), "SQLite database path")
-	tlsCert := flag.String("tls-cert", os.Getenv("SIGIL_CONTROL_TLS_CERT"), "TLS certificate file")
-	tlsKey := flag.String("tls-key", os.Getenv("SIGIL_CONTROL_TLS_KEY"), "TLS private key file")
-	jsonLogs := flag.Bool("json-logs", os.Getenv("SIGIL_CONTROL_JSON_LOGS") == "1", "emit JSON logs")
+	addr := flag.String("addr", envOr("SERALITH_CONTROL_ADDR", ":8080"), "listen address")
+	dbPath := flag.String("db", envOr("SERALITH_CONTROL_DB", "seralith-control.db"), "SQLite database path")
+	tlsCert := flag.String("tls-cert", os.Getenv("SERALITH_CONTROL_TLS_CERT"), "TLS certificate file")
+	tlsKey := flag.String("tls-key", os.Getenv("SERALITH_CONTROL_TLS_KEY"), "TLS private key file")
+	jsonLogs := flag.Bool("json-logs", os.Getenv("SERALITH_CONTROL_JSON_LOGS") == "1", "emit JSON logs")
 	showVersion := flag.Bool("version", false, "print version and exit")
 	flag.Parse()
 
 	if *showVersion {
-		fmt.Println("sigil-control", version.String())
+		fmt.Println("seralith-control", version.String())
 		return nil
 	}
 	var handler slog.Handler = slog.NewTextHandler(os.Stderr, nil)
@@ -58,7 +58,7 @@ func run() error {
 	srv := &http.Server{
 		Addr: *addr,
 		Handler: control.NewServer(control.ServerConfig{
-			Store: store, BootstrapToken: os.Getenv("SIGIL_CONTROL_BOOTSTRAP_TOKEN"), Logger: logger, Version: version.Version,
+			Store: store, BootstrapToken: os.Getenv("SERALITH_CONTROL_BOOTSTRAP_TOKEN"), Logger: logger, Version: version.Version,
 		}).Handler(),
 		ReadHeaderTimeout: 10 * time.Second,
 		ReadTimeout:       60 * time.Second,
@@ -68,7 +68,7 @@ func run() error {
 	}
 	errc := make(chan error, 1)
 	go func() {
-		logger.Info("sigil-control listening", "addr", *addr, "version", version.Version, "tls", *tlsCert != "")
+		logger.Info("seralith-control listening", "addr", *addr, "version", version.Version, "tls", *tlsCert != "")
 		if *tlsCert != "" {
 			errc <- srv.ListenAndServeTLS(*tlsCert, *tlsKey)
 		} else {

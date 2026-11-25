@@ -31,10 +31,10 @@ type fixture struct {
 
 func newFixture(t *testing.T) *fixture {
 	t.Helper()
-	t.Setenv("SIGIL_DATA_DIR", t.TempDir())
+	t.Setenv("SERALITH_DATA_DIR", t.TempDir())
 	g := testutil.NewGitRepo(t)
-	g.Write(".sigil/config.yaml", "version: 1\nname: demo\n")
-	g.Write(".sigil/policy.yaml", policy.Default)
+	g.Write(".seralith/config.yaml", "version: 1\nname: demo\n")
+	g.Write(".seralith/policy.yaml", policy.Default)
 	g.Write("README.md", "# demo\n")
 	g.Commit("init")
 	ctx := context.Background()

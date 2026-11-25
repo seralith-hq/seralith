@@ -247,9 +247,9 @@ func (m *Manager) Start(ctx context.Context, spec Spec) (*Session, error) {
 	cmd := exec.Command(spec.Command[0], spec.Command[1:]...)
 	cmd.Dir = ws.Path
 	cmd.Env = append(append(os.Environ(),
-		"SIGIL_SESSION="+id,
-		"SIGIL_WORKSPACE="+ws.Name,
-		"SIGIL_ACTOR="+spec.Actor.String(),
+		"SERALITH_SESSION="+id,
+		"SERALITH_WORKSPACE="+ws.Name,
+		"SERALITH_ACTOR="+spec.Actor.String(),
 	), spec.Env...)
 
 	s := &Session{

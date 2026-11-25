@@ -1,6 +1,6 @@
-# Contributing to Sigil
+# Contributing to Seralith
 
-Thank you for helping build Sigil. This document describes how we work so that
+Thank you for helping build Seralith. This document describes how we work so that
 your contribution can be reviewed and merged quickly.
 
 ## Ground rules
@@ -23,10 +23,10 @@ Requirements:
 | git | 2.40+ |
 
 ```sh
-git clone https://github.com/ryan-tobin/new-startup.git sigil
-cd sigil
+git clone https://github.com/ryan-tobin/new-startup.git seralith
+cd seralith
 make bootstrap   # installs web dependencies
-make build       # builds the web workbench and the sigil binaries into ./bin
+make build       # builds the web workbench and the seralith binaries into ./bin
 make test        # runs Go and web test suites
 ```
 
@@ -34,7 +34,7 @@ Useful targets:
 
 | Target | Description |
 | --- | --- |
-| `make build` | Build `bin/sigil` and `bin/sigil-control` |
+| `make build` | Build `bin/seralith` and `bin/seralith-control` |
 | `make test` | Run all tests with the race detector |
 | `make lint` | Run `golangci-lint`, `go vet`, and the web linters |
 | `make fmt` | Format Go and TypeScript sources |
@@ -59,7 +59,7 @@ Useful targets:
   `chore`, `revert`. Scopes match top-level packages: `cli`, `core`, `ledger`,
   `policy`, `workspace`, `session`, `daemon`, `web`, `control`, `site`, `docs`.
 - Keep commits focused. Each commit should build and pass tests.
-- Sign your commits (`git commit -S`). Sigil is a provenance company; we hold
+- Sign your commits (`git commit -S`). Seralith is a provenance company; we hold
   ourselves to the same standard.
 
 ## Pull requests
@@ -93,4 +93,4 @@ Useful targets:
 
 By contributing you agree that your contributions to directories outside `ee/`
 are licensed under the [Apache License 2.0](LICENSE). Contributions to `ee/`
-require a signed contributor agreement; contact legal@sigil.systems.
+require a signed contributor agreement; contact hello@seralith.com.

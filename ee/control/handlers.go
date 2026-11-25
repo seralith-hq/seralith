@@ -64,7 +64,7 @@ func (s *Server) handleRevokeKey(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-// handleTrustYAML exports the registry in the .sigil/trust.yaml format so CI gates
+// handleTrustYAML exports the registry in the .seralith/trust.yaml format so CI gates
 // verify against the organization's current keys.
 func (s *Server) handleTrustYAML(w http.ResponseWriter, r *http.Request) {
 	ts, err := s.cfg.Store.TrustStore(r.Context(), userFrom(r).OrgID)
@@ -105,7 +105,7 @@ func (s *Server) handlePolicyYAML(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/yaml")
-	w.Header().Set("X-Sigil-Policy-Version", strconv.Itoa(pv.Version))
+	w.Header().Set("X-Seralith-Policy-Version", strconv.Itoa(pv.Version))
 	_, _ = w.Write([]byte(pv.Document))
 }
 

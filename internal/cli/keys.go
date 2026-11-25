@@ -33,7 +33,7 @@ func newWhoamiCmd(g *globals) *cobra.Command {
 			fmt.Fprintf(g.stdout, "principal  %s\nkey        %s\nkey file   %s\n", e.Principal, e.Key.KeyID(), project.UserKeyPath())
 			switch {
 			case !trusted:
-				fmt.Fprintf(g.stdout, "trust      %s (ask a maintainer to run: sigil key trust <your public key> --principal %s)\n", s.red("not trusted"), e.Principal)
+				fmt.Fprintf(g.stdout, "trust      %s (ask a maintainer to run: seralith key trust <your public key> --principal %s)\n", s.red("not trusted"), e.Principal)
 			case tk.Revoked:
 				fmt.Fprintf(g.stdout, "trust      %s\n", s.red("revoked"))
 			default:

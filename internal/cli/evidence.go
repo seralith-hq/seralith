@@ -41,7 +41,7 @@ DoWI 8430.01, NIST SP 800-218, and the EU CRA, and a signed manifest.`,
 			policyBytes, _ := os.ReadFile(e.Project.ConfigPath(project.PolicyFile))
 			trustBytes, _ := os.ReadFile(e.Project.ConfigPath(project.TrustFile))
 			if out == "" {
-				out = fmt.Sprintf("sigil-evidence-%s.zip", time.Now().UTC().Format("20060102T150405Z"))
+				out = fmt.Sprintf("seralith-evidence-%s.zip", time.Now().UTC().Format("20060102T150405Z"))
 			}
 			f, err := os.Create(out)
 			if err != nil {
@@ -82,7 +82,7 @@ DoWI 8430.01, NIST SP 800-218, and the EU CRA, and a signed manifest.`,
 			} else if e, lerr := loadEnv(cmd.Context(), g); lerr == nil {
 				trust = e.Trust
 			} else {
-				err = fmt.Errorf("pass --trust when not inside a Sigil project")
+				err = fmt.Errorf("pass --trust when not inside a Seralith project")
 			}
 			if err != nil {
 				return err

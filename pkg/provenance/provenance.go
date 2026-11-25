@@ -1,4 +1,4 @@
-// Package provenance defines the in-toto statements and predicates Sigil produces.
+// Package provenance defines the in-toto statements and predicates Seralith produces.
 package provenance
 
 import (
@@ -14,9 +14,9 @@ import (
 
 const (
 	StatementType     = "https://in-toto.io/Statement/v1"
-	PredicateChange   = "https://sigil.systems/attestation/change/v1"
-	PredicateApproval = "https://sigil.systems/attestation/approval/v1"
-	BuilderID         = "https://sigil.systems/builder/workbench"
+	PredicateChange   = "https://seralith.com/attestation/change/v1"
+	PredicateApproval = "https://seralith.com/attestation/approval/v1"
+	BuilderID         = "https://seralith.com/builder/workbench"
 )
 
 type DigestSet map[string]string

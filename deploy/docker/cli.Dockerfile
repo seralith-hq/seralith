@@ -16,11 +16,11 @@ COPY --from=web /src/web/dist/ ./internal/webui/dist/
 ARG VERSION=dev
 RUN CGO_ENABLED=0 go build -trimpath \
     -ldflags "-s -w -X github.com/ryan-tobin/new-startup/internal/version.Version=${VERSION}" \
-    -o /out/sigil ./cmd/sigil
+    -o /out/seralith ./cmd/seralith
 
 FROM alpine:3.24
-RUN apk add --no-cache git ca-certificates && adduser -D -u 10001 sigil
-COPY --from=build /out/sigil /usr/local/bin/sigil
-USER sigil
+RUN apk add --no-cache git ca-certificates && adduser -D -u 10001 seralith
+COPY --from=build /out/seralith /usr/local/bin/seralith
+USER seralith
 WORKDIR /workspace
-ENTRYPOINT ["sigil"]
+ENTRYPOINT ["seralith"]
