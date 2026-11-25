@@ -25,7 +25,7 @@ export function PolicyPage() {
         <div>
           <h1 className="page-title">Policy</h1>
           <p className="page-subtitle">
-            Rules from <code>.sigil/policy.yaml</code>. The gate re-evaluates them independently on every
+            Rules from <code>.seralith/policy.yaml</code>. The gate re-evaluates them independently on every
             commit.
           </p>
         </div>
@@ -37,7 +37,7 @@ export function PolicyPage() {
       {policy.data?.rules.length === 0 && (
         <div className="card">
           <Empty title="No rules">
-            Every change is allowed. Run `sigil policy default` for a starting point.
+            Every change is allowed. Run `seralith policy default` for a starting point.
           </Empty>
         </div>
       )}

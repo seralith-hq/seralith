@@ -23,12 +23,12 @@ func newRunCmd(g *globals) *cobra.Command {
 
 The workspace is snapshotted before and after the session, and the difference
 is recorded as a segment attributed to the session's actor. Without a command,
-the agent profile's default command is used. Without --agent, Sigil infers the
+the agent profile's default command is used. Without --agent, Seralith infers the
 profile from the command, and an unrecognized command is attributed to you.`,
-		Example: `  sigil run --ws auth --agent codex
-  sigil run --ws auth --agent gemini --model pro -- gemini
-  sigil run --ws auth -- $SHELL
-  sigil run --ws auth --agent aider -- aider --model local/qwen`,
+		Example: `  seralith run --ws auth --agent codex
+  seralith run --ws auth --agent gemini --model pro -- gemini
+  seralith run --ws auth -- $SHELL
+  seralith run --ws auth --agent aider -- aider --model local/qwen`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ctx := cmd.Context()
 			e, err := loadEnv(ctx, g)
@@ -54,7 +54,7 @@ profile from the command, and an unrecognized command is attributed to you.`,
 			interactive = interactive && term.IsTerminal(int(stdinFile.Fd())) && !noPTY
 
 			s := styleFor(g.stderr)
-			fmt.Fprintf(g.stderr, "%s %s in %s as %s\n", s.accent("◆ sigil"), joinCommand(command), s.bold(ws.Name), actor.String())
+			fmt.Fprintf(g.stderr, "%s %s in %s as %s\n", s.accent("◆ seralith"), joinCommand(command), s.bold(ws.Name), actor.String())
 
 			spec := session.Spec{Workspace: ws.Name, Actor: actor, Command: command, PTY: interactive}
 			if !interactive {
@@ -82,7 +82,7 @@ profile from the command, and an unrecognized command is attributed to you.`,
 				return fmt.Errorf("session %s: %s", info.ID, info.Error)
 			}
 			fmt.Fprintf(g.stderr, "%s session %s exited %d · %s changed (+%d −%d)\n",
-				s.accent("◆ sigil"), short(info.ID), *info.ExitCode, plural(info.FilesChanged, "file"), info.LinesAdded, info.LinesDeleted)
+				s.accent("◆ seralith"), short(info.ID), *info.ExitCode, plural(info.FilesChanged, "file"), info.LinesAdded, info.LinesDeleted)
 			if *info.ExitCode != 0 {
 				return &ExitError{Code: *info.ExitCode}
 			}
@@ -90,7 +90,7 @@ profile from the command, and an unrecognized command is attributed to you.`,
 		},
 	}
 	cmd.Flags().StringVar(&wsName, "ws", "", "workspace name (defaults to the workspace containing the current directory)")
-	cmd.Flags().StringVar(&agentID, "agent", "", "agent profile id; see `sigil agents`")
+	cmd.Flags().StringVar(&agentID, "agent", "", "agent profile id; see `seralith agents`")
 	cmd.Flags().StringVar(&model, "model", "", "declare the model in use, for the record")
 	cmd.Flags().BoolVar(&noPTY, "no-pty", false, "use pipes instead of a pseudo-terminal")
 	return cmd
@@ -100,7 +100,7 @@ func pickProfile(reg *agent.Registry, id string, args []string) (agent.Profile, 
 	if id != "" {
 		p, ok := reg.Get(id)
 		if !ok {
-			return agent.Profile{}, nil, fmt.Errorf("unknown agent %q; see `sigil agents`", id)
+			return agent.Profile{}, nil, fmt.Errorf("unknown agent %q; see `seralith agents`", id)
 		}
 		if len(args) == 0 {
 			args = p.Command

@@ -1,8 +1,8 @@
-# Sigil Control
+# Seralith Control
 
-Sigil Control is the organization control plane for Sigil. It is available
+Seralith Control is the organization control plane for Seralith. It is available
 with Team, Enterprise, and Sovereign subscriptions and is licensed under the
-[Sigil Commercial License](LICENSE).
+[Seralith Commercial License](LICENSE).
 
 | Capability | Description |
 | --- | --- |
@@ -16,12 +16,12 @@ with Team, Enterprise, and Sovereign subscriptions and is licensed under the
 ## Running
 
 ```sh
-export SIGIL_CONTROL_BOOTSTRAP_TOKEN=$(openssl rand -hex 24)
-sigil-control --addr :8080 --db /var/lib/sigil/control.db \
-  --tls-cert /etc/sigil/tls.crt --tls-key /etc/sigil/tls.key --json-logs
+export SERALITH_CONTROL_BOOTSTRAP_TOKEN=$(openssl rand -hex 24)
+seralith-control --addr :8080 --db /var/lib/seralith/control.db \
+  --tls-cert /etc/seralith/tls.crt --tls-key /etc/seralith/tls.key --json-logs
 
 curl -sS https://control.example.com/v1/bootstrap \
-  -H "X-Bootstrap-Token: $SIGIL_CONTROL_BOOTSTRAP_TOKEN" \
+  -H "X-Bootstrap-Token: $SERALITH_CONTROL_BOOTSTRAP_TOKEN" \
   -d '{"org":"Acme Defense","slug":"acme","email":"owner@acme.dev"}'
 ```
 

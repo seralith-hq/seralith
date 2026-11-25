@@ -1,6 +1,6 @@
 # Security Policy
 
-Sigil is security infrastructure. We treat every report with urgency.
+Seralith is security infrastructure. We treat every report with urgency.
 
 ## Supported versions
 
@@ -11,12 +11,12 @@ Sigil is security infrastructure. We treat every report with urgency.
 
 ## Reporting a vulnerability
 
-Do **not** open a public issue. Instead, email **security@sigil.systems** or use
+Do **not** open a public issue. Instead, email **security@seralith.com** or use
 GitHub's private vulnerability reporting on this repository.
 
 Please include:
 
-- Affected component (`sigil` CLI, daemon, workbench, control plane) and version
+- Affected component (`seralith` CLI, daemon, workbench, control plane) and version
 - Reproduction steps or proof of concept
 - Impact assessment, especially any way to forge, strip, or replay attestations
   or to bypass a policy gate
@@ -41,5 +41,5 @@ bypasses, privilege escalation in the daemon, authentication in the control
 plane, and supply-chain integrity of our release artifacts.
 
 Out of scope: denial of service through resource exhaustion on a machine the
-attacker already controls, and issues in third-party coding agents that Sigil
+attacker already controls, and issues in third-party coding agents that Seralith
 launches but does not ship.

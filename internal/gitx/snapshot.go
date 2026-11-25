@@ -12,7 +12,7 @@ import (
 // are not ignored, as a tree object without touching the real index. The real index is
 // copied first so git can reuse its stat cache instead of rehashing every file.
 func (r *Repo) Snapshot(ctx context.Context) (string, error) {
-	tmp, err := os.MkdirTemp("", "sigil-index-")
+	tmp, err := os.MkdirTemp("", "seralith-index-")
 	if err != nil {
 		return "", err
 	}

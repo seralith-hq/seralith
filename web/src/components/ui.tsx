@@ -1,19 +1,20 @@
 import type { ReactNode } from "react";
 import type { Actor, ActorKind, Decision, DecisionStatus } from "../lib/types";
 import { actorLabel, percentages } from "../lib/format";
-import { mark, wordmark } from "./brand";
+import { bolt, stone, wordmark } from "./brand";
 
 export function Logo({ size = 28 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox={mark.viewBox} role="img" aria-label="Sigil">
-      <path d={mark.path} fill="var(--signal)" fillRule="evenodd" />
+    <svg width={size} height={size} viewBox={stone.viewBox} role="img" aria-label="Seralith">
+      <path d={stone.path} fill="currentColor" fillRule="evenodd" />
+      <path d={bolt.path} fill="var(--signal)" />
     </svg>
   );
 }
 
 export function Wordmark({ height = 14 }: { height?: number }) {
   return (
-    <svg height={height} viewBox={wordmark.viewBox} role="img" aria-label="Sigil" style={{ display: "block" }}>
+    <svg height={height} viewBox={wordmark.viewBox} role="img" aria-label="Seralith" style={{ display: "block" }}>
       <path d={wordmark.path} fill="currentColor" fillRule="evenodd" />
     </svg>
   );

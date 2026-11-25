@@ -90,7 +90,7 @@ func TestBootstrapIsGuardedAndOneShot(t *testing.T) {
 	if code := a.call("POST", "/v1/bootstrap", "", map[string]string{"org": "y", "slug": "yy", "email": "a@b.c"}, nil, "X-Bootstrap-Token", bootstrap); code != http.StatusConflict {
 		t.Fatalf("second bootstrap: %d", code)
 	}
-	if code := a.call("GET", "/v1/me", "sgl_bogus", nil, nil); code != http.StatusUnauthorized {
+	if code := a.call("GET", "/v1/me", "srl_bogus", nil, nil); code != http.StatusUnauthorized {
 		t.Fatalf("bogus token: %d", code)
 	}
 }
@@ -134,7 +134,7 @@ func TestRoleEnforcementAndAudit(t *testing.T) {
 	}
 	var metrics string
 	a.call("GET", "/metrics", "", nil, &metrics)
-	if !strings.Contains(metrics, "sigil_control_requests_total") {
+	if !strings.Contains(metrics, "seralith_control_requests_total") {
 		t.Fatalf("metrics = %s", metrics)
 	}
 }
@@ -227,10 +227,10 @@ func TestCLICloudRoundTrip(t *testing.T) {
 	a.call("PUT", "/v1/projects/demo/policy", owner, map[string]string{"document": policy.Default}, nil)
 
 	home := t.TempDir()
-	t.Setenv("SIGIL_DATA_DIR", filepath.Join(home, "data"))
-	t.Setenv("SIGIL_CONFIG_DIR", filepath.Join(home, "config"))
-	t.Setenv("SIGIL_KEY", filepath.Join(home, "dev.pem"))
-	t.Setenv("SIGIL_PRINCIPAL", "dev@acme.dev")
+	t.Setenv("SERALITH_DATA_DIR", filepath.Join(home, "data"))
+	t.Setenv("SERALITH_CONFIG_DIR", filepath.Join(home, "config"))
+	t.Setenv("SERALITH_KEY", filepath.Join(home, "dev.pem"))
+	t.Setenv("SERALITH_PRINCIPAL", "dev@acme.dev")
 	g := testutil.NewGitRepo(t)
 	g.Write("a.txt", "a\n")
 	g.Commit("init")
@@ -239,14 +239,14 @@ func TestCLICloudRoundTrip(t *testing.T) {
 		t.Helper()
 		var out, errb bytes.Buffer
 		if code := cli.Main(append([]string{"-C", g.Dir}, args...), strings.NewReader(""), &out, &errb); code != 0 {
-			t.Fatalf("sigil %v: %d\n%s%s", args, code, out.String(), errb.String())
+			t.Fatalf("seralith %v: %d\n%s%s", args, code, out.String(), errb.String())
 		}
 		return out.String()
 	}
 	run("init")
 	pub := run("key", "export")
 	a.call("POST", "/v1/keys", owner, map[string]any{"principal": "dev@acme.dev", "kind": "human", "roles": []string{"maintainer"}, "publicKey": pub}, nil)
-	g.Commit("chore: enable sigil")
+	g.Commit("chore: enable seralith")
 	run("ws", "new", "w")
 	run("run", "--ws", "w", "--agent", "codex", "--", "sh", "-c", "echo hi > b.txt")
 	run("commit", "--ws", "w", "-m", "feat: b")

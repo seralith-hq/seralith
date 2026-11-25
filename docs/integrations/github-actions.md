@@ -3,8 +3,8 @@
 Protect a branch by gating every pull request.
 
 ```yaml
-# .github/workflows/sigil.yml
-name: Sigil
+# .github/workflows/seralith.yml
+name: Seralith
 on:
   pull_request:
 
@@ -23,13 +23,13 @@ jobs:
           version: latest
 ```
 
-Then mark the **Sigil** check as required in your branch protection rules.
+Then mark the **Seralith** check as required in your branch protection rules.
 
 The action:
 
-1. Installs `sigil` and verifies its checksum.
-2. Fetches the base branch and `refs/notes/sigil`.
-3. Runs `sigil gate --range origin/<base>..HEAD --config-from origin/<base>`.
+1. Installs `seralith` and verifies its checksum.
+2. Fetches the base branch and `refs/notes/seralith`.
+3. Runs `seralith gate --range origin/<base>..HEAD --config-from origin/<base>`.
 
 `--config-from` loads policy and trust from the **base branch**, so a pull
 request cannot loosen the rules it is judged by. Results appear as annotations
@@ -37,24 +37,24 @@ and in the job summary.
 
 ## Publishing attestations
 
-Developers publish attestations with `sigil sync push` before or after
+Developers publish attestations with `seralith sync push` before or after
 `git push`. To automate it, add a pre-push hook:
 
 ```sh
 # .git/hooks/pre-push
 #!/bin/sh
-exec sigil sync push --remote "$1"
+exec seralith sync push --remote "$1"
 ```
 
-## Uploading to Sigil Control
+## Uploading to Seralith Control
 
 ```yaml
-      - run: sigil cloud push --range origin/${{ github.base_ref }}..HEAD
+      - run: seralith cloud push --range origin/${{ github.base_ref }}..HEAD
         env:
-          SIGIL_CLOUD_URL: https://control.example.com
-          SIGIL_CLOUD_TOKEN: ${{ secrets.SIGIL_CLOUD_TOKEN }}
-          SIGIL_CLOUD_PROJECT: my-service
+          SERALITH_CLOUD_URL: https://control.example.com
+          SERALITH_CLOUD_TOKEN: ${{ secrets.SERALITH_CLOUD_TOKEN }}
+          SERALITH_CLOUD_PROJECT: my-service
 ```
 
-Create a `ci` member in Sigil Control to issue a token that can upload but not
+Create a `ci` member in Seralith Control to issue a token that can upload but not
 administer.

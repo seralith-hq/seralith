@@ -74,13 +74,13 @@ func buildEnv(ctx context.Context, p *project.Project) (*env, error) {
 }
 
 func principalFor(ctx context.Context, p *project.Project) (string, error) {
-	if v := os.Getenv("SIGIL_PRINCIPAL"); v != "" {
+	if v := os.Getenv("SERALITH_PRINCIPAL"); v != "" {
 		return v, nil
 	}
 	if v := p.Repo.Config(ctx, "user.email"); v != "" {
 		return v, nil
 	}
-	return "", fmt.Errorf("no identity: set git user.email or SIGIL_PRINCIPAL")
+	return "", fmt.Errorf("no identity: set git user.email or SERALITH_PRINCIPAL")
 }
 
 // useConfigFrom replaces the policy and trust store with the versions committed at rev,
@@ -112,7 +112,7 @@ func (e *env) useConfigFrom(ctx context.Context, rev string) error {
 // requireIdentity fails for commands that sign or own work when no identity is configured.
 func (e *env) requireIdentity() error {
 	if e.Principal == "" {
-		return errors.New("no identity: set git user.email or SIGIL_PRINCIPAL")
+		return errors.New("no identity: set git user.email or SERALITH_PRINCIPAL")
 	}
 	return nil
 }

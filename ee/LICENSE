@@ -1,7 +1,7 @@
-Sigil Commercial License
+Seralith Commercial License
 Version 1.0
 
-Copyright (c) 2026 Sigil Systems, Inc. All rights reserved.
+Copyright (c) 2026 Seralith, Inc. All rights reserved.
 
 This license applies to all files in the ee/ directory of this repository and
 any binaries built from them ("the Software"). Files outside ee/ are licensed
@@ -10,19 +10,19 @@ under the Apache License, Version 2.0.
 1. Evaluation and development. You may use, copy, and modify the Software for
    internal evaluation, development, and testing, without charge, for a period
    of up to 30 days per organization, or longer with written permission from
-   Sigil Systems, Inc.
+   Seralith, Inc.
 
 2. Production use. Use of the Software in production, including to store,
    verify, or report on attestations for software that is shipped, deployed,
    or delivered to a customer, requires a valid, paid subscription agreement
-   with Sigil Systems, Inc. covering the number of developers who produce
+   with Seralith, Inc. covering the number of developers who produce
    attestations processed by the Software.
 
 3. Restrictions. You may not (a) provide the Software, or any modified
    version of it, to third parties as a hosted or managed service; (b) remove
    or circumvent any license key, usage metering, or notice in the Software;
    or (c) sublicense, sell, or distribute the Software except as part of an
-   agreement with Sigil Systems, Inc.
+   agreement with Seralith, Inc.
 
 4. Contributions. Contributions to the Software are accepted only under a
    signed contributor license agreement.
@@ -38,11 +38,11 @@ under the Apache License, Version 2.0.
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT,
    EXCEPT AS EXPRESSLY PROVIDED IN A SUBSCRIPTION AGREEMENT.
 
-7. Limitation of liability. IN NO EVENT SHALL SIGIL SYSTEMS, INC. BE LIABLE
+7. Limitation of liability. IN NO EVENT SHALL SERALITH SYSTEMS, INC. BE LIABLE
    FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY ARISING FROM, OUT OF, OR IN
    CONNECTION WITH THE SOFTWARE, EXCEPT AS EXPRESSLY PROVIDED IN A
    SUBSCRIPTION AGREEMENT.
 
 8. Termination. This license terminates automatically if you breach it.
 
-For subscriptions, contact sales@sigil.systems.
+For subscriptions, contact sales@seralith.com.

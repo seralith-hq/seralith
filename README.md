@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="brand/png/sigil-banner.png" alt="Sigil" width="640">
+  <img src="brand/png/seralith-banner.png" alt="Seralith" width="640">
 </p>
 
 <h3 align="center">Build in parallel. Ship with proof.</h3>
@@ -16,7 +16,7 @@
 
 ---
 
-## Why Sigil
+## Why Seralith
 
 Developers now run several coding agents at once, each on its own branch, using
 whatever tool and model they prefer. That makes teams fast. It also leaves an
@@ -30,19 +30,19 @@ provenance, and pedigree. The EU Cyber Resilience Act's reporting obligations
 took effect the same month. Secure software attestations under NIST SP 800-218
 are already a condition of selling to the federal government.
 
-Sigil closes the gap at the only moment it can be closed: **when the code is
+Seralith closes the gap at the only moment it can be closed: **when the code is
 written.**
 
 ## What it does
 
-Sigil is a local-first workbench that runs your coding sessions, human or agent,
+Seralith is a local-first workbench that runs your coding sessions, human or agent,
 in isolated workspaces and records cryptographic evidence of every change.
 
 | Capability | What you get |
 | --- | --- |
 | **Parallel workspaces** | One command creates an isolated git worktree per task. Run five agents and your own editor at the same time without collisions. |
-| **Agent-agnostic sessions** | Launch any terminal tool: your editor, a shell, or any coding agent CLI. Sigil never sits between you and a model provider and never touches your tokens. |
-| **Observed attribution** | Sigil snapshots the tree before and after every session, so attribution is measured, not self-reported. Edits between sessions are attributed to the human who owns the workspace. |
+| **Agent-agnostic sessions** | Launch any terminal tool: your editor, a shell, or any coding agent CLI. Seralith never sits between you and a model provider and never touches your tokens. |
+| **Observed attribution** | Seralith snapshots the tree before and after every session, so attribution is measured, not self-reported. Edits between sessions are attributed to the human who owns the workspace. |
 | **Signed provenance** | Every commit gets an [in-toto](https://in-toto.io) attestation in a DSSE envelope, signed with Ed25519 and stored in git notes. |
 | **Policy gates** | Declarative rules such as "agent changes under `crypto/**` need one approval from `security`" or "agents may not edit CI workflows". Enforced locally and in CI. |
 | **Tamper-evident ledger** | An append-only, hash-chained audit log of sessions, commits, approvals, and policy decisions. |
@@ -58,34 +58,34 @@ curl -fsSL https://raw.githubusercontent.com/ryan-tobin/new-startup/main/scripts
 # Or build from source
 make bootstrap release-build
 
-# Initialize Sigil in a repository
+# Initialize Seralith in a repository
 cd your-repo
-sigil init
-git add .sigil && git commit -m "chore: enable sigil"
+seralith init
+git add .seralith && git commit -m "chore: enable seralith"
 
 # Create isolated workspaces and run agents in parallel
-sigil ws new auth-refactor
-sigil ws new docs-refresh
-sigil run --ws auth-refactor --agent codex
-sigil run --ws docs-refresh --agent gemini --model pro
+seralith ws new auth-refactor
+seralith ws new docs-refresh
+seralith run --ws auth-refactor --agent codex
+seralith run --ws docs-refresh --agent gemini --model pro
 
 # Or just use your own editor or shell; your edits are attributed to you
-sigil run --ws auth-refactor -- $SHELL
+seralith run --ws auth-refactor -- $SHELL
 
 # Review, then commit with a signed attestation
-sigil status --ws auth-refactor
-sigil commit --ws auth-refactor -m "refactor(auth): extract token service"
-sigil sync push
+seralith status --ws auth-refactor
+seralith commit --ws auth-refactor -m "refactor(auth): extract token service"
+seralith sync push
 
 # A security reviewer approves; CI gates the branch
-sigil approve sigil/auth-refactor --role security
-sigil gate --base origin/main --config-from origin/main
+seralith approve seralith/auth-refactor --role security
+seralith gate --base origin/main --config-from origin/main
 
 # Who wrote this file?
-sigil blame internal/auth/token.go
+seralith blame internal/auth/token.go
 
 # Open the workbench
-sigil serve --open
+seralith serve --open
 ```
 
 See [Getting started](docs/getting-started.md) for a full walkthrough.
@@ -104,18 +104,18 @@ See [Getting started](docs/getting-started.md) for a full walkthrough.
 ┌──────────────────────────────────────────────────────────────────────┐
 │ Developer machine                                                    │
 │                                                                      │
-│  sigil CLI ──┐                 ┌──────────── Workbench UI (React) ──┐ │
+│  seralith CLI ──┐                 ┌──────────── Workbench UI (React) ──┐ │
 │              ▼                 ▼                                     │ │
-│        ┌──────────────── sigil daemon (Go) ────────────────┐        │ │
+│        ┌──────────────── seralith daemon (Go) ────────────────┐        │ │
 │        │ workspaces │ sessions (PTY) │ snapshots │ policy  │◀───────┘ │
 │        │ attest (in-toto + DSSE) │ ledger (hash chain)     │          │
 │        └───────────────┬───────────────────────────────────┘          │
 │                        ▼                                              │
-│           git worktrees + refs/notes/sigil                            │
+│           git worktrees + refs/notes/seralith                            │
 └────────────────────────┬─────────────────────────────────────────────┘
                          │ push
                          ▼
-     CI: `sigil gate`  ─────────▶  Sigil Control (ee): orgs, trusted keys,
+     CI: `seralith gate`  ─────────▶  Seralith Control (ee): orgs, trusted keys,
                                     policy bundles, attestation archive,
                                     evidence packages
 ```
@@ -126,11 +126,11 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 
 | Path | Contents |
 | --- | --- |
-| `cmd/sigil` | The `sigil` CLI and daemon entry point |
+| `cmd/seralith` | The `seralith` CLI and daemon entry point |
 | `internal/` | Core packages: attestation, ledger, policy, workspaces, sessions, API |
 | `pkg/` | Public Go API for integrators |
 | `web/` | Workbench UI (React, TypeScript, Vite) |
-| `ee/` | Sigil Control, the commercial control plane |
+| `ee/` | Seralith Control, the commercial control plane |
 | `site/` | Marketing site |
 | `deploy/` | Container images, Compose, and Kubernetes manifests |
 | `scripts/` | Installer and maintenance scripts |
@@ -157,7 +157,7 @@ See [docs/architecture.md](docs/architecture.md) for the full design.
 - [Threat model](docs/security/threat-model.md)
 - [Compliance mapping](docs/compliance/mapping.md)
 - [GitHub Actions](docs/integrations/github-actions.md) · [GitLab CI](docs/integrations/gitlab-ci.md)
-- [Self-hosting Sigil Control](docs/operations/self-hosting.md)
+- [Self-hosting Seralith Control](docs/operations/self-hosting.md)
 
 ## Contributing
 
@@ -167,8 +167,8 @@ We welcome contributions. Read [CONTRIBUTING.md](CONTRIBUTING.md) and our
 
 ## License
 
-The Sigil workbench, CLI, and libraries are licensed under the
-[Apache License 2.0](LICENSE). Code in [`ee/`](ee/) is licensed under the Sigil
+The Seralith workbench, CLI, and libraries are licensed under the
+[Apache License 2.0](LICENSE). Code in [`ee/`](ee/) is licensed under the Seralith
 Commercial License.
 
-Copyright 2026 Sigil Systems, Inc.
+Copyright 2026 Seralith, Inc.

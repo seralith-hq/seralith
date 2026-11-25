@@ -18,7 +18,7 @@ func newWorkspaceCmd(g *globals) *cobra.Command {
 	var base string
 	newCmd := &cobra.Command{
 		Use:   "new <name>",
-		Short: "Create a workspace on a new sigil/<name> branch",
+		Short: "Create a workspace on a new seralith/<name> branch",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			e, err := loadEnv(cmd.Context(), g)
@@ -60,7 +60,7 @@ func newWorkspaceCmd(g *globals) *cobra.Command {
 				return writeJSON(g.stdout, list)
 			}
 			if len(list) == 0 {
-				fmt.Fprintln(g.stdout, "no workspaces; create one with: sigil ws new <name>")
+				fmt.Fprintln(g.stdout, "no workspaces; create one with: seralith ws new <name>")
 				return nil
 			}
 			s := styleFor(g.stdout)
@@ -79,7 +79,7 @@ func newWorkspaceCmd(g *globals) *cobra.Command {
 
 	pathCmd := &cobra.Command{
 		Use:   "path <name>",
-		Short: "Print a workspace's directory, for use with cd \"$(sigil ws path x)\"",
+		Short: "Print a workspace's directory, for use with cd \"$(seralith ws path x)\"",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			e, err := loadEnv(cmd.Context(), g)
@@ -114,7 +114,7 @@ func newWorkspaceCmd(g *globals) *cobra.Command {
 		},
 	}
 	rmCmd.Flags().BoolVar(&force, "force", false, "discard unattested segments and uncommitted changes")
-	rmCmd.Flags().BoolVar(&keepBranch, "keep-branch", false, "keep the sigil/<name> branch")
+	rmCmd.Flags().BoolVar(&keepBranch, "keep-branch", false, "keep the seralith/<name> branch")
 
 	cmd.AddCommand(newCmd, lsCmd, pathCmd, rmCmd)
 	return cmd

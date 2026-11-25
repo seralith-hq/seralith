@@ -1,5 +1,5 @@
 name: Bug report
-description: Report a defect in Sigil
+description: Report a defect in Seralith
 labels: ["type: bug", "status: triage"]
 body:
   - type: markdown
@@ -18,16 +18,16 @@ body:
     attributes:
       label: Steps to reproduce
       placeholder: |
-        1. sigil init
-        2. sigil ws new feature-x
+        1. seralith init
+        2. seralith ws new feature-x
         3. ...
     validations:
       required: true
   - type: input
     id: version
     attributes:
-      label: Sigil version
-      description: Output of `sigil version`
+      label: Seralith version
+      description: Output of `seralith version`
     validations:
       required: true
   - type: dropdown

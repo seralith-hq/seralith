@@ -1,24 +1,24 @@
 # Architecture
 
-Sigil has four parts: a CLI and daemon that run on developer machines, an
+Seralith has four parts: a CLI and daemon that run on developer machines, an
 attestation format that travels with git history, a gate that runs in CI, and
 an optional control plane for organizations.
 
 ```
  Developer machine                                         CI / merge queue
 ┌───────────────────────────────────────────────────┐    ┌──────────────────────┐
-│  sigil CLI          Workbench UI (React)          │    │ sigil gate           │
+│  seralith CLI          Workbench UI (React)          │    │ seralith gate           │
 │      │                     │  HTTP + WS (loopback) │    │  • verify signatures │
 │      ▼                     ▼                       │    │  • check tree chain  │
-│  ┌─────────────── sigil daemon ────────────────┐  │    │  • re-evaluate policy│
+│  ┌─────────────── seralith daemon ────────────────┐  │    │  • re-evaluate policy│
 │  │ workspace  session   snapshot   attest      │  │    │  • check approvals   │
 │  │ manager    runner    + diff     + policy    │  │    └──────────▲───────────┘
 │  └────┬──────────┬─────────┬──────────┬────────┘  │               │
 │       ▼          ▼         ▼          ▼           │   git push    │ git fetch
-│  git worktrees  PTY    tree objects  refs/notes/sigil ───────────►│
+│  git worktrees  PTY    tree objects  refs/notes/seralith ───────────►│
 │                 transcripts           ledger.jsonl│               │
 └───────────────────────────────────────────────────┘    ┌──────────┴───────────┐
-                                                         │ Sigil Control (ee)   │
+                                                         │ Seralith Control (ee)   │
                                                          │ registry · policy ·  │
                                                          │ archive · analytics  │
                                                          └──────────────────────┘
@@ -26,16 +26,16 @@ an optional control plane for organizations.
 
 ## Design principles
 
-1. **Observe, do not ask.** Attribution comes from snapshots Sigil takes around
+1. **Observe, do not ask.** Attribution comes from snapshots Seralith takes around
    each session, not from agents describing their own work. An agent cannot
    under-report what it changed.
 2. **Re-derive at the gate.** The CI gate trusts nothing in an attestation that
    it can recompute: tree hashes, the segment chain, and policy decisions are
    all checked independently.
-3. **No middleman.** Sigil launches coding tools as ordinary processes. It never
+3. **No middleman.** Seralith launches coding tools as ordinary processes. It never
    proxies model traffic, holds API keys, or meters tokens. Local and air-gapped
    models work exactly like hosted ones.
-4. **Git-native.** Attestations live in `refs/notes/sigil` beside the commits
+4. **Git-native.** Attestations live in `refs/notes/seralith` beside the commits
    they describe. No service is required to verify a repository.
 5. **Local-first.** Everything works offline on one machine. The control plane
    adds coordination; it is never in the critical path of writing code.
@@ -44,8 +44,8 @@ an optional control plane for organizations.
 
 ### Workspaces (`internal/workspace`)
 
-A workspace is a git worktree on a `sigil/<name>` branch, stored outside the
-repository (by default under `~/.local/share/sigil/worktrees`). Each workspace
+A workspace is a git worktree on a `seralith/<name>` branch, stored outside the
+repository (by default under `~/.local/share/seralith/worktrees`). Each workspace
 records:
 
 - `head`: the commit it is based on
@@ -69,8 +69,8 @@ A session runs one command in one workspace under a pseudo-terminal:
 
 1. Observe the workspace. Any change since the checkpoint becomes a **manual
    segment** attributed to the workspace owner.
-2. Start the process with `SIGIL_SESSION`, `SIGIL_WORKSPACE`, and
-   `SIGIL_ACTOR` in its environment. Stream output to the terminal, any
+2. Start the process with `SERALITH_SESSION`, `SERALITH_WORKSPACE`, and
+   `SERALITH_ACTOR` in its environment. Stream output to the terminal, any
    number of WebSocket subscribers, and a transcript file.
 3. When it exits, snapshot again. The difference becomes a **session
    segment** attributed to the session's actor, with the transcript's SHA-256.
@@ -84,7 +84,7 @@ Attribution replays the segments' zero-context diff hunks in order, tracking
 which segment owns each line as run-length intervals. Hunks are applied
 bottom-up so old-side coordinates remain valid, and content that predates
 tracking is an unbounded baseline run, so file contents never need to be read.
-`sigil blame` combines this per-commit attribution with `git blame` to
+`seralith blame` combines this per-commit attribution with `git blame` to
 attribute every surviving line in a file across its history.
 
 ### Policy (`internal/policy`)
@@ -95,11 +95,11 @@ and change-size thresholds, producing `allow`, `warn`, `require-approval`, or
 
 ### Attestations (`pkg/provenance`, `pkg/dsse`, `internal/notes`)
 
-`sigil commit` stages the whole workspace, commits, and verifies that the
+`seralith commit` stages the whole workspace, commits, and verifies that the
 committed tree equals the last observed tree. It then signs an in-toto
 Statement whose subject is the commit and whose `change/v1` predicate holds
 the segments, attribution, summary, and policy result. The DSSE envelope is
-appended to the commit's note in `refs/notes/sigil`. See the
+appended to the commit's note in `refs/notes/seralith`. See the
 [attestation specification](spec/attestation.md).
 
 ### Gate (`internal/verify`)
@@ -108,7 +108,7 @@ For every commit in a range, the gate checks:
 
 | Check | Failure means |
 | --- | --- |
-| A change attestation exists with this commit as subject | The commit was not produced through Sigil |
+| A change attestation exists with this commit as subject | The commit was not produced through Seralith |
 | Signature by a trusted key whose principal is the committer | Forged, re-signed, or untrusted |
 | Attested tree and parents equal the commit's | Attestation copied from another commit |
 | Segments chain from the parent tree to the commit tree | The commit contains unobserved changes |
@@ -127,12 +127,12 @@ rewrite of the whole chain without the signing key.
 
 ### Daemon and workbench (`internal/daemon`, `web/`)
 
-`sigil serve` exposes the same operations over a JSON API on the loopback
+`seralith serve` exposes the same operations over a JSON API on the loopback
 interface, with server-sent events for live updates and a WebSocket bridge for
 terminals. The React workbench is embedded in the binary and makes no external
 requests.
 
-### Sigil Control (`ee/`)
+### Seralith Control (`ee/`)
 
 The commercial control plane is a single binary with embedded SQLite. It holds
 the organization key registry and published policies, archives and re-verifies
@@ -143,8 +143,8 @@ trail. See [ee/README.md](../ee/README.md).
 
 | Data | Location | Shared |
 | --- | --- | --- |
-| Configuration, policy, trust store | `<repo>/.sigil/` | Committed |
-| Attestations | `refs/notes/sigil` | Pushed with `sigil sync push` |
-| Workspace database, ledger, transcripts | `<git-common-dir>/sigil/` | Local |
-| Worktrees | `~/.local/share/sigil/worktrees/` | Local |
-| Signing key | `~/.config/sigil/keys/default.pem` | Never |
+| Configuration, policy, trust store | `<repo>/.seralith/` | Committed |
+| Attestations | `refs/notes/seralith` | Pushed with `seralith sync push` |
+| Workspace database, ledger, transcripts | `<git-common-dir>/seralith/` | Local |
+| Worktrees | `~/.local/share/seralith/worktrees/` | Local |
+| Signing key | `~/.config/seralith/keys/default.pem` | Never |

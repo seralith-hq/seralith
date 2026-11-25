@@ -1,4 +1,4 @@
-// Package project locates a Sigil-enabled repository and its configuration and state.
+// Package project locates a Seralith-enabled repository and its configuration and state.
 package project
 
 import (
@@ -16,14 +16,14 @@ import (
 )
 
 const (
-	ConfigDirName = ".sigil"
+	ConfigDirName = ".seralith"
 	ConfigFile    = "config.yaml"
 	PolicyFile    = "policy.yaml"
 	TrustFile     = "trust.yaml"
-	NotesRef      = "refs/notes/sigil"
+	NotesRef      = "refs/notes/seralith"
 )
 
-var ErrNotInitialized = errors.New("project: sigil is not initialized here; run `sigil init`")
+var ErrNotInitialized = errors.New("project: seralith is not initialized here; run `seralith init`")
 
 type AgentProfile struct {
 	ID         string   `yaml:"id"`
@@ -53,7 +53,7 @@ type ControlConfig struct {
 	Project string `yaml:"project"`
 }
 
-// Project is a repository with Sigil configuration.
+// Project is a repository with Seralith configuration.
 type Project struct {
 	Root     string
 	Repo     *gitx.Repo
@@ -79,7 +79,7 @@ func Find(ctx context.Context, dir string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &Project{Root: main.Dir, Repo: main, StateDir: filepath.Join(common, "sigil")}
+	p := &Project{Root: main.Dir, Repo: main, StateDir: filepath.Join(common, "seralith")}
 	cfg, err := LoadConfig(p.ConfigPath(ConfigFile))
 	if err != nil {
 		return nil, err
@@ -88,7 +88,7 @@ func Find(ctx context.Context, dir string) (*Project, error) {
 	return p, nil
 }
 
-// Load is Find that additionally requires `sigil init` to have run.
+// Load is Find that additionally requires `seralith init` to have run.
 func Load(ctx context.Context, dir string) (*Project, error) {
 	p, err := Find(ctx, dir)
 	if err != nil {
@@ -152,33 +152,33 @@ func (p *Project) SaveConfig() error {
 	return os.WriteFile(p.ConfigPath(ConfigFile), data, 0o644)
 }
 
-// DataDir is the per-user data directory for Sigil.
+// DataDir is the per-user data directory for Seralith.
 func DataDir() string {
-	if v := os.Getenv("SIGIL_DATA_DIR"); v != "" {
+	if v := os.Getenv("SERALITH_DATA_DIR"); v != "" {
 		return v
 	}
 	if v := os.Getenv("XDG_DATA_HOME"); v != "" {
-		return filepath.Join(v, "sigil")
+		return filepath.Join(v, "seralith")
 	}
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".local", "share", "sigil")
+	return filepath.Join(home, ".local", "share", "seralith")
 }
 
-// ConfigHome is the per-user configuration directory for Sigil.
+// ConfigHome is the per-user configuration directory for Seralith.
 func ConfigHome() string {
-	if v := os.Getenv("SIGIL_CONFIG_DIR"); v != "" {
+	if v := os.Getenv("SERALITH_CONFIG_DIR"); v != "" {
 		return v
 	}
 	if v, err := os.UserConfigDir(); err == nil {
-		return filepath.Join(v, "sigil")
+		return filepath.Join(v, "seralith")
 	}
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "sigil")
+	return filepath.Join(home, ".config", "seralith")
 }
 
 // UserKeyPath is the default location of the developer's personal signing key.
 func UserKeyPath() string {
-	if v := os.Getenv("SIGIL_KEY"); v != "" {
+	if v := os.Getenv("SERALITH_KEY"); v != "" {
 		return v
 	}
 	return filepath.Join(ConfigHome(), "keys", "default.pem")

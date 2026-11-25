@@ -1,5 +1,5 @@
-// Package agent describes the terminal tools Sigil can launch and attribute work to.
-// Sigil only starts these programs; it never proxies their network traffic or credentials.
+// Package agent describes the terminal tools Seralith can launch and attribute work to.
+// Seralith only starts these programs; it never proxies their network traffic or credentials.
 package agent
 
 import (
@@ -27,7 +27,7 @@ type Profile struct {
 	Custom     bool                 `json:"custom,omitempty"`
 }
 
-// Builtins are the profiles Sigil recognizes without configuration.
+// Builtins are the profiles Seralith recognizes without configuration.
 var Builtins = []Profile{
 	{ID: "shell", Name: "Shell", Kind: provenance.ActorHuman, Command: []string{defaultShell()}},
 	{ID: "claude", Name: "Claude Code", Kind: provenance.ActorAgent, Command: []string{"claude"}, ModelFlags: []string{"--model"}, ModelEnv: []string{"ANTHROPIC_MODEL"}},

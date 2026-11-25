@@ -9,7 +9,7 @@ import (
 func newAgentsCmd(g *globals) *cobra.Command {
 	return &cobra.Command{
 		Use:   "agents",
-		Short: "List coding tools Sigil can launch and whether they are installed",
+		Short: "List coding tools Seralith can launch and whether they are installed",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			e, err := loadEnv(cmd.Context(), g)
@@ -30,7 +30,7 @@ func newAgentsCmd(g *globals) *cobra.Command {
 				rows = append(rows, []string{d.Profile.ID, d.Profile.Name, string(d.Profile.Kind), state, d.Path})
 			}
 			table(g.stdout, []string{"ID", "NAME", "KIND", "STATUS", "PATH"}, rows)
-			fmt.Fprintln(g.stdout, s.dim("\nSigil launches these tools as-is. It never proxies model traffic or handles your credentials."))
+			fmt.Fprintln(g.stdout, s.dim("\nSeralith launches these tools as-is. It never proxies model traffic or handles your credentials."))
 			return nil
 		},
 	}

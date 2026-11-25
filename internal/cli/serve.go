@@ -58,7 +58,7 @@ cross-site Origin are refused.`,
 			}
 			url := fmt.Sprintf("http://%s/#token=%s", ln.Addr().String(), token)
 			s := styleFor(g.stdout)
-			fmt.Fprintf(g.stdout, "%s workbench for %s\n  %s\n", s.accent("◆ sigil"), s.bold(e.Project.Config.Name), url)
+			fmt.Fprintf(g.stdout, "%s workbench for %s\n  %s\n", s.accent("◆ seralith"), s.bold(e.Project.Config.Name), url)
 			if dev {
 				fmt.Fprintf(g.stdout, "  dev UI: http://localhost:5173/#token=%s\n", token)
 			}

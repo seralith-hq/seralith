@@ -7,14 +7,14 @@ COPY . .
 ARG VERSION=dev
 RUN CGO_ENABLED=0 go build -trimpath \
     -ldflags "-s -w -X github.com/ryan-tobin/new-startup/internal/version.Version=${VERSION}" \
-    -o /out/sigil-control ./ee/cmd/sigil-control
+    -o /out/seralith-control ./ee/cmd/seralith-control
 
 FROM gcr.io/distroless/static-debian12:nonroot
-COPY --from=build /out/sigil-control /usr/local/bin/sigil-control
+COPY --from=build /out/seralith-control /usr/local/bin/seralith-control
 USER nonroot:nonroot
-VOLUME ["/var/lib/sigil"]
-ENV SIGIL_CONTROL_DB=/var/lib/sigil/control.db \
-    SIGIL_CONTROL_ADDR=:8080 \
-    SIGIL_CONTROL_JSON_LOGS=1
+VOLUME ["/var/lib/seralith"]
+ENV SERALITH_CONTROL_DB=/var/lib/seralith/control.db \
+    SERALITH_CONTROL_ADDR=:8080 \
+    SERALITH_CONTROL_JSON_LOGS=1
 EXPOSE 8080
-ENTRYPOINT ["/usr/local/bin/sigil-control"]
+ENTRYPOINT ["/usr/local/bin/seralith-control"]

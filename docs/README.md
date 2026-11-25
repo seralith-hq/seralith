@@ -1,14 +1,14 @@
-# Sigil Documentation
+# Seralith Documentation
 
 ## Product
 
 | Guide | Audience |
 | --- | --- |
-| [Getting started](getting-started.md) | Developers trying Sigil for the first time |
-| [Architecture](architecture.md) | Engineers evaluating or contributing to Sigil |
+| [Getting started](getting-started.md) | Developers trying Seralith for the first time |
+| [Architecture](architecture.md) | Engineers evaluating or contributing to Seralith |
 | [CLI reference](cli.md) | Everyone |
 | [GitHub Actions](integrations/github-actions.md) and [GitLab CI](integrations/gitlab-ci.md) | Platform teams |
-| [Self-hosting Sigil Control](operations/self-hosting.md) | Operators of Enterprise and Sovereign deployments |
+| [Self-hosting Seralith Control](operations/self-hosting.md) | Operators of Enterprise and Sovereign deployments |
 
 ## Specifications
 
@@ -22,7 +22,7 @@
 | Document | Contents |
 | --- | --- |
 | [Threat model](security/threat-model.md) | Assets, trust boundaries, threats, mitigations, and known limitations |
-| [Compliance mapping](compliance/mapping.md) | How Sigil evidence maps to DoWI 8430.01, NIST SP 800-218, NIST SP 800-171, and the EU CRA |
+| [Compliance mapping](compliance/mapping.md) | How Seralith evidence maps to DoWI 8430.01, NIST SP 800-218, NIST SP 800-171, and the EU CRA |
 
 ## Process
 

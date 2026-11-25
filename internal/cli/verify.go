@@ -60,9 +60,9 @@ func newGateCmd(g *globals) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "gate",
 		Short: "Verify every commit in a range; exits non-zero on failure (for CI)",
-		Example: `  sigil gate --base origin/main
-  sigil gate --range v1.2.0..v1.3.0 --format markdown
-  sigil gate --base origin/main --fetch --format github`,
+		Example: `  seralith gate --base origin/main
+  seralith gate --range v1.2.0..v1.3.0 --format markdown
+  seralith gate --base origin/main --fetch --format github`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			e, err := loadEnv(cmd.Context(), g)
@@ -99,10 +99,10 @@ func newGateCmd(g *globals) *cobra.Command {
 			case "github":
 				for _, c := range rep.Commits {
 					for _, p := range c.Problems {
-						fmt.Fprintf(g.stdout, "::error title=Sigil gate (%s)::%s\n", short(c.Commit), p)
+						fmt.Fprintf(g.stdout, "::error title=Seralith gate (%s)::%s\n", short(c.Commit), p)
 					}
 					for _, w := range c.Warnings {
-						fmt.Fprintf(g.stdout, "::warning title=Sigil gate (%s)::%s\n", short(c.Commit), w)
+						fmt.Fprintf(g.stdout, "::warning title=Seralith gate (%s)::%s\n", short(c.Commit), w)
 					}
 				}
 				if path := os.Getenv("GITHUB_STEP_SUMMARY"); path != "" {
@@ -133,7 +133,7 @@ func newGateCmd(g *globals) *cobra.Command {
 
 func printGate(w io.Writer, rep *verify.GateReport) {
 	s := styleFor(w)
-	fmt.Fprintf(w, "%s %s  %s\n\n", s.bold("sigil gate"), rep.Range, s.status(string(rep.Status)))
+	fmt.Fprintf(w, "%s %s  %s\n\n", s.bold("seralith gate"), rep.Range, s.status(string(rep.Status)))
 	if len(rep.Commits) == 0 {
 		fmt.Fprintln(w, "no commits in range")
 		return
@@ -187,7 +187,7 @@ func formatLineMap(m map[string]int) string {
 func gateMarkdown(rep *verify.GateReport) string {
 	var b strings.Builder
 	icon := map[verify.Status]string{verify.StatusPass: "✅", verify.StatusWarn: "⚠️", verify.StatusFail: "❌", verify.StatusSkipped: "⏭️"}
-	fmt.Fprintf(&b, "### %s Sigil gate: %s\n\n", icon[rep.Status], strings.ToUpper(string(rep.Status)))
+	fmt.Fprintf(&b, "### %s Seralith gate: %s\n\n", icon[rep.Status], strings.ToUpper(string(rep.Status)))
 	fmt.Fprintf(&b, "Range `%s` · human lines %d · agent lines %d\n\n", rep.Range, rep.Lines["human"], rep.Lines["agent"])
 	fmt.Fprintf(&b, "| | Commit | Subject | Details |\n| --- | --- | --- | --- |\n")
 	for _, c := range rep.Commits {

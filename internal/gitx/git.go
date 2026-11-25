@@ -1,4 +1,4 @@
-// Package gitx wraps the git command line for the operations Sigil relies on.
+// Package gitx wraps the git command line for the operations Seralith relies on.
 package gitx
 
 import (

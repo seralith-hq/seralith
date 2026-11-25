@@ -10,7 +10,7 @@ export function AgentsPage() {
         <div>
           <h1 className="page-title">Coding tools</h1>
           <p className="page-subtitle">
-            Sigil launches these as-is. It never proxies model traffic, never sees your tokens, and works with
+            Seralith launches these as-is. It never proxies model traffic, never sees your tokens, and works with
             local models.
           </p>
         </div>

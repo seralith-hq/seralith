@@ -24,9 +24,9 @@ var (
 
 func setup(t *testing.T) (*session.Manager, *workspace.Workspace) {
 	t.Helper()
-	t.Setenv("SIGIL_DATA_DIR", t.TempDir())
+	t.Setenv("SERALITH_DATA_DIR", t.TempDir())
 	g := testutil.NewGitRepo(t)
-	g.Write(".sigil/config.yaml", "version: 1\nname: demo\n")
+	g.Write(".seralith/config.yaml", "version: 1\nname: demo\n")
 	g.Write("app.txt", testutil.Lines("one", "two"))
 	g.Commit("init")
 	p, err := project.Load(ctx, g.Dir)

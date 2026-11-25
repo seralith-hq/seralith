@@ -170,10 +170,10 @@ func TestCommitHelpers(t *testing.T) {
 		t.Fatalf("ShowFile = %q err=%v", data, err)
 	}
 	tree, _ := repo.CommitTree(ctx, c2)
-	if err := repo.UpdateRef(ctx, "refs/sigil/test", tree); err != nil {
+	if err := repo.UpdateRef(ctx, "refs/seralith/test", tree); err != nil {
 		t.Fatal(err)
 	}
-	if err := repo.DeleteRef(ctx, "refs/sigil/test"); err != nil {
+	if err := repo.DeleteRef(ctx, "refs/seralith/test"); err != nil {
 		t.Fatal(err)
 	}
 	if repo.Config(ctx, "user.email") != "test@example.com" {

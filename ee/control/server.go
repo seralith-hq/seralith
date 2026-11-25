@@ -380,27 +380,27 @@ func (m *metrics) serve(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
 	m.mu.Lock()
 	defer m.mu.Unlock()
-	fmt.Fprintln(w, "# HELP sigil_control_requests_total HTTP requests by route and status.")
-	fmt.Fprintln(w, "# TYPE sigil_control_requests_total counter")
+	fmt.Fprintln(w, "# HELP seralith_control_requests_total HTTP requests by route and status.")
+	fmt.Fprintln(w, "# TYPE seralith_control_requests_total counter")
 	keys := make([]string, 0, len(m.requests))
 	for k := range m.requests {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 	for _, k := range keys {
-		fmt.Fprintf(w, "sigil_control_requests_total{%s} %d\n", k, m.requests[k].Load())
+		fmt.Fprintf(w, "seralith_control_requests_total{%s} %d\n", k, m.requests[k].Load())
 	}
-	fmt.Fprintln(w, "# HELP sigil_control_request_duration_microseconds_total Cumulative request time by route.")
-	fmt.Fprintln(w, "# TYPE sigil_control_request_duration_microseconds_total counter")
+	fmt.Fprintln(w, "# HELP seralith_control_request_duration_microseconds_total Cumulative request time by route.")
+	fmt.Fprintln(w, "# TYPE seralith_control_request_duration_microseconds_total counter")
 	routes := make([]string, 0, len(m.durations))
 	for k := range m.durations {
 		routes = append(routes, k)
 	}
 	sort.Strings(routes)
 	for _, k := range routes {
-		fmt.Fprintf(w, "sigil_control_request_duration_microseconds_total{route=%q} %d\n", k, m.durations[k].Load())
+		fmt.Fprintf(w, "seralith_control_request_duration_microseconds_total{route=%q} %d\n", k, m.durations[k].Load())
 	}
-	fmt.Fprintln(w, "# HELP sigil_control_attestations_ingested_total Attestations newly stored.")
-	fmt.Fprintln(w, "# TYPE sigil_control_attestations_ingested_total counter")
-	fmt.Fprintf(w, "sigil_control_attestations_ingested_total %d\n", m.ingested.Load())
+	fmt.Fprintln(w, "# HELP seralith_control_attestations_ingested_total Attestations newly stored.")
+	fmt.Fprintln(w, "# TYPE seralith_control_attestations_ingested_total counter")
+	fmt.Fprintf(w, "seralith_control_attestations_ingested_total %d\n", m.ingested.Load())
 }

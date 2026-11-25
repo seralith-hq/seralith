@@ -1,4 +1,4 @@
-"""Shared geometry helpers for generating Sigil brand assets."""
+"""Shared geometry helpers for generating Seralith brand assets."""
 
 from fontTools.pens.basePen import BasePen
 from fontTools.ttLib import TTFont

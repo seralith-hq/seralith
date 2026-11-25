@@ -24,7 +24,7 @@ import (
 	"github.com/ryan-tobin/new-startup/pkg/provenance"
 )
 
-const ManifestPayloadType = "application/vnd.sigil.evidence-manifest+json"
+const ManifestPayloadType = "application/vnd.seralith.evidence-manifest+json"
 
 type Input struct {
 	Repo       *gitx.Repo
@@ -123,11 +123,11 @@ func Build(ctx context.Context, in Input, w io.Writer) (*Manifest, error) {
 	files["report.md"] = []byte(renderReport(in, sortedUsage(usage)))
 
 	man := &Manifest{
-		Type:      "https://sigil.systems/evidence/v1",
+		Type:      "https://seralith.com/evidence/v1",
 		Project:   in.Project,
 		Range:     in.Range,
 		Generated: in.Now,
-		Generator: "sigil " + version.Version,
+		Generator: "seralith " + version.Version,
 		Status:    in.Gate.Status,
 	}
 	names := make([]string, 0, len(files))
@@ -225,7 +225,7 @@ func renderReport(in Input, usage []*ToolUsage) string {
 	g := in.Gate
 	fmt.Fprintf(&b, "# Software Provenance Evidence\n\n")
 	fmt.Fprintf(&b, "| Field | Value |\n| --- | --- |\n")
-	fmt.Fprintf(&b, "| Project | %s |\n| Range | `%s` |\n| Generated | %s |\n| Generator | sigil %s |\n| Gate status | **%s** |\n\n",
+	fmt.Fprintf(&b, "| Project | %s |\n| Range | `%s` |\n| Generated | %s |\n| Generator | seralith %s |\n| Gate status | **%s** |\n\n",
 		in.Project, in.Range, in.Now.Format(time.RFC3339), version.Version, strings.ToUpper(string(g.Status)))
 
 	fmt.Fprintf(&b, "## Attribution\n\n| Actor kind | Surviving lines |\n| --- | --- |\n")
@@ -258,7 +258,7 @@ func renderReport(in Input, usage []*ToolUsage) string {
 	for _, c := range Controls {
 		fmt.Fprintf(&b, "| %s | %s | %s | %s |\n", c.Framework, c.ID, c.Evidence, strings.Join(c.Artifacts, ", "))
 	}
-	fmt.Fprintf(&b, "\n## Verifying this package\n\n```sh\nsigil evidence verify <package.zip> --trust trust.yaml\n```\n")
+	fmt.Fprintf(&b, "\n## Verifying this package\n\n```sh\nseralith evidence verify <package.zip> --trust trust.yaml\n```\n")
 	return b.String()
 }
 

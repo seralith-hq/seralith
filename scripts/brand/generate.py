@@ -1,8 +1,9 @@
-"""Generates every Sigil logo asset from the symbol construction and wordmark font.
+"""Generates every Seralith logo asset from the symbol construction and wordmark font.
 
 Usage:
     python -m venv .venv && .venv/bin/pip install -r scripts/brand/requirements.txt
-    .venv/bin/python scripts/brand/generate.py --font path/to/michroma-latin-400-normal.woff
+    npm pack @fontsource/cinzel && tar -xzf fontsource-cinzel-*.tgz
+    .venv/bin/python scripts/brand/generate.py --font package/files/cinzel-latin-700-normal.woff
 """
 
 import argparse
@@ -10,7 +11,8 @@ import pathlib
 
 from PIL import Image, ImageChops, ImageDraw
 from shapely.affinity import scale, translate
-from shapely.geometry import MultiPolygon, box
+from shapely.geometry import MultiPolygon
+from shapely.ops import unary_union
 
 from geometry import text_geometry, to_path
 from mark import symbol
@@ -19,41 +21,54 @@ GRAPHITE = "#0E1116"
 BONE = "#E9E6DF"
 SIGNAL = "#FF5A1F"
 
-WORDMARK_WEIGHT = 80
-WORDMARK_TRACKING = 360
-CAP_RATIO = 0.48
-GAP_RATIO = 0.26
+WORDMARK_TRACKING = 140
+CAP_RATIO = 0.46
+GAP_RATIO = 0.34
 
 
 def polys(geom):
     return list(geom.geoms) if isinstance(geom, MultiPolygon) else [geom]
 
 
+def normalize(geoms, height):
+    """Scales a group of geometries together so their union is `height` tall at the origin."""
+    minx, miny, _, maxy = unary_union(geoms).bounds
+    s = height / (maxy - miny)
+    return [translate(scale(g, s, s, origin=(0, 0)), -minx * s, -miny * s) for g in geoms]
+
+
 def fit(geom, height, x=0.0, y=0.0):
-    minx, miny, maxx, maxy = geom.bounds
+    minx, miny, _, maxy = geom.bounds
     s = height / (maxy - miny)
     return translate(scale(geom, s, s, origin=(0, 0)), x - minx * s, y - miny * s)
 
 
+def square(bounds):
+    minx, miny, maxx, maxy = bounds
+    cx, cy, side = (minx + maxx) / 2, (miny + maxy) / 2, max(maxx - minx, maxy - miny)
+    return (cx - side / 2, cy - side / 2, cx + side / 2, cy + side / 2)
+
+
 def build(font):
-    mark, _ = symbol(100.0)
-    mark = fit(mark, 100.0)
-    words, _ = text_geometry(font, "SIGIL", tracking=WORDMARK_TRACKING)
-    words = words.buffer(WORDMARK_WEIGHT, join_style="mitre", mitre_limit=2)
+    stone, bolt, mono = normalize(list(symbol()), 100.0)
+    words, _ = text_geometry(font, "SERALITH", tracking=WORDMARK_TRACKING)
     cap = 100.0 * CAP_RATIO
-    mark_w = mark.bounds[2]
-    word = fit(words, cap, x=mark_w + 100.0 * GAP_RATIO, y=(100.0 - cap) / 2).simplify(0.03)
-    return mark, word, fit(words, cap).simplify(0.03)
+    mark_w = unary_union([stone, bolt]).bounds[2]
+    lockup_word = fit(words, cap, x=mark_w + 100.0 * GAP_RATIO, y=(100.0 - cap) / 2).simplify(0.03)
+    return stone, bolt, mono, lockup_word, fit(words, cap).simplify(0.03)
 
 
-def svg(layers, bounds, pad=0.0, background=None, radius=0.0):
+def svg(layers, bounds, pad=0.0, background=None, radius=0.0, style=None):
     minx, miny, maxx, maxy = bounds
     w, h = maxx - minx + 2 * pad, maxy - miny + 2 * pad
-    out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{minx - pad:.2f} {miny - pad:.2f} {w:.2f} {h:.2f}" role="img" aria-label="Sigil">']
+    out = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{minx - pad:.2f} {miny - pad:.2f} {w:.2f} {h:.2f}" role="img" aria-label="Seralith">']
+    if style:
+        out.append(f"<style>{style}</style>")
     if background:
         out.append(f'<rect x="{minx - pad:.2f}" y="{miny - pad:.2f}" width="{w:.2f}" height="{h:.2f}" rx="{radius:.2f}" fill="{background}"/>')
     for geom, color in layers:
-        out.append(f'<path fill="{color}" fill-rule="evenodd" d="{to_path(geom)}"/>')
+        attr = f'class="{color[1:]}"' if color.startswith(".") else f'fill="{color}"'
+        out.append(f'<path {attr} fill-rule="evenodd" d="{to_path(geom)}"/>')
     out.append("</svg>\n")
     return "\n".join(out)
 
@@ -69,20 +84,20 @@ def raster(layers, bounds, size, pad=0.0, background=None, radius=0.0, ss=8):
         ImageDraw.Draw(bg).rounded_rectangle([0, 0, W - 1, H - 1], radius=radius * k, fill=255)
         img.paste(Image.new("RGBA", (W, H), background), (0, 0), bg)
     for geom, color in layers:
-        mask = Image.new("L", (W, H), 0)
+        mask = Image.new("1", (W, H), 0)
         for poly in polys(geom):
             for ring in [poly.exterior, *poly.interiors]:
-                layer = Image.new("L", (W, H), 0)
+                layer = Image.new("1", (W, H), 0)
                 pts = [((x - minx + pad) * k, (y - miny + pad) * k) for x, y in ring.coords]
-                ImageDraw.Draw(layer).polygon(pts, fill=255)
-                mask = ImageChops.logical_xor(mask.convert("1"), layer.convert("1")).convert("L")
-        img.paste(Image.new("RGBA", (W, H), color), (0, 0), mask)
+                ImageDraw.Draw(layer).polygon(pts, fill=1)
+                mask = ImageChops.logical_xor(mask, layer)
+        img.paste(Image.new("RGBA", (W, H), color), (0, 0), mask.convert("L"))
     return img.resize((round(W / ss), round(H / ss)), Image.LANCZOS)
 
 
-def typescript(mark, word):
-    def entry(name, geom):
-        minx, miny, maxx, maxy = geom.bounds
+def typescript(stone, bolt, word):
+    def entry(name, geom, bounds):
+        minx, miny, maxx, maxy = bounds
         return (
             f"export const {name} = {{\n"
             f'  viewBox: "{minx:.2f} {miny:.2f} {maxx - minx:.2f} {maxy - miny:.2f}",\n'
@@ -90,13 +105,18 @@ def typescript(mark, word):
             "};\n"
         )
 
-    header = "// Generated by scripts/brand/generate.py. Do not edit.\n\n"
-    return header + entry("mark", mark) + "\n" + entry("wordmark", word)
+    mb = unary_union([stone, bolt]).bounds
+    return (
+        "// Generated by scripts/brand/generate.py. Do not edit.\n\n"
+        + entry("stone", stone, mb) + "\n"
+        + entry("bolt", bolt, mb) + "\n"
+        + entry("wordmark", word, word.bounds)
+    )
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--font", required=True, help="Michroma Regular (TTF, OTF, or WOFF)")
+    ap.add_argument("--font", required=True, help="Cinzel Bold (TTF, OTF, or WOFF)")
     root = pathlib.Path(__file__).resolve().parents[2]
     ap.add_argument("--out", default=str(root / "brand"))
     ap.add_argument("--ts", default=str(root / "web" / "src" / "components" / "brand.ts"))
@@ -104,64 +124,69 @@ def main():
     out = pathlib.Path(args.out)
     (out / "png").mkdir(parents=True, exist_ok=True)
 
-    mark, lockup_word, word = build(args.font)
-    lockup = mark.union(lockup_word)
-    mb, lb, wb = mark.bounds, lockup.bounds, word.bounds
-    icon_pad, icon_radius = 30.0, 36.0
+    stone, bolt, mono, lockup_word, word = build(args.font)
+    mark = unary_union([stone, bolt])
+    mb, lb, wb = mark.bounds, unary_union([mark, lockup_word]).bounds, word.bounds
+    sq = square(mb)
+    plate_pad, plate_radius = 28.0, 30.0
+    adaptive = f".s{{fill:{GRAPHITE}}}.b{{fill:{SIGNAL}}}@media (prefers-color-scheme:dark){{.s{{fill:{BONE}}}}}"
 
     files = {
-        "sigil-mark.svg": svg([(mark, SIGNAL)], mb),
-        "sigil-mark-graphite.svg": svg([(mark, GRAPHITE)], mb),
-        "sigil-mark-bone.svg": svg([(mark, BONE)], mb),
-        "sigil-logo.svg": svg([(mark, SIGNAL), (lockup_word, GRAPHITE)], lb),
-        "sigil-logo-dark.svg": svg([(mark, SIGNAL), (lockup_word, BONE)], lb),
-        "sigil-logo-graphite.svg": svg([(lockup, GRAPHITE)], lb),
-        "sigil-logo-bone.svg": svg([(lockup, BONE)], lb),
-        "sigil-wordmark.svg": svg([(word, GRAPHITE)], wb),
-        "sigil-wordmark-bone.svg": svg([(word, BONE)], wb),
-        "sigil-app-icon.svg": svg([(mark, SIGNAL)], mb, pad=icon_pad, background=GRAPHITE, radius=icon_radius),
+        "seralith-mark.svg": svg([(stone, GRAPHITE), (bolt, SIGNAL)], mb),
+        "seralith-mark-dark.svg": svg([(stone, BONE), (bolt, SIGNAL)], mb),
+        "seralith-mark-graphite.svg": svg([(mono, GRAPHITE), (bolt, GRAPHITE)], mb),
+        "seralith-mark-bone.svg": svg([(mono, BONE), (bolt, BONE)], mb),
+        "seralith-logo.svg": svg([(stone, GRAPHITE), (bolt, SIGNAL), (lockup_word, GRAPHITE)], lb),
+        "seralith-logo-dark.svg": svg([(stone, BONE), (bolt, SIGNAL), (lockup_word, BONE)], lb),
+        "seralith-logo-graphite.svg": svg([(mono, GRAPHITE), (bolt, GRAPHITE), (lockup_word, GRAPHITE)], lb),
+        "seralith-logo-bone.svg": svg([(mono, BONE), (bolt, BONE), (lockup_word, BONE)], lb),
+        "seralith-wordmark.svg": svg([(word, GRAPHITE)], wb),
+        "seralith-wordmark-bone.svg": svg([(word, BONE)], wb),
+        "seralith-app-icon.svg": svg([(stone, BONE), (bolt, SIGNAL)], sq, pad=plate_pad, background=GRAPHITE, radius=plate_radius),
+        "favicon.svg": svg([(stone, ".s"), (bolt, ".b")], sq, style=adaptive),
     }
     for name, body in files.items():
         (out / name).write_text(body)
-    pathlib.Path(args.ts).write_text(typescript(mark, word))
+    pathlib.Path(args.ts).write_text(typescript(stone, bolt, word))
 
-    icon = lambda size: raster([(mark, SIGNAL)], mb, size, pad=icon_pad, background=GRAPHITE, radius=icon_radius)
-    plain = lambda size, color=SIGNAL: raster([(mark, color)], mb, size)
-    for size in (1024, 512, 180):
-        name = "apple-touch-icon.png" if size == 180 else f"sigil-app-icon-{size}.png"
-        icon(size).save(out / "png" / name)
+    png = out / "png"
+    plate = lambda size, pad=plate_pad: raster([(stone, BONE), (bolt, SIGNAL)], sq, size, pad=pad, background=GRAPHITE, radius=plate_radius)
     for size in (1024, 512):
-        plain(size).save(out / "png" / f"sigil-mark-{size}.png")
-        raster([(mark, SIGNAL), (lockup_word, GRAPHITE)], lb, size * 2).save(out / "png" / f"sigil-logo-{size * 2}.png")
-        raster([(mark, SIGNAL), (lockup_word, BONE)], lb, size * 2).save(out / "png" / f"sigil-logo-dark-{size * 2}.png")
+        plate(size).save(png / f"seralith-app-icon-{size}.png")
+        raster([(stone, GRAPHITE), (bolt, SIGNAL)], sq, size).save(png / f"seralith-mark-{size}.png")
+        raster([(stone, GRAPHITE), (bolt, SIGNAL), (lockup_word, GRAPHITE)], lb, size * 2).save(png / f"seralith-logo-{size * 2}.png")
+        raster([(stone, BONE), (bolt, SIGNAL), (lockup_word, BONE)], lb, size * 2).save(png / f"seralith-logo-dark-{size * 2}.png")
+    plate(180).save(png / "apple-touch-icon.png")
+    raster([(stone, BONE), (bolt, SIGNAL)], sq, 1024, pad=40.0, background=GRAPHITE).save(png / "seralith-avatar-1024.png")
     for size in (16, 32, 48):
-        plain(size).save(out / "png" / f"favicon-{size}.png")
-    plain(256).save(out / "png" / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (256, 256)])
-
-    cx, cy, side = (mb[0] + mb[2]) / 2, (mb[1] + mb[3]) / 2, max(mb[2] - mb[0], mb[3] - mb[1])
-    square = (cx - side / 2, cy - side / 2, cx + side / 2, cy + side / 2)
-    raster([(mark, SIGNAL)], square, 1024, pad=45.0, background=GRAPHITE).save(out / "png" / "sigil-avatar-1024.png")
+        plate(size, pad=10.0).save(png / f"favicon-{size}.png")
+    plate(256, pad=10.0).save(png / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48), (64, 64), (256, 256)])
 
     banner = Image.new("RGBA", (1600, 400), (0, 0, 0, 0))
-    plate = Image.new("L", banner.size, 0)
-    ImageDraw.Draw(plate).rounded_rectangle([0, 0, 1599, 399], radius=36, fill=255)
-    banner.paste(Image.new("RGBA", banner.size, GRAPHITE), (0, 0), plate)
-    banner_lockup = raster([(mark, SIGNAL), (lockup_word, BONE)], lb, 1040)
-    banner.alpha_composite(banner_lockup, ((1600 - banner_lockup.width) // 2, (400 - banner_lockup.height) // 2))
-    banner.save(out / "png" / "sigil-banner.png")
+    mask = Image.new("L", banner.size, 0)
+    ImageDraw.Draw(mask).rounded_rectangle([0, 0, 1599, 399], radius=36, fill=255)
+    banner.paste(Image.new("RGBA", banner.size, GRAPHITE), (0, 0), mask)
+    lock = raster([(stone, BONE), (bolt, SIGNAL), (lockup_word, BONE)], lb, 1100)
+    banner.alpha_composite(lock, ((1600 - lock.width) // 2, (400 - lock.height) // 2))
+    banner.save(png / "seralith-banner.png")
 
     sheet = Image.new("RGBA", (1600, 1000), BONE)
-    light_lockup = raster([(mark, SIGNAL), (lockup_word, GRAPHITE)], lb, 900)
-    sheet.alpha_composite(light_lockup, (120, (380 - light_lockup.height) // 2))
+    light = raster([(stone, GRAPHITE), (bolt, SIGNAL), (lockup_word, GRAPHITE)], lb, 1000)
+    sheet.alpha_composite(light, (120, (380 - light.height) // 2))
     dark = Image.new("RGBA", (1600, 380), GRAPHITE)
-    dark_lockup = raster([(mark, SIGNAL), (lockup_word, BONE)], lb, 900)
-    dark.alpha_composite(dark_lockup, (120, (380 - dark_lockup.height) // 2))
+    dark_lock = raster([(stone, BONE), (bolt, SIGNAL), (lockup_word, BONE)], lb, 1000)
+    dark.alpha_composite(dark_lock, (120, (380 - dark_lock.height) // 2))
     sheet.alpha_composite(dark, (0, 380))
     x = 120
-    for img in (raster([(lockup, GRAPHITE)], lb, 420), icon(180), plain(48), plain(32), plain(16)):
+    row = (
+        raster([(mono, GRAPHITE), (bolt, GRAPHITE), (lockup_word, GRAPHITE)], lb, 460),
+        plate(180),
+        plate(48, pad=10.0), plate(32, pad=10.0), plate(16, pad=10.0),
+    )
+    for img in row:
         sheet.alpha_composite(img, (x, 880 - img.height // 2))
         x += img.width + 70
-    sheet.convert("RGB").save(out / "png" / "sigil-brand-sheet.png")
+    sheet.convert("RGB").save(png / "seralith-brand-sheet.png")
 
 
 if __name__ == "__main__":

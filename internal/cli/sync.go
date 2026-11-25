@@ -11,7 +11,7 @@ func newSyncCmd(g *globals) *cobra.Command {
 	var remote string
 	cmd := &cobra.Command{
 		Use:   "sync",
-		Short: "Push or fetch attestations (refs/notes/sigil)",
+		Short: "Push or fetch attestations (refs/notes/seralith)",
 	}
 	cmd.PersistentFlags().StringVar(&remote, "remote", "origin", "git remote")
 	cmd.AddCommand(&cobra.Command{

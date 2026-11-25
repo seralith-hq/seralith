@@ -103,7 +103,7 @@ func (s *Service) Commit(ctx context.Context, opts CommitOptions) (*CommitResult
 	if _, err := repo.Run(ctx, "add", "-A"); err != nil {
 		return nil, err
 	}
-	args := []string{"commit", "-q", "-m", opts.Message, "--trailer", "Sigil-Workspace: " + pv.Workspace.Name}
+	args := []string{"commit", "-q", "-m", opts.Message, "--trailer", "Seralith-Workspace: " + pv.Workspace.Name}
 	if _, err := repo.Run(ctx, args...); err != nil {
 		return nil, fmt.Errorf("attest: git commit: %w", err)
 	}

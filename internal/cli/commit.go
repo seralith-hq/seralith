@@ -120,8 +120,8 @@ func newCommitCmd(g *globals) *cobra.Command {
 
 All changes in the workspace are staged and committed. The attestation records
 every segment since the previous commit, line-level attribution, and the policy
-decisions in effect, and is stored in refs/notes/sigil. Push it with
-'sigil sync push'.`,
+decisions in effect, and is stored in refs/notes/seralith. Push it with
+'seralith sync push'.`,
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if message == "" {
