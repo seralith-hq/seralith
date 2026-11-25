@@ -50,6 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Security:** policy is checked against the diff git computes, not only the
   files a change attestation declares. A change that leaves a path out of its
   segments fails, and understated line counts no longer avoid thresholds.
+- `seralith run` could exit before recording `session.ended` in the ledger,
+  because a session signalled completion before writing that entry.
 - Email addresses on seralith.com render as written instead of being replaced by
   Cloudflare's obfuscation placeholder.
 
