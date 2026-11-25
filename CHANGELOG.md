@@ -41,6 +41,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Security:** `seralith gate` no longer skips a merge commit whose tree
+  differs from the clean merge of its parents. Such a merge previously passed
+  with any content and no attestation.
+- **Security:** an approval now counts only for the commit it approves, or for
+  the range tip when it approves the tip. Copying an approval from another
+  commit into a note no longer satisfies policy.
+- **Security:** policy is checked against the diff git computes, not only the
+  files a change attestation declares. A change that leaves a path out of its
+  segments fails, and understated line counts no longer avoid thresholds.
 - `seralith run` could exit before recording `session.ended` in the ledger,
   because a session signalled completion before writing that entry.
 - Email addresses on seralith.com render as written instead of being replaced by
