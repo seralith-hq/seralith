@@ -127,6 +127,33 @@ func TestBuild(t *testing.T) {
 	}
 }
 
+func TestAssetsAreCopiedAndNotPages(t *testing.T) {
+	src := writeDocs(t, map[string]string{
+		"README.md":                       "# Docs\n\nOverview of the documentation.\n",
+		"features/authorship-tracking.md": "# Authorship tracking\n\nWho wrote each line.\n\n![Authorship](../assets/demo/authorship.gif)\n",
+		"assets/demo/README.md":           "# How to re-render\n\nRun make demo.\n",
+		"assets/demo/authorship.gif":      "GIF89a",
+	})
+	out := filepath.Join(t.TempDir(), "site", "docs")
+	if err := Build(src, out, "https://seralith.com"); err != nil {
+		t.Fatal(err)
+	}
+
+	page := read(t, filepath.Join(out, "features", "authorship-tracking.html"))
+	if !strings.Contains(page, `src="/docs/assets/demo/authorship.gif"`) {
+		t.Fatalf("image was not rewritten to a site asset: %s", page)
+	}
+	if got := read(t, filepath.Join(out, "assets", "demo", "authorship.gif")); got != "GIF89a" {
+		t.Fatalf("copied asset = %q", got)
+	}
+	if _, err := os.Stat(filepath.Join(out, "assets", "demo", "index.html")); !os.IsNotExist(err) {
+		t.Fatal("markdown under docs/assets should not become a page")
+	}
+	if strings.Contains(read(t, filepath.Join(out, "sitemap.xml")), "/docs/assets/") {
+		t.Fatal("docs/assets should not appear in the sitemap")
+	}
+}
+
 func TestBuildRefusesDangerousOutput(t *testing.T) {
 	src := writeDocs(t, map[string]string{"README.md": "# Docs\n"})
 	for _, out := range []string{"", ".", "/"} {
