@@ -15,6 +15,7 @@
 | Guide | Contents |
 | --- | --- |
 | [Authorship tracking](features/authorship-tracking.md) | How Seralith observes which lines a person or an agent wrote, and the evidence it records |
+| [Policy gates](features/policy-gates.md) | How rules match a change, how the gate evaluates them again, and how approvals are counted |
 
 ## Specifications
 

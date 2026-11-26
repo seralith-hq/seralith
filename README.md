@@ -244,6 +244,7 @@ The guides in [`docs/`](docs/README.md) are published at
 ### Features
 
 - [Authorship tracking](docs/features/authorship-tracking.md) — how Seralith observes which lines a person or an agent wrote, and the evidence it records
+- [Policy gates](docs/features/policy-gates.md) — how rules allow, warn, require approval, or deny a change, at commit and again in CI
 
 ### Guides
 
