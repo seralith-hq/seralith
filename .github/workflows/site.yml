@@ -3,9 +3,9 @@ name: Site
 on:
   push:
     branches: [main]
-    paths: ["site/**", "docs/**", "tools/sitedocs/**", ".github/workflows/site.yml"]
+    paths: ["site/**", "docs/**", "blog/**", "tools/sitedocs/**", ".github/workflows/site.yml"]
   pull_request:
-    paths: ["site/**", "docs/**", "tools/sitedocs/**", ".github/workflows/site.yml"]
+    paths: ["site/**", "docs/**", "blog/**", "tools/sitedocs/**", ".github/workflows/site.yml"]
   workflow_dispatch:
 
 permissions:
