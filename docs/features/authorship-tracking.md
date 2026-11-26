@@ -5,6 +5,14 @@ wrote by observing the working tree. It snapshots the tree before and after
 every session and attributes the difference to that session's actor. Agents are
 never asked to describe their own work.
 
+## See it
+
+A workspace on its own worktree, a manual edit, and a session. `seralith commit`
+signs a change attestation into `refs/notes/seralith`. The note is read back,
+then `seralith blame` shows which lines are human and which are agent.
+
+![Signed change attestation with human and agent authorship](../assets/demo/authorship.gif)
+
 ## How it works
 
 Seralith is not an AI product. It launches your editor, a shell, or any coding

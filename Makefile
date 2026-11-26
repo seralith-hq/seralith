@@ -27,6 +27,13 @@ web: ## Build the workbench UI into the embedded asset directory
 site-docs: ## Render docs/ and blog/ into the site (site/docs, site/blog)
 	go run ./tools/sitedocs
 
+.PHONY: demo
+demo: build ## Re-render the terminal demos in docs/assets/demo
+	@command -v vhs >/dev/null || { echo "demo: install vhs (https://github.com/charmbracelet/vhs) and ttyd"; exit 1; }
+	@command -v ttyd >/dev/null || { echo "demo: ttyd is required (vhs uses it)"; exit 1; }
+	PATH="$(CURDIR)/bin:$$PATH" vhs docs/assets/demo/authorship.tape
+	PATH="$(CURDIR)/bin:$$PATH" vhs docs/assets/demo/gate.tape
+
 .PHONY: build
 build: ## Build seralith and seralith-control into ./bin
 	CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/seralith ./cmd/seralith

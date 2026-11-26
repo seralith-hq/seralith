@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+"""Print the authorship fields of a change attestation note on stdin.
+
+The tapes pipe `git notes --ref=refs/notes/seralith show <commit>` into this
+program. It decodes the DSSE envelope and does not invent fields.
+"""
+
+import base64
+import json
+import sys
+
+
+def main() -> int:
+    raw = sys.stdin.read().strip()
+    if not raw:
+        print("no attestation note on stdin", file=sys.stderr)
+        return 1
+    try:
+        env = json.loads(raw)
+        statement = json.loads(base64.b64decode(env["payload"]))
+        predicate = statement["predicate"]
+        subject = statement["subject"][0]["digest"].get("gitCommit", "")
+        committer = predicate["committer"]
+        segments = predicate["segments"]
+    except (KeyError, IndexError, ValueError, json.JSONDecodeError) as err:
+        print(f"not a change attestation: {err}", file=sys.stderr)
+        return 1
+
+    print(f"payloadType    {env['payloadType']}")
+    print(f"predicateType  {statement['predicateType']}")
+    print(f"subject        gitCommit {subject[:12]}")
+    print(f"signature      {env['signatures'][0]['keyid']}")
+    print(f"committer      {committer['kind']}:{committer['id']}")
+    for segment in segments:
+        actor = segment["actor"]
+        tool = actor.get("tool") or ""
+        suffix = f"  tool {tool}" if tool else ""
+        print(f"segment        {segment['kind']:<7} {actor['kind']}:{actor['id']}{suffix}")
+    lines = predicate.get("summary", {}).get("linesByKind") or {}
+    ordered = [name for name in ("human", "agent") if name in lines]
+    ordered.extend(name for name in lines if name not in ordered)
+    print("lines          " + "  ".join(f"{name} {lines[name]}" for name in ordered))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

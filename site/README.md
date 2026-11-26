@@ -6,7 +6,9 @@ JavaScript, and no third-party requests.
 The `/docs` section is generated from the repository's `docs/` folder by
 `tools/sitedocs` into `site/docs/`, which is not committed. Edit the Markdown in
 `docs/`, never the generated pages. Links between docs become site links, links to
-other repository files point at GitHub, and `docs/rfcs/` is left out.
+other repository files point at GitHub, and `docs/rfcs/` is left out. Files under
+`docs/assets/` are copied to `/docs/assets/` so a page can embed them; Markdown in
+that folder is not turned into a page.
 
 The `/blog` section is generated from the repository's `blog/` folder into
 `site/blog/`, also not committed, by the same `tools/sitedocs` command. Each

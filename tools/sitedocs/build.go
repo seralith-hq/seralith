@@ -25,7 +25,9 @@ import (
 
 const repoBlob = "https://github.com/seralith-hq/seralith/blob/main/"
 
-var excludedDirs = map[string]bool{"rfcs": true}
+// rfcs are drafts and are left out of the site. assets are static files
+// (images, demos) copied beside the pages, not rendered as pages.
+var excludedDirs = map[string]bool{"rfcs": true, "assets": true}
 
 type section struct {
 	key, name string
@@ -104,7 +106,27 @@ func Build(src, out, base string) error {
 			return fmt.Errorf("%s: %w", p.Rel, err)
 		}
 	}
+	if err := copyAssets(b.src, b.out); err != nil {
+		return err
+	}
 	return b.sitemap()
+}
+
+// copyAssets places docs/assets under the site's /docs/assets so pages can embed
+// those files. The directory is not a set of pages; Markdown inside it is skipped.
+func copyAssets(src, out string) error {
+	assets := filepath.Join(src, "assets")
+	info, err := os.Stat(assets)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	if !info.IsDir() {
+		return fmt.Errorf("%s is not a directory", assets)
+	}
+	return os.CopyFS(filepath.Join(out, "assets"), os.DirFS(assets))
 }
 
 func newMarkdown() goldmark.Markdown {
@@ -333,11 +355,34 @@ func (b *builder) rewrite(fromRel, dest string) string {
 		if p, ok := b.pages[path.Join(rel, "README.md")]; ok {
 			return p.URL + frag
 		}
+		if strings.HasPrefix(rel, "assets/") {
+			if urlPath, ok := b.assetURL(rel); ok {
+				return urlPath + frag
+			}
+		}
 	}
 	if repoPath == "docs" {
 		return "/docs/" + frag
 	}
 	return repoBlob + repoPath + frag
+}
+
+// assetURL returns the site path of a file under docs that is not a page, such as
+// an image in docs/assets. rel is relative to docs and uses forward slashes.
+func (b *builder) assetURL(rel string) (string, bool) {
+	if rel == "" || rel == "." || path.IsAbs(rel) || strings.HasPrefix(rel, "../") || strings.Contains(rel, "/../") {
+		return "", false
+	}
+	full := filepath.Join(b.src, filepath.FromSlash(rel))
+	info, err := os.Stat(full)
+	if err != nil || info.IsDir() {
+		return "", false
+	}
+	inside, err := filepath.Rel(b.src, full)
+	if err != nil || inside == ".." || strings.HasPrefix(inside, ".."+string(filepath.Separator)) {
+		return "", false
+	}
+	return "/docs/" + path.Clean(rel), true
 }
 
 func (b *builder) write(p *page, nav []navSection) error {
