@@ -48,6 +48,15 @@ needle = "workspaces:\n"
 if needle not in text:
     raise SystemExit("seralith init did not write a workspaces block")
 text = text.replace(needle, f"{needle}    root: {wt}\n", 1)
+if "\nagents:" not in "\n" + text:
+    if not text.endswith("\n"):
+        text += "\n"
+    text += """agents:
+    - id: worker
+      name: Worker
+      kind: agent
+      command: ["/bin/sh"]
+"""
 path.write_text(text)
 PY
   git add .seralith

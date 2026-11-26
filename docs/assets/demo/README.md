@@ -7,7 +7,7 @@ then runs real commands. Nothing in the GIFs is mocked or edited by hand.
 
 | Tape | GIF | What it shows |
 | --- | --- | --- |
-| `authorship.tape` | `authorship.gif` | A workspace worktree, a manual edit, a session, the signed change attestation stored in `refs/notes/seralith`, and that note read back |
+| `authorship.tape` | `authorship.gif` | A workspace worktree, a manual edit, a session under the repository's `worker` profile, the signed change attestation stored in `refs/notes/seralith`, and that note read back |
 | `gate.tape` | `gate.gif` | `seralith gate` passing on a compliant change, then failing because a protected path has no approval |
 
 ## Re-render

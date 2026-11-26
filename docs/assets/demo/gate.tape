@@ -24,7 +24,7 @@ Show
 Type "seralith ws new retry" Enter
 Sleep 1.2s
 
-Type `seralith run --ws retry --agent codex --no-pty -- /bin/sh "$DEMO_BIN/write-retry.sh"` Enter
+Type `seralith run --ws retry --agent worker --no-pty -- /bin/sh "$DEMO_BIN/write-retry.sh"` Enter
 Sleep 1.4s
 
 Type `seralith commit --ws retry -m "feat: add retry helper"` Enter
@@ -36,7 +36,7 @@ Sleep 2s
 Type "seralith ws new auth" Enter
 Sleep 1.2s
 
-Type `seralith run --ws auth --agent codex --no-pty -- /bin/sh "$DEMO_BIN/write-token.sh"` Enter
+Type `seralith run --ws auth --agent worker --no-pty -- /bin/sh "$DEMO_BIN/write-token.sh"` Enter
 Sleep 1.4s
 
 Type `seralith commit --ws auth -m "feat: add token helper"` Enter

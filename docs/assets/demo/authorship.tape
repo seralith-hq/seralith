@@ -32,7 +32,7 @@ Sleep 400ms
 Type `printf 'package retry\n\nfunc Attempts() int { return 3 }\n' > "$ws/retry.go"` Enter
 Sleep 500ms
 
-Type `seralith run --ws retry --agent codex --no-pty -- /bin/sh "$DEMO_BIN/append-delay.sh"` Enter
+Type `seralith run --ws retry --agent worker --no-pty -- /bin/sh "$DEMO_BIN/append-delay.sh"` Enter
 Sleep 1.4s
 
 Type "seralith status --ws retry" Enter
