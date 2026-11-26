@@ -153,8 +153,8 @@ seralith status --ws payments-retry
 ```text
 workspace payments-retry  seralith/payments-retry
 
-SEGMENT       KIND     ACTOR        FILES   LINES
-ses_abead710  session  agent:codex  1 file  +4 −0
+SEGMENT    KIND     ACTOR      FILES   LINES
+edit_0001  session  agent:bot  1 file  +4 −0
 
 attribution agent 4 (100%)
 policy
