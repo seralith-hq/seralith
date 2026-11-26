@@ -28,6 +28,7 @@ node_modules/
 .vite/
 web/dist/
 site/dist/
+site/docs/
 
 # Embedded web assets are generated at build time
 internal/webui/dist/*

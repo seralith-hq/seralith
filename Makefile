@@ -23,6 +23,10 @@ web: ## Build the workbench UI into the embedded asset directory
 	cp -R web/dist/. internal/webui/dist/
 	touch internal/webui/dist/.gitkeep
 
+.PHONY: site-docs
+site-docs: ## Render docs/ into the site's /docs pages (site/docs)
+	go run ./tools/sitedocs
+
 .PHONY: build
 build: ## Build seralith and seralith-control into ./bin
 	CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o bin/seralith ./cmd/seralith
