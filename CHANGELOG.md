@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Documentation: a feature guide to policy gates, published at
+  seralith.com/docs/features/policy-gates, with command output captured
+  from a real run.
+
 - Terminal demos of authorship tracking and `seralith gate`, recorded from the
   `seralith` binary with VHS tapes in `docs/assets/demo/`. Re-render them with
   `make demo`. `tools/sitedocs` copies `docs/assets/` into the published site
