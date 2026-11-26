@@ -31,6 +31,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The root README: the authorship recording sits under the introduction, the
+  architecture diagram lines up after the Seralith rename, and the quick start
+  matches the CLI. `seralith blame` on a workspace file needs `--rev`, and
+  `seralith gate --base` does not see a `seralith/<name>` branch while the
+  primary checkout is still on the base.
+
 - Commits that change only `blog/` build and deploy seralith.com.
 
 ### Fixed
