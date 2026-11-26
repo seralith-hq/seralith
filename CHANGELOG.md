@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- seralith.com/docs: the repository's documentation, rendered from `docs/` on
+  every site deploy with a sidebar, per-page links to edit on GitHub, and a docs
+  sitemap. `make site-docs` builds it locally.
+
 - seralith.com and the README link to the GitHub repository and @seralithhq on X.
 
 ## [0.1.0] - 2026-11-25

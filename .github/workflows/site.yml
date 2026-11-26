@@ -3,9 +3,9 @@ name: Site
 on:
   push:
     branches: [main]
-    paths: ["site/**", ".github/workflows/site.yml"]
+    paths: ["site/**", "docs/**", "tools/sitedocs/**", ".github/workflows/site.yml"]
   pull_request:
-    paths: ["site/**", ".github/workflows/site.yml"]
+    paths: ["site/**", "docs/**", "tools/sitedocs/**", ".github/workflows/site.yml"]
   workflow_dispatch:
 
 permissions:
@@ -30,6 +30,11 @@ jobs:
       PROJECT: seralith
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Build the docs pages
+        run: go run ./tools/sitedocs
       - name: Check credentials
         id: creds
         run: |
