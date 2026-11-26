@@ -29,6 +29,7 @@ node_modules/
 web/dist/
 site/dist/
 site/docs/
+site/blog/
 
 # Embedded web assets are generated at build time
 internal/webui/dist/*
