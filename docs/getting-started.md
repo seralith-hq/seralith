@@ -68,11 +68,13 @@ seralith status --ws payments-retry
 ```
 
 ```
-SEGMENT       KIND     ACTOR                FILES    LINES
-ses_1a20ec31  session  agent:codex          4 files  +212 −31
-seg_1a20ed90  manual   human:you@corp.com   1 file   +6 −2
+workspace payments-retry  seralith/payments-retry
 
-attribution agent 198 (94%) · human 12 (6%)
+SEGMENT       KIND     ACTOR               FILES    LINES
+ses_1a20ec31  session  agent:codex         4 files  +212 −31
+seg_1a20ed90  manual   human:you@corp.com  1 file   +6 −2
+
+attribution agent 198 (94%) · human 12 (5%)
 policy
   require-approval   security-critical-review (1 approval from security)
 ```
@@ -108,7 +110,7 @@ seralith gate --base origin/main --fetch --format github
 
 ```sh
 seralith blame internal/payments/retry.go --summary
-# 212 lines · human 14 (6%) · agent 198 (93%)
+# 210 lines · human 12 (5%) · agent 198 (94%)
 ```
 
 ## 7. Hand evidence to an assessor

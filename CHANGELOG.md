@@ -9,11 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Documentation: a feature guide to authorship tracking, published at
+  seralith.com/docs/features/authorship-tracking, with command output captured
+  from a real run.
+
 - seralith.com/docs: the repository's documentation, rendered from `docs/` on
   every site deploy with a sidebar, per-page links to edit on GitHub, and a docs
   sitemap. `make site-docs` builds it locally.
 
 - seralith.com and the README link to the GitHub repository and @seralithhq on X.
+
+### Fixed
+
+- The `seralith status` and `seralith blame` examples in the getting-started
+  guide now match the CLI's real output: the workspace header line, column
+  spacing, consistent line counts, and percentages rounded down.
 
 ## [0.1.0] - 2026-11-25
 
