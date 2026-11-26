@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Terminal demos of authorship tracking and `seralith gate`, recorded from the
+  `seralith` binary with VHS tapes in `docs/assets/demo/`. Re-render them with
+  `make demo`. `tools/sitedocs` copies `docs/assets/` into the published site
+  so a docs page can embed one.
+
 - Documentation: a feature guide to authorship tracking, published at
   seralith.com/docs/features/authorship-tracking, with command output captured
   from a real run.
