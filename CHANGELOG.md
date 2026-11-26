@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `make demo`. `tools/sitedocs` copies `docs/assets/` into the published site
   so a docs page can embed one.
 
+- seralith.com/blog: posts rendered from `blog/` by the same `tools/sitedocs`
+  command that builds `/docs`, with an index at `/blog`. The first post,
+  `/blog/three-gate-bypasses`, describes three `seralith gate` bypasses that
+  were fixed before v0.1.0.
+
 - Documentation: a feature guide to authorship tracking, published at
   seralith.com/docs/features/authorship-tracking, with command output captured
   from a real run.

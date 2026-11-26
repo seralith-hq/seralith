@@ -24,7 +24,7 @@ web: ## Build the workbench UI into the embedded asset directory
 	touch internal/webui/dist/.gitkeep
 
 .PHONY: site-docs
-site-docs: ## Render docs/ into the site's /docs pages (site/docs)
+site-docs: ## Render docs/ and blog/ into the site (site/docs, site/blog)
 	go run ./tools/sitedocs
 
 .PHONY: demo

@@ -44,6 +44,7 @@ var pageTemplate = template.Must(template.Must(template.New("page").Parse(navTem
         </a>
         <nav aria-label="Primary">
           <a href="/docs/">Docs</a>
+          <a href="/blog/">Blog</a>
           <a href="https://github.com/seralith-hq/seralith">GitHub</a>
           <a href="/security">Security</a>
           <a class="btn btn-small" href="/#contact">Book a pilot</a>
@@ -69,7 +70,78 @@ var pageTemplate = template.Must(template.Must(template.New("page").Parse(navTem
 
     <footer class="wrap footer">
       <span>© 2026 Seralith, Inc.</span>
-      <span><a class="muted" href="/security">Security</a> · <a class="muted" href="https://github.com/seralith-hq/seralith" rel="noopener">GitHub</a> · <a class="muted" href="https://x.com/seralithhq" rel="noopener me">X</a></span>
+      <span><a class="muted" href="/blog/">Blog</a> · <a class="muted" href="/security">Security</a> · <a class="muted" href="https://github.com/seralith-hq/seralith" rel="noopener">GitHub</a> · <a class="muted" href="https://x.com/seralithhq" rel="noopener me">X</a></span>
+    </footer>
+  {{.EmailOn}}
+  </body>
+</html>
+`))
+
+var blogTemplate = template.Must(template.New("blog").Parse(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{.Page.Title}} · Seralith</title>
+    {{- with .Page.Desc}}
+    <meta name="description" content="{{.}}" />
+    <meta property="og:description" content="{{.}}" />
+    {{- end}}
+    <meta property="og:title" content="{{.Page.Title}} · Seralith" />
+    <meta property="og:url" content="{{.Base}}{{.Page.URL}}" />
+    <meta property="og:image" content="{{.Base}}/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@seralithhq" />
+    <meta name="theme-color" content="#0E1116" />
+    <link rel="canonical" href="{{.Base}}{{.Page.URL}}" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+  {{.EmailOff}}
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="logo" href="/" aria-label="Seralith home">
+          <img src="/logo.svg" alt="Seralith" height="28" />
+        </a>
+        <nav aria-label="Primary">
+          <a href="/docs/">Docs</a>
+          <a href="/blog/" aria-current="page">Blog</a>
+          <a href="https://github.com/seralith-hq/seralith">GitHub</a>
+          <a href="/security">Security</a>
+          <a class="btn btn-small" href="/#contact">Book a pilot</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="wrap blog">
+      <main class="doc">
+        {{- if .Index}}
+        <h1>Blog</h1>
+        <p>{{.Page.Desc}}</p>
+        <ul class="post-list">
+          {{- range .Posts}}
+          <li class="post-item">
+            <h2><a href="{{.URL}}">{{.Title}}</a></h2>
+            <p class="post-meta"><time datetime="{{.Date}}">{{.DateLabel}}</time></p>
+            <p class="post-summary">{{.Summary}}</p>
+          </li>
+          {{- end}}
+        </ul>
+        {{- else}}
+        <h1>{{.Page.Title}}</h1>
+        <p class="post-meta"><time datetime="{{.Page.Date}}">{{.Page.DateLabel}}</time></p>
+{{.Page.HTML}}
+        <p class="doc-edit small"><a href="{{.EditURL}}">Edit this page on GitHub</a></p>
+        {{- end}}
+      </main>
+    </div>
+
+    <footer class="wrap footer">
+      <span>© 2026 Seralith, Inc.</span>
+      <span><a class="muted" href="/docs/">Docs</a> · <a class="muted" href="/blog/" aria-current="page">Blog</a> · <a class="muted" href="/security">Security</a> · <a class="muted" href="https://github.com/seralith-hq/seralith" rel="noopener">GitHub</a> · <a class="muted" href="https://x.com/seralithhq" rel="noopener me">X</a></span>
     </footer>
   {{.EmailOn}}
   </body>

@@ -3,3 +3,4 @@ Allow: /
 
 Sitemap: https://seralith.com/sitemap.xml
 Sitemap: https://seralith.com/docs/sitemap.xml
+Sitemap: https://seralith.com/blog/sitemap.xml

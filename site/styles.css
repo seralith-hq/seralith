@@ -169,3 +169,12 @@ td:first-child { white-space: nowrap; font-family: var(--mono); font-size: 13px;
   .docs-nav { display: none; }
   .docs-menu { display: block; border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
 }
+
+.blog { padding: 40px 0 72px; }
+.post-list { list-style: none; margin: 32px 0 0; padding: 0; display: grid; gap: 28px; }
+.post-list h2 { margin: 0; font-size: 22px; }
+.post-list h2 a { color: var(--bone); }
+.post-list h2 a:hover { color: var(--signal); }
+.post-meta { margin: 6px 0 8px; font: 500 13px var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--steel); }
+.post-summary { margin: 0; }
+.doc > .post-meta { margin-top: 0; }
