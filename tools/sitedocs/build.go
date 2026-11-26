@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -43,15 +44,19 @@ var sections = []section{
 var rootOrder = map[string]int{"README.md": 0, "getting-started.md": 1, "architecture.md": 2, "cli.md": 3}
 
 type page struct {
-	Rel      string
-	URL      string
-	Title    string
-	NavTitle string
-	Desc     string
-	Section  string
-	HTML     template.HTML
-	out      string
-	source   []byte
+	Rel       string
+	URL       string
+	Title     string
+	NavTitle  string
+	Desc      string
+	Section   string
+	HTML      template.HTML
+	Date      string
+	DateLabel string
+	Summary   string
+	out       string
+	source    []byte
+	when      time.Time
 }
 
 type navSection struct {
@@ -77,15 +82,7 @@ func Build(src, out, base string) error {
 		out:   out,
 		base:  strings.TrimSuffix(base, "/"),
 		pages: map[string]*page{},
-		md: goldmark.New(
-			goldmark.WithExtensions(
-				extension.NewTable(extension.WithTableCellAlignMethod(extension.TableCellAlignAttribute)),
-				extension.Strikethrough,
-				extension.Linkify,
-				extension.TaskList,
-			),
-			goldmark.WithParserOptions(parser.WithAutoHeadingID()),
-		),
+		md:    newMarkdown(),
 	}
 	if err := b.collect(); err != nil {
 		return err
@@ -110,8 +107,22 @@ func Build(src, out, base string) error {
 	return b.sitemap()
 }
 
-func (b *builder) collect() error {
-	root, err := os.OpenRoot(b.src)
+func newMarkdown() goldmark.Markdown {
+	return goldmark.New(
+		goldmark.WithExtensions(
+			extension.NewTable(extension.WithTableCellAlignMethod(extension.TableCellAlignAttribute)),
+			extension.Strikethrough,
+			extension.Linkify,
+			extension.TaskList,
+		),
+		goldmark.WithParserOptions(parser.WithAutoHeadingID()),
+	)
+}
+
+// walkMarkdown walks src with os.Root and calls fn for every Markdown file.
+// skip drops a file, or a whole directory when the entry is a directory.
+func walkMarkdown(src string, skip func(rel string, d fs.DirEntry) bool, fn func(rel string, data []byte) error) error {
+	root, err := os.OpenRoot(src)
 	if err != nil {
 		return err
 	}
@@ -120,19 +131,27 @@ func (b *builder) collect() error {
 		if err != nil {
 			return err
 		}
-		if d.IsDir() {
-			if excludedDirs[rel] {
+		if skip != nil && skip(rel, d) {
+			if d.IsDir() {
 				return fs.SkipDir
 			}
 			return nil
 		}
-		if !strings.HasSuffix(rel, ".md") {
+		if d.IsDir() || !strings.HasSuffix(rel, ".md") {
 			return nil
 		}
 		data, err := root.ReadFile(rel)
 		if err != nil {
 			return err
 		}
+		return fn(rel, data)
+	})
+}
+
+func (b *builder) collect() error {
+	return walkMarkdown(b.src, func(rel string, d fs.DirEntry) bool {
+		return d.IsDir() && excludedDirs[rel]
+	}, func(rel string, data []byte) error {
 		pg := &page{Rel: rel, source: data, Section: sectionName(rel)}
 		pg.URL, pg.out = locate(rel)
 		pg.Title = title(data, rel)
@@ -258,28 +277,38 @@ func (b *builder) nav() []navSection {
 	return out
 }
 
-func (b *builder) render(p *page) error {
-	doc := b.md.Parser().Parse(text.NewReader(p.source))
+func renderMarkdown(md goldmark.Markdown, source []byte, rewrite func(dest string) string) (string, error) {
+	doc := md.Parser().Parse(text.NewReader(source))
 	err := ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
 		if !entering {
 			return ast.WalkContinue, nil
 		}
 		switch v := n.(type) {
 		case *ast.Link:
-			v.Destination = []byte(b.rewrite(p.Rel, string(v.Destination)))
+			v.Destination = []byte(rewrite(string(v.Destination)))
 		case *ast.Image:
-			v.Destination = []byte(b.rewrite(p.Rel, string(v.Destination)))
+			v.Destination = []byte(rewrite(string(v.Destination)))
 		}
 		return ast.WalkContinue, nil
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 	var buf bytes.Buffer
-	if err := b.md.Renderer().Render(&buf, p.source, doc); err != nil {
-		return err
+	if err := md.Renderer().Render(&buf, source, doc); err != nil {
+		return "", err
 	}
 	html := strings.NewReplacer("<table>", `<div class="table-scroll"><table>`, "</table>", "</table></div>").Replace(buf.String())
+	return html, nil
+}
+
+func (b *builder) render(p *page) error {
+	html, err := renderMarkdown(b.md, p.source, func(dest string) string {
+		return b.rewrite(p.Rel, dest)
+	})
+	if err != nil {
+		return err
+	}
 	p.HTML = template.HTML(html) //nolint:gosec // goldmark escapes raw HTML because the unsafe option is off
 	return nil
 }

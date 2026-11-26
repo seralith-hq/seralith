@@ -84,6 +84,7 @@ func TestBuild(t *testing.T) {
 		`<link rel="canonical" href="https://seralith.com/docs/" />`,
 		`aria-current="page">Overview</a>`,
 		`<!--email_off-->`,
+		`href="/blog/"`,
 	} {
 		if !strings.Contains(index, want) {
 			t.Errorf("index.html missing %s", want)
