@@ -10,6 +10,12 @@
 | [GitHub Actions](integrations/github-actions.md) and [GitLab CI](integrations/gitlab-ci.md) | Platform teams |
 | [Self-hosting Seralith Control](operations/self-hosting.md) | Operators of Enterprise and Sovereign deployments |
 
+## Features
+
+| Guide | Contents |
+| --- | --- |
+| [Authorship tracking](features/authorship-tracking.md) | How Seralith observes which lines a person or an agent wrote, and the evidence it records |
+
 ## Specifications
 
 | Document | Contents |
