@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - seralith.com and the README link to the GitHub repository and @seralithhq on X.
 
+### Changed
+
+- Commits that change only `blog/` build and deploy seralith.com.
+
 ### Fixed
 
 - The `seralith status` and `seralith blame` examples in the getting-started
