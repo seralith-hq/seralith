@@ -258,6 +258,9 @@ The guides in [`docs/`](docs/README.md) are published at
 
 - [Attestation format](docs/spec/attestation.md)
 - [Policy language](docs/spec/policy.md)
+- [Trust store](docs/spec/trust-store.md)
+- [Audit ledger](docs/spec/ledger.md)
+- [Evidence packages](docs/spec/evidence.md)
 
 ### Security and compliance
 

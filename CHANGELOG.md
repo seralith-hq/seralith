@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Specifications for the trust store, the audit ledger, and evidence
+  packages, and for the verification rules that were previously defined only
+  in code.
+
 - Documentation: a feature guide to policy gates, published at
   seralith.com/docs/features/policy-gates, with command output captured
   from a real run.

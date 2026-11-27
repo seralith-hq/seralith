@@ -21,8 +21,11 @@
 
 | Document | Contents |
 | --- | --- |
-| [Attestation format](spec/attestation.md) | `change/v1` and `approval/v1` predicates, storage, and verification algorithm |
+| [Attestation format](spec/attestation.md) | `change/v1` and `approval/v1` predicates, DSSE, storage, and the verification algorithm |
 | [Policy language](spec/policy.md) | Rule schema, matching semantics, effects, and approvals |
+| [Trust store](spec/trust-store.md) | Public keys, roles, the human kind, and revocation |
+| [Audit ledger](spec/ledger.md) | Hash chain, checkpoints, and anchored versus unanchored |
+| [Evidence packages](spec/evidence.md) | Manifest bytes, the manifest signature, and what verification checks |
 
 ## Security and compliance
 

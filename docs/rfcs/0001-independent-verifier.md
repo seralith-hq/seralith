@@ -28,12 +28,11 @@ assessor to verify an evidence package offline with the trust store. That
 command runs Seralith's own verification code. A buyer who requires
 verification independent of the vendor cannot use it as the only check.
 
-The same program is a spec review. Where this note marks a check "spec gap:
-only defined by code", an implementer cannot get a matching result from
-`docs/spec/attestation.md`, `docs/spec/policy.md`, and the threat model alone.
-Those gaps should be closed in the specs before the program is described as an
-implementation of the spec. Closing them is a later change. This note only
-records them.
+The same program is a spec review. The checks this note first marked "spec
+gap: only defined by code" are now specified. The table points at the section
+that states each rule. An implementer can match them from
+`docs/spec/attestation.md`, `docs/spec/policy.md`, `docs/spec/trust-store.md`,
+`docs/spec/ledger.md`, and `docs/spec/evidence.md`.
 
 v1.0.0 does not depend on this program. The gate in CI remains the enforcement
 point (`docs/architecture.md`, `docs/security/threat-model.md`).
@@ -82,11 +81,11 @@ The two programs do not share a generator.
 ### Checklist
 
 "From spec" means a published document states the pass/fail rule:
-`docs/spec/attestation.md`, `docs/spec/policy.md`, `docs/security/threat-model.md`,
-or `docs/compliance/mapping.md`. "Spec gap: only defined by code" means the
-pass/fail rule an independent program must match is in the code cited on that
-row. Feature guides are not the spec. Where a guide describes the same
-behavior, the row says so, and the label stays a spec gap.
+`docs/spec/attestation.md`, `docs/spec/policy.md`, `docs/spec/trust-store.md`,
+`docs/spec/ledger.md`, `docs/spec/evidence.md`, `docs/security/threat-model.md`,
+or `docs/compliance/mapping.md`. "Closed" means a row that was only defined by
+code now has that rule in the section linked from the row. Feature guides are
+not the spec.
 
 The gate checks live in `internal/verify/verify.go` (`Commit`, `Gate`). The
 package checks live in `internal/evidence/evidence.go` (`Verify`). The ledger
@@ -97,33 +96,31 @@ again.
 | # | Check | Where it is done today | Label |
 | --- | --- | --- | --- |
 | 1 | DSSE envelope: payload type `application/vnd.in-toto+json`, payload is standard base64, signature over the PAE `DSSEv1 <len(type)> <type> <len(payload)> <payload>`, key id `ed25519:` plus the first 16 bytes of SHA-256 of the raw public key. At least one signature must verify under the trust store. | `pkg/dsse/dsse.go` (`PAE`, `Verify`), `internal/keys/keys.go` (`ID`), `docs/spec/attestation.md` | from spec |
-| 2 | A repeated DSSE `keyid` does not count twice. The first signature for that id is the one that is verified. | `pkg/dsse/dsse.go` (`Verify`, the `seen` map) | spec gap: only defined by code |
+| 2 | A repeated DSSE `keyid` counts once. A later signature for an id is checked only when no earlier signature for that id has verified. | `pkg/dsse/dsse.go` (`Verify`, the `seen` map); [Repeated key ids](../spec/attestation.md#repeated-key-ids) | closed |
 | 3 | Select a `change/v1` statement whose subject is the commit and whose envelope meets check 1, where at least one accepted key's trust-store principal equals `predicate.committer.id`. | `docs/spec/attestation.md` step 1; `internal/verify/verify.go` (`pickChange`) | from spec |
-| 4 | Selection order and subject fields. The note is walked in file order. The first envelope that passes check 3 is the one that is checked further. A later envelope is not considered. The subject is the first subject's `digest.gitCommit` only. `subject[0].name` and any later subject are ignored. The committer key's `kind` is not required to be `human`. | `internal/verify/verify.go` (`pickChange`); `internal/notes/notes.go` (`Read`, `Statements`); `pkg/provenance/provenance.go` (`Commit`) | spec gap: only defined by code |
+| 4 | Selection order and subject fields. The note is walked in file order. The first envelope that passes check 3 is the one that is checked further. A later envelope is not considered. The subject is the first subject's `digest.gitCommit` only. `subject[0].name` and any later subject are ignored. The committer key's `kind` is not required to be `human`. | `internal/verify/verify.go` (`pickChange`); `internal/notes/notes.go` (`Read`, `Statements`); `pkg/provenance/provenance.go` (`Commit`); [Selecting a change attestation](../spec/attestation.md#selecting-a-change-attestation) and [Storage](../spec/attestation.md#storage) | closed |
 | 5 | `predicate.commit` equals the commit, `predicate.tree` equals the commit's tree, and `predicate.parents` equals the commit's parents in order. | `docs/spec/attestation.md` (field table and step 2); `internal/verify/verify.go` (`checkIntegrity`) | from spec |
 | 6 | Segments chain from the first parent's tree, or the empty tree for a root commit, to the commit tree: `segments[0].baseTree` is that start, each next `baseTree` equals the previous `resultTree`, and the last `resultTree` equals the commit tree. | `docs/spec/attestation.md` step 3; `internal/verify/verify.go` (`checkIntegrity`) | from spec |
-| 7 | Empty segment list and the empty-tree id. If `segments` is empty and the commit tree equals that start tree, check 6 passes. The start tree for a root is the object id `4b825dc642cb6eb9a060e54bf8d69288fbee4904`. | `internal/verify/verify.go` (`checkIntegrity`); `internal/gitx/git.go` (`EmptyTree`) | spec gap: only defined by code |
+| 7 | Empty segment list and the empty-tree id. If `segments` is empty and the commit tree equals that start tree, check 6 passes. The start tree for a root is the object id `4b825dc642cb6eb9a060e54bf8d69288fbee4904`. | `internal/verify/verify.go` (`checkIntegrity`); `internal/gitx/git.go` (`EmptyTree`); [Segment chain](../spec/attestation.md#segment-chain) | closed |
 | 8 | Every path git reports between the start tree and the commit tree, including the old path of a rename, appears in some segment's `files`. Lines a path adds beyond the sum of `linesAdded` declared for that path are attributed to every actor that declared the path, and those extra lines are part of policy input. Paths a segment declares and git does not report are still policy input. Over-declared line counts are not a failure. | `docs/spec/attestation.md` steps 4 and 5; `docs/spec/policy.md` (a rename is a change to both paths); `internal/verify/verify.go` (`observedChanges`); `internal/policy/policy.go` (`ChangesFromSegments`) | from spec |
-| 9 | How that diff is computed. `git diff --no-ext-diff` with rename detection (`-M`), NUL name-status, numstat, and a zero-context patch. A copy (`C`) is treated as a rename. A binary file (numstat `-`) adds zero lines. The rename threshold is git's default. | `internal/gitx/diff.go` (`DiffTrees`, `parseNameStatus`, `parseNumstat`) | spec gap: only defined by code |
+| 9 | How that diff is computed. `git diff --no-ext-diff` with rename detection (`-M`), NUL name-status, numstat, and a zero-context patch. A copy (`C`) is treated as a rename. A binary file (numstat `-`) adds zero lines. The rename threshold is git's default. | `internal/gitx/diff.go` (`DiffTrees`, `parseNameStatus`, `parseNumstat`); [Diff](../spec/attestation.md#diff) | closed |
 | 10 | Policy is the caller's policy file, re-evaluated. The `policy` object inside the attestation is not compared. Any `deny` fails. `require-approval` fails until enough approvers match. `warn` passes and is reported. `allow` passes. `humanLabels: unverified` is the default: it extends an agent path rule to human-labeled changes on those paths, and turns a `deny` that matches only those human-labeled paths into one approval. `humanLabels: trusted` does not extend those rules. Rules with no `paths` are not extended. | `docs/spec/policy.md`; `docs/spec/attestation.md` step 5; `internal/policy/policy.go` (`Evaluate`, `extendsToHuman`); `internal/verify/verify.go` (`Commit`) | from spec |
-| 11 | Policy details the spec does not state. An omitted `humanLabels` is treated as `unverified`. Globs use `doublestar.Match` from `github.com/bmatcuk/doublestar/v4` v4.10.7 (`*` does not match `/`). Unknown YAML fields are rejected. A rule id matches `^[a-z0-9][a-z0-9._-]{0,63}$`. `version` other than 1 is rejected. Human-extended matches count toward `files` and `linesAdded`. If a `deny` rule matches an agent path and a human-labeled path, the decision stays `deny` and lists the agent paths only. The human-only relaxation sets `approvals` to 1, keeps the rule's roles, and uses the message in `unverifiedMessage`. `allowSelfApproval` on that rule still applies. The gate enforces every matching rule. `policy.Strongest` does not drop a weaker rule; commit time uses it (`internal/attest/attest.go`), and the gate does not. | `internal/policy/policy.go` (`Parse`, `Validate`, `Evaluate`); `go.mod`; the mixed `deny` case and the omitted field are also described in `docs/features/policy-gates.md` | spec gap: only defined by code |
+| 11 | Policy details the spec does not state. An omitted `humanLabels` is treated as `unverified`. Globs use `doublestar.Match` from `github.com/bmatcuk/doublestar/v4` v4.10.7 (`*` does not match `/`). Unknown YAML fields are rejected. A rule id matches `^[a-z0-9][a-z0-9._-]{0,63}$`. `version` other than 1 is rejected. Human-extended matches count toward `files` and `linesAdded`. If a `deny` rule matches an agent path and a human-labeled path, the decision stays `deny` and lists the agent paths only. The human-only relaxation sets `approvals` to 1, keeps the rule's roles, and uses the message in `unverifiedMessage`. `allowSelfApproval` on that rule still applies. The gate enforces every matching rule. `policy.Strongest` does not drop a weaker rule; commit time uses it (`internal/attest/attest.go`), and the gate does not. | `internal/policy/policy.go` (`Parse`, `Validate`, `Evaluate`); `go.mod`; the mixed `deny` case and the omitted field are also described in `docs/features/policy-gates.md`; [Syntax](../spec/policy.md#syntax), [Globs](../spec/policy.md#globs), and [Evaluation](../spec/policy.md#evaluation) | closed |
 | 12 | Approvals. For each `require-approval` decision with threshold *n* and roles *R*, count distinct approver principals over `approval/v1` statements that approve this commit and sit on it, or that approve the range tip and sit on the tip. The approval's `commit` equals its subject and that target. The envelope meets check 1 with a human key whose principal equals `approver.id` and, when the approval names a role, holds that role. The role is in *R* when *R* is non-empty. `rules` is empty or contains the rule id. The approver differs from the committer unless the rule sets `allowSelfApproval`. A qualifying `reject` fails the commit. Fewer than *n* approvers fails. | `docs/spec/attestation.md` step 6; `docs/spec/policy.md`; `internal/verify/verify.go` (`collectApprovals`, `satisfy`, `Gate`) | from spec |
-| 13 | A `decision` other than `reject` counts as an approval, including a value other than `approve`. A malformed approval predicate is skipped, so it neither approves nor rejects. | `internal/verify/verify.go` (`collectApprovals`, `satisfy`) | spec gap: only defined by code |
+| 13 | A `decision` other than `reject` counts as an approval, including a value other than `approve`. A malformed approval predicate is skipped, so it neither approves nor rejects. | `internal/verify/verify.go` (`collectApprovals`, `satisfy`); [Approvals](../spec/attestation.md#approvals) | closed |
 | 14 | Merge commits. When merges are skipped, a merge is skipped only if its tree equals one parent's tree, or it has exactly two parents and its tree equals the conflict-free result of `git merge-tree --write-tree` on those parents. Any other merge needs its own change attestation. | `docs/spec/attestation.md`; `internal/verify/verify.go` (`mergeIsDerived`, `Commit`) | from spec |
-| 15 | Merge-skip invocation and which command skips. The git arguments are `merge-tree --write-tree --no-messages`. A non-zero exit means "not a clean merge" and is not an error. More than two parents are clean only when the tree equals one parent. `seralith gate` skips unless `--include-merges`. `seralith verify` does not skip. `seralith evidence export` always skips. | `internal/verify/verify.go` (`mergeIsDerived`); `internal/cli/verify.go`; `internal/cli/evidence.go` | spec gap: only defined by code |
+| 15 | Merge-skip invocation and which command skips. The git arguments are `merge-tree --write-tree --no-messages`. A non-zero exit means "not a clean merge" and is not an error. More than two parents are clean only when the tree equals one parent. `seralith gate` skips unless `--include-merges`. `seralith verify` does not skip. `seralith evidence export` always skips. | `internal/verify/verify.go` (`mergeIsDerived`); `internal/cli/verify.go`; `internal/cli/evidence.go`; [Merge commits](../spec/attestation.md#merge-commits) | closed |
 | 16 | Policy and trust for a CI run come from the base revision, not from the branch under test. | `docs/security/threat-model.md` T8; `docs/spec/policy.md` (file location `.seralith/policy.yaml`); `docs/integrations/github-actions.md` | from spec |
-| 17 | How those files are loaded. `--config-from REV` reads `.seralith/policy.yaml` and `.seralith/trust.yaml` as blobs at `REV` and fails if either blob is missing. With no `--config-from`, a missing policy file is an empty version-1 policy and a missing trust file is an empty store. | `internal/cli/env.go` (`useConfigFrom`); `internal/policy/policy.go` (`Load`); `internal/keys/trust.go` (`LoadTrustStore`) | spec gap: only defined by code |
-| 18 | Trust store and revocation. The store is YAML, `version: 1` only. Each key has `id`, `principal`, `kind` (`human` or `machine`), `roles`, a PKIX `PUBLIC KEY` PEM, and optional `revoked`. A declared id that differs from check 1's key id fails the parse. `Resolve` skips revoked keys. Revocation applies when the store used for that run is the updated one. The threat model states the timing and does not state this file. | `internal/keys/trust.go` (`ParseTrustStore`, `Resolve`); `docs/security/threat-model.md` (key compromise) | spec gap: only defined by code |
-| 19 | Ledger hash chain and checkpoints. JSON Lines. Each entry's hash is the SHA-256 of a canonical encoding of the entry with the hash cleared, and `prev` is the previous entry's hash. A checkpoint is a later entry whose signature covers an earlier head. Edits, gaps, reordering, and a bad signature from a trusted checkpoint key are failures. A chain with no trusted checkpoint is unanchored: intact, and not proof against a rewrite by someone who can edit the file. | `docs/architecture.md` (Ledger); `docs/security/threat-model.md` T10; `internal/ledger/ledger.go` (`ComputeHash`, `Verify`, `Anchored`) | spec gap: only defined by code |
-| 20 | Evidence package. Zip members listed in `manifest.json` are present and their SHA-256 matches. `manifest.sig.json` is a DSSE signature over the exact bytes of `manifest.json`, payload type `application/vnd.seralith.evidence-manifest+json`, threshold one trusted key. `OK` requires a valid signature, no mismatch, and no missing listed file. | `docs/compliance/mapping.md` (member names and the verify command); `internal/evidence/evidence.go` (`Verify`, `Build`, `ManifestPayloadType`) | spec gap: only defined by code |
+| 17 | How those files are loaded. `--config-from REV` reads `.seralith/policy.yaml` and `.seralith/trust.yaml` as blobs at `REV` and fails if either blob is missing. With no `--config-from`, a missing policy file is an empty version-1 policy and a missing trust file is an empty store. | `internal/cli/env.go` (`useConfigFrom`); `internal/policy/policy.go` (`Load`); `internal/keys/trust.go` (`LoadTrustStore`); [Policy loading](../spec/policy.md#loading) and [Trust loading](../spec/trust-store.md#loading) | closed |
+| 18 | Trust store and revocation. The store is YAML, `version: 1` only. Each key has `id`, `principal`, `kind` (`human` or `machine`), `roles`, a PKIX `PUBLIC KEY` PEM, and optional `revoked`. A declared id that differs from check 1's key id fails the parse. `Resolve` skips revoked keys. Revocation applies when the store used for that run is the updated one. The threat model states the timing and does not state this file. | `internal/keys/trust.go` (`ParseTrustStore`, `Resolve`); `docs/security/threat-model.md` (key compromise); [Trust store](../spec/trust-store.md) | closed |
+| 19 | Ledger hash chain and checkpoints. JSON Lines. Each entry's hash is the SHA-256 of a canonical encoding of the entry with the hash cleared, and `prev` is the previous entry's hash. A checkpoint is a later entry whose signature covers an earlier head. Edits, gaps, reordering, and a bad signature from a trusted checkpoint key are failures. A chain with no trusted checkpoint is unanchored: intact, and not proof against a rewrite by someone who can edit the file. | `docs/architecture.md` (Ledger); `docs/security/threat-model.md` T10; `internal/ledger/ledger.go` (`ComputeHash`, `Verify`, `Anchored`); [Audit ledger](../spec/ledger.md) | closed |
+| 20 | Evidence package. Zip members listed in `manifest.json` are present and their SHA-256 matches. `manifest.sig.json` is a DSSE signature over the exact bytes of `manifest.json`, payload type `application/vnd.seralith.evidence-manifest+json`, threshold one trusted key. `OK` requires a valid signature, no mismatch, and no missing listed file. | `docs/compliance/mapping.md` (member names and the verify command); `internal/evidence/evidence.go` (`Verify`, `Build`, `ManifestPayloadType`); [Evidence packages](../spec/evidence.md) | closed |
 
-Check 19 is a gap because the pass/fail rules an implementer must match are the ones in `internal/ledger/ledger.go`, not the sentences in the architecture doc. The canonical preimage is Go's `encoding/json` of `Entry` after `Hash` is set to `""` (the field is present as an empty string; it has no `omitempty`), with `data` compacted when non-empty, empty `actor`, `subject`, and `data` omitted, and `time` formatted as `time.Time` JSON. The first entry has `seq` 1 and `prev` equal to 64 zero hex digits (`GenesisHash`). Each next `seq` is one greater. A checkpoint has type `ledger.checkpoint`. Its `data` is `seq`, `head`, `keyid`, and standard-base64 `sig`. The signed message is the raw bytes `seralith-ledger-checkpoint:v1:<seq>:<head>`, signed with Ed25519, not wrapped in DSSE. An unknown checkpoint key is listed and is not a chain failure. `OK` is "no issues". `Anchored` is `OK`, at least one checkpoint, and every checkpoint verified. A prefix of a ledger that still chains verifies, including a prefix that ends on a checkpoint. The check does not prove that some other copy of the log had more entries.
+Check 19 is closed in [the ledger specification](../spec/ledger.md). Check 20 is closed in [the evidence specification](../spec/evidence.md).
 
-Check 20 is a gap because the compliance doc names the members and the command, and the decision procedure is the code. In particular, `evidence.Verify` does not re-run the gate, does not re-hash the ledger, and does not compare `ledger-verify.json` to a fresh ledger check. It does not reject zip members that are not in the manifest, and it does not read the manifest `size` field. `manifest.json` and `manifest.sig.json` are not in the hashed file list. The signature payload must be byte-for-byte equal to `manifest.json`, not a re-encoding of the same JSON. `signedBy` is key ids. Each member is read up to 512 MiB (`io.LimitReader`); a longer member is hashed as that prefix, so it mismatches a manifest hash of the full member rather than failing the open.
+Lines the gate does not recompute, and so this program does not report as verified: `attribution`, `summary`, `predicate.policy`, `transcriptDigest`, `builder`, `repository`, and `createdAt`. The gate copies `summary` into its report for display (`internal/verify/verify.go`). Those fields stay attested claims. The attestation specification lists them as claims the gate does not recompute.
 
-Lines the gate does not recompute, and so this program does not report as verified: `attribution`, `summary`, `predicate.policy`, `transcriptDigest`, `builder`, `repository`, and `createdAt`. The gate copies `summary` into its report for display (`internal/verify/verify.go`). Those fields stay attested claims.
-
-Unreadable notes lines, a payload type other than the in-toto type, and a statement `_type` other than `https://in-toto.io/Statement/v1` are skipped (`internal/notes/notes.go`, `pkg/provenance/provenance.go` `Open`). If nothing remains that passes check 3, the commit fails with no change attestation. That skip is a spec gap, grouped with check 4.
+Unreadable notes lines, a payload type other than the in-toto type, and a statement `_type` other than `https://in-toto.io/Statement/v1` are skipped (`internal/notes/notes.go`, `pkg/provenance/provenance.go` `Open`). If nothing remains that passes check 3, the commit fails with no change attestation. That skip is specified with check 4 in [Storage](../spec/attestation.md#storage).
 
 ### What the program does not prove
 
@@ -325,10 +322,9 @@ the ledger encoding, and the evidence manifest. After the v1.0.0 tag, a change
 to a vector under `conformance/v1/` is a breaking change. New predicate
 versions get a new directory. They do not replace the v1 vectors.
 
-Building the corpus will hit every spec gap above, because the generator has
-to freeze behavior the spec does not state. That is a reason to write those
-rules into `docs/spec/` before calling the verifier an implementation of the
-spec. The corpus can still lock the current behavior first.
+The rules those vectors lock are the ones in `docs/spec/`. The corpus still
+locks today's behavior: a pull request that changes a v1 result has to change
+`expect.json` in the same pull request.
 
 ## Security and provenance considerations
 
@@ -379,10 +375,11 @@ commit today. A policy or trust store whose `version` is not 1 is exit 2,
 matching `policy.Parse` and `ParseTrustStore`, which reject the file before
 verification starts.
 
-The ledger encoding and the evidence manifest have no version field in a spec.
-Check 19 and check 20 are the behavior to freeze in `conformance/v1/`. Changing
-the hash preimage or the manifest payload after that is a breaking change,
-same as a predicate change.
+The ledger encoding and the evidence manifest have no version field of their
+own. The bytes are specified in `docs/spec/ledger.md` and
+`docs/spec/evidence.md`. Check 19 and check 20 are the behavior to freeze in
+`conformance/v1/`. Changing the hash preimage or the manifest payload after
+that is a breaking change, same as a predicate change.
 
 This note does not add a predicate, a policy field, or a trust-store field.
 
@@ -403,8 +400,9 @@ dependency for Seralith. It is not a second implementation.
 
 **Do nothing.** v1.0.0 can ship this way. Auditors keep running the vendor
 gate and the vendor package check. Buyers who require a second implementation
-cannot be told that one exists, and the spec gaps stay implicit in the Go
-sources. This note exists so that choice is explicit. It does not block the
+cannot be told that one exists. The checks are written down in the
+specifications; this alternative leaves the vendor gate as the only program
+that runs them. This note exists so that choice is explicit. It does not block the
 release.
 
 ## Open questions
@@ -421,8 +419,6 @@ release.
    decision.
 3. **Repository and release keys.** Who owns the verifier repository, and who
    holds the release key described above?
-4. **Spec fixes before code.** The recommendation is to write checks 2, 4, 7,
-   9, 11, 13, 15, 17, 18, 19, and 20 into `docs/spec/` before the verifier is
-   described as implementing the spec, and to let the corpus lock today's
-   behavior in the meantime. Ryan decides whether a spec change lands before
-   any verifier code.
+4. **Spec fixes before code.** Checks 2, 4, 7, 9, 11, 13, 15, 17, 18, 19, and
+   20 are specified in `docs/spec/`. The corpus can still lock that behavior.
+   The verifier itself is separate work.
